@@ -1,5 +1,23 @@
 extends layout
 
+//-block headScript
+//-	script.
+//-		$(document).ready(function(){
+//-			$("#search").click(function() {
+//-				alert($("#movie").val());
+//-			});
+//-		});
+
 block content
-  h1= title
-  p Welcome to #{title}
+	.col-sm-6.col-sm-offset-3		
+		h1
+			+fa('search', 'What do you want to find')
+
+		//-if message.length > 0
+		//-	.alert.alert-danger= message
+
+		form(action='/search', method='GET')
+			+input('text', 'movie', 'Movie')
+			+input('text', 'show', 'Show')
+			+input('text', 'music', 'Music')
+			button#search.btn.btn-warning.btn-lg(type='submit') Search

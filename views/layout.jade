@@ -1,7 +1,40 @@
 doctype html
+
+mixin fa(type, text)
+	span(class='fa fa-'+type)
+	| 
+	= text
+
+mixin faButtonDefault(faType, href, text)
+	a.btn.btn-default(href=href)
+		+fa(faType, text)
+		
+mixin faButtonPrimary(faType, href, text)
+	a.btn.btn-primary(href=href)
+		+fa(faType, text)
+		
+mixin buttonPrimary(href, text)
+	a.btn.btn-primary(href=href)= text
+		
+mixin inputRequired(type, id, text)
+	.form-group
+		label= text
+		input.form-control(type=type, name=id, id=id, required)
+
+mixin input(type, id, text)
+	.form-group
+		label= text
+		input.form-control(type=type, name=id, id=id)
+
+
 html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    block content
+	head
+		title= title
+		meta(name='viewport', content='width=device-width, initial-scale=1')
+		link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css')
+		link(rel='stylesheet', href='//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css')
+		script(src='https://code.jquery.com/jquery-2.1.0.min.js')
+		block headScript
+	body
+	.container
+		block content
