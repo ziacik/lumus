@@ -1,36 +1,14 @@
 extends layout
 
 block headScript
-	script.
-		function getParameter(name) {
-			return decodeURI(
-				(RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
-			);
-		}
-
-		$(document).ready(function(){
-			$.getJSON("http://www.omdbapi.com/?i=&s=" + getParameter('movie'), function(data) {								
-				var items = [];
-				$.each( data.Search, function( key, val ) {
-					items.push( "<li id='" + val.imdbID + "'>" + val.Title + " (" + val.Year + ") [" + val.Rating + "]</li>" );
-				});				
-				$( "<ul/>", {
-					"class": "my-new-list",
-					html: items.join( "" )
-				}).appendTo( "#movies" );
-			});
-		});
+	script(src="/javascripts/search.js")
 
 block content
-	.col-sm-6.col-sm-offset-1		
-		h1
-			+fa('search', 'Search Results')
+	h1
+		+fa('search', 'Search Results')
 
-		//-if message.length > 0
-		//-	.alert.alert-danger= message
-	.row
-		.col-sm-6
-			.well
-				h3
-					+fa('film', 'Movies')
-					#movies			
+	form(action='/add', method='GET')
+		#results
+		button#add.btn.btn-warning.btn-lg(type='submit') Add Selected
+	
+	
