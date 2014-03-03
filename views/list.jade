@@ -5,9 +5,9 @@ block headScript
 
 block content
 	h1
-		+fa('search', 'Search Results')
+		+fa('search', 'List')
 
-	form(action='/add', method='POST')
+	form(action='/add', method='GET')
 		#results
 		button#add.btn.btn-warning.btn-lg(type='submit') Add Selected
 	
