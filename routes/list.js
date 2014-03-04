@@ -17,9 +17,14 @@ function fetchBestMovieResult($rootElements) {
 }
 
 function doNext($rootElements, index) {
-	var $rootElement = $rootElements[index];
+	var $rootElement = $rootElements[index];	
+	
+	var url = 'http://thepiratebay.se' + $($rootElement).children('.detLink').attr('href');
+	console.log(url);
+	
+	request(url, function(error, response, body) {
+		console.log(url + " done");
 
-	request('http://thepiratebay.se' + $($rootElement).children('.detLink').attr('href'), function(error, response, body) {
 		if (error) {
 			console.log(error);
 			return;
@@ -50,7 +55,11 @@ function addTorrent(magnetLink) {
 		}
 	};
 
+	console.log(options.url);
+	
 	request(options, function(error, response, body) {
+		console.log(options.url + " done");
+
 		if (error) {
 			console.log(error);
 			tryAgainOrFail(function() { addTorrent(magnetLink); }, "Too many tries, getting error, giving up.");
@@ -82,10 +91,14 @@ exports.add = function(req, res) {
 	for (var key in req.body) {
 		console.log(key);
 		var url = "http://thepiratebay.se/search/" + key + "/0/7/207";
+		console.log(url);
 
 		request(url, function(err, resp, body) {
-			if (err)
-				throw err;
+			console.log(url + " done");
+
+			if (err) {
+				console.log(err);
+			}
 	
 			$ = cheerio.load(body);					
 			fetchBestMovieResult($(".detName"));
