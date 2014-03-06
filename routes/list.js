@@ -1,11 +1,21 @@
 var request = require('request');
 var cheerio = require('cheerio');
+var Item = require('../models/item').Item;
+var ItemTypes = require('../models/item').ItemTypes;
 var transmissionSessionId;
 var torrentAddTries = 5;
 
 exports.list = function(req, res) {
-	res.render('list', {
-		title : 'List'
+	Item.getAll(function(err, items) {
+		if (err) {
+			res.render('error', {
+				error: err
+			});
+		} else {
+			res.render('list', {
+				items: items
+			});		
+		}
 	});
 };
 
@@ -89,6 +99,20 @@ function tryAgainOrFail(doWhat, message) {
 
 exports.add = function(req, res) {
 	for (var key in req.body) {
+		var item = new Item();
+		item.name = key;
+		item.type = ItemTypes.film;
+		item.save(function(err, doc) {
+			if (err) {
+				res.redirect('/error');
+			} else {
+				res.redirect('/list');			
+			}				
+		});
+		
+		break; //TODO
+	/*	
+		
 		console.log(key);
 		var url = "http://thepiratebay.se/search/" + key + "/0/7/207";
 		console.log(url);
@@ -102,8 +126,6 @@ exports.add = function(req, res) {
 	
 			$ = cheerio.load(body);					
 			fetchBestMovieResult($(".detName"));
-		});
-	}
-
-	res.redirect('/');
+		});*/
+	}	
 };

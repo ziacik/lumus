@@ -1,14 +1,15 @@
 extends layout
 
 block headScript
-	script(src="/javascripts/search.js")
 
 block content
 	h1
 		+fa('search', 'List')
-
-	form(action='/add', method='GET')
-		#results
-		button#add.btn.btn-warning.btn-lg(type='submit') Add Selected
 	
+	each item in items
+		strong
+			+fa(item.type, item.name)
+		|   |  
+		span.state #{item.state}
+		
 	
