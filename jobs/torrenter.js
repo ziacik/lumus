@@ -156,7 +156,7 @@ function doNext(item, $rootElements, index) {
 			return;
 		}
 				
-		if (true || body.indexOf('DTS') >= 0 || body.indexOf('AC3') >= 0 || body.indexOf('AC-3') >= 0) {
+		if (/*true || */body.indexOf('DTS') >= 0 || body.indexOf('AC3') >= 0 || body.indexOf('AC-3') >= 0) {
 			addTorrent(item, $($rootElement).next().attr('href'));
 		} else {	
 			if (index < $rootElements.length) {
