@@ -1,5 +1,5 @@
 var ItemTypes = Object.freeze({film:"film", serie:"serie", music:"music"});
-var ItemStates = Object.freeze({wanted:"wanted", snatched:"snatched", downloaded:"downloaded", renamed:"renamed", subtitled:"subtitled"});
+var ItemStates = Object.freeze({wanted:"wanted", snatched:"snatched", downloaded:"downloaded", renamed:"renamed", subtitled:"subtitled", finished:"finished"});
 
 var Datastore = require('nedb');
 
@@ -23,13 +23,10 @@ Item.setupMethods = function(item) {
 		if (!done)
 			throw "Sorry, done callback is required.";
 		
-		console.log('s');
 		if (item._id) {
 			db.items.update({_id : item._id}, item, {}, done);
 		} else {
-			console.log('i');
 			db.items.insert(item, function(err, newDoc) {
-				console.log(err);
 				item._id = newDoc._id;
 				done(err);
 			});
@@ -42,7 +39,6 @@ Item.setupMethods = function(item) {
 };
 
 Item.getAll = function(done) {
-	console.log('0');
 	db.items.find({}, function(err, items) {
 		if (err) {
 			console.log(err);
@@ -76,7 +72,6 @@ Item.find = function(byWhat, done) {
 		
 		for (index in items) {
 			var item = items[index];
-			console.log('setting up item ' + item);
 			Item.setupMethods(item);
 		}
 

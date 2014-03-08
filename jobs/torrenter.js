@@ -1,5 +1,6 @@
 var request = require('request');
 var cheerio = require('cheerio');
+var path = require('path');
 
 var Item = require('../models/item').Item;
 var ItemTypes = require('../models/item').ItemTypes;
@@ -13,7 +14,7 @@ var torrentAddTries = 5;
 function findTorrent(item) {
 	console.log("Searching for " + item.name);
 
-	var url = "http://thepiratebay.se/search/" + item.name + "/0/7/207";
+	var url = "http://thepiratebay.se/search/" + item.name + "/0/7/207"; //todo 207 //100 is audio
 
 	request(url, function(err, resp, body) {
 		console.log(url + " done");
@@ -43,7 +44,7 @@ function checkFinished(item) {
 	rpc.arguments.fields = [ 'isFinished', 'downloadDir', 'files', 'name' ];
 	
 	var options = {
-		url : 'http://malina:9091/transmission/rpc',
+		url : 'http://localhost:9091/transmission/rpc',
 		method : 'POST',
 		json : rpc,
 		headers : {
@@ -84,6 +85,28 @@ function checkFinished(item) {
 						
 			} else if (body.arguments.torrents[0].isFinished) {
 
+				var torrentInfo = body.arguments.torrents[0];
+				var filesInfo = torrentInfo.files;
+				
+				var maxLength = 0;
+				var maxFileInfo;
+				
+				for (var index in filesInfo) {
+					var fileInfo = filesInfo[index];
+					if (fileInfo.length > maxLength) {
+						maxLength = fileInfo.length;
+						maxFileInfo = fileInfo;
+					}
+				}
+				
+				console.log(torrentInfo);
+
+				var fileDir = path.dirname(maxFileInfo.name);
+				var fileName = path.basename(maxFileInfo.name); 
+
+				item.downloadDir = path.join(torrentInfo.downloadDir, fileDir);
+				item.mainFile = fileName;				
+				
 				item.state = ItemStates.downloaded;
 				item.planNextCheck(1); /// So that renames goes on right away.				
 
@@ -110,8 +133,8 @@ function checkFinished(item) {
 
 function fetchBestMovieResult(item, $rootElements) {
 	if ($rootElements.length == 0) {
-		console.log("No result for " + item.name + ", rescheduling (1 min)."); //TODO should be like 1 day or what.
-		item.planNextCheck(10);
+		console.log("No result for " + item.name + ", rescheduling (1 day)."); //TODO should be like 1 day or what.
+		item.planNextCheck(24*3600);
 		item.save(function(err) {}); //TODO err
 		return;
 	}
@@ -150,7 +173,7 @@ function addTorrent(item, magnetLink) {
 	rpc.arguments.filename = magnetLink;
 	
 	var options = {
-		url : 'http://malina:9091/transmission/rpc',
+		url : 'http://localhost:9091/transmission/rpc',
 		method : 'POST',
 		json : rpc,
 		headers : {

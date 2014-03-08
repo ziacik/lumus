@@ -33,6 +33,8 @@ function check() {
 				renamer.rename(item);
 			else if (item.state === ItemStates.renamed)
 				subtitler.findSubtitles(item);
+			else if (item.state === ItemStates.subtitled)
+				notifier.updateLibrary(item.type);
 			else
 				console.log('Invalid state ' + item.state);
 		}

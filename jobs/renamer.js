@@ -1,20 +1,27 @@
 var fs = require('fs');
 var path = require('path');
+var process = require('child_process');
 
 var Item = require('../models/item').Item;
 var ItemTypes = require('../models/item').ItemTypes;
 var ItemStates = require('../models/item').ItemStates;
 
-function rename(item, file) {
-	console.log("Renaming " + file);
-	var fileName = path.basename(file);
+//TODO: moje lokalne transmission rpc vracia pri duplicate torrente aj ide, malina nie
 
-	fs.mkdirSync("/media/Pyre/Movies/" + item.name); //TODO hardcoded
-	fs.rename(file, "/media/Pyre/Movies/" + item.name + "/" + fileName);
-
-	item.state = ItemStates.renamed;
-	item.planNextCheck(10); //TODO hardcoded	
-	item.save();	
+function rename(item) {
+	console.log("Renaming " + item.name);
+	
+	item.renamedDir = "/home/ziacik/Movies/" + item.name;
+	
+	try {
+		fs.rename(item.downloadDir, item.renamedDir);
+	} catch (e) {
+		console.log(e);
+	}
+	
+	item.state = ItemStates.renamed; /// Ignore failed renames.
+	item.planNextCheck(1); //TODO hardcoded	
+	item.save(function(err) {}); //TODO: err handling	
 }
 
 module.exports.rename = rename;
