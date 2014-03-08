@@ -9,6 +9,6 @@ block content
 	each item in items
 		p
 			strong
-				+fa(item.type, item.name)
+				+fa(icons[item.type], item.name)
 			|   |  
 			span.state #{item.state}

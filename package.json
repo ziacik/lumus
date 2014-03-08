@@ -12,6 +12,7 @@
     "cheerio": "*",
     "request": "*",
     "nedb": "*",
-    "cron": "*"
+    "cron": "*",
+    "nconf": "*"
   }
 }

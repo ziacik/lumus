@@ -14,7 +14,7 @@ var torrentAddTries = 5;
 function findTorrent(item) {
 	console.log("Searching for " + item.name);
 
-	var url = "http://thepiratebay.se/search/" + item.name + "/0/7/207"; //todo 207 //100 is audio
+	var url = "http://thepiratebay.se/search/" + item.name + "/0/7/100"; //todo 207 //100 is audio
 
 	request(url, function(err, resp, body) {
 		console.log(url + " done");
@@ -156,7 +156,7 @@ function doNext(item, $rootElements, index) {
 			return;
 		}
 				
-		if (/*true || */body.indexOf('DTS') >= 0 || body.indexOf('AC3') >= 0 || body.indexOf('AC-3') >= 0) {
+		if (true || body.indexOf('DTS') >= 0 || body.indexOf('AC3') >= 0 || body.indexOf('AC-3') >= 0) {
 			addTorrent(item, $($rootElement).next().attr('href'));
 		} else {	
 			if (index < $rootElements.length) {

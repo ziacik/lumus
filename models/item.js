@@ -1,4 +1,5 @@
-var ItemTypes = Object.freeze({film:"film", serie:"serie", music:"music"});
+var ItemTypes = Object.freeze({movie:"movie", show:"show", music:"music"});
+var ItemTypeIcons = Object.freeze({movie:"film", show:"leaf", music:"music"});
 var ItemStates = Object.freeze({wanted:"wanted", snatched:"snatched", downloaded:"downloaded", renamed:"renamed", subtitled:"subtitled", finished:"finished"});
 
 var Datastore = require('nedb');
@@ -87,3 +88,4 @@ Item.findById = function(id, done) {
 module.exports.Item = Item;
 module.exports.ItemTypes = ItemTypes;
 module.exports.ItemStates = ItemStates;
+module.exports.ItemTypeIcons = ItemTypeIcons;

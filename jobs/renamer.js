@@ -1,3 +1,4 @@
+var config = require('../config');
 var fs = require('fs');
 var path = require('path');
 var process = require('child_process');
@@ -11,10 +12,14 @@ var ItemStates = require('../models/item').ItemStates;
 function rename(item) {
 	console.log("Renaming " + item.name);
 	
-	item.renamedDir = "/home/ziacik/Movies/" + item.name;
-	
+	console.log(config);
+	console.log(item.type);
+	console.log(config[item.type + 'TargetDir']);
+		
 	try {
-		fs.rename(item.downloadDir, item.renamedDir);
+		var destinationDir = path.join(config[item.type + 'TargetDir'], item.name);	
+		fs.rename(item.downloadDir, destinationDir);
+		item.renamedDir = destinationDir;
 	} catch (e) {
 		console.log(e);
 	}
