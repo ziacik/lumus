@@ -1,8 +1,12 @@
 var request = require('request');
 var cheerio = require('cheerio');
+
 var Item = require('../models/item').Item;
 var ItemTypes = require('../models/item').ItemTypes;
 var ItemStates = require('../models/item').ItemStates;
+
+var notifier;
+
 var transmissionSessionId;
 var torrentAddTries = 5;
 
@@ -18,7 +22,7 @@ function findTorrent(item) {
 			console.log(err);
 			//TODO done(err); 
 			item.state = ItemStates.wanted;
-			item.nextCheck = new Date(new Date().getTime() + 10000).toJSON(); //TODO hardcoded
+			item.planNextCheck(10); //TODO hardcoded
 			item.save(function(err) {
 				if (err)
 					console.log(err);
@@ -66,19 +70,33 @@ function checkFinished(item) {
 		console.log(body);
 		
 		if (body.result !== 'success') {
+		
 			console.log('Not success. What do?'); //TODO
-			item.nextCheck = new Date(new Date().getTime() + 10000).toJSON(); //TODO hardcoded
-		} else {		
+			item.planNextCheck(10); //TODO hardcoded
+		
+		} else {
+				
 			if (body.arguments.torrents.length == 0) {
+			
 				console.log('Torrent removed.');
 				item.state = ItemStates.wanted;
-				item.nextCheck = new Date(new Date().getTime() + 10000).toJSON(); //TODO hardcoded		
+				item.planNextCheck(10); //TODO hardcoded
+						
 			} else if (body.arguments.torrents[0].isFinished) {
-				item.state = ItemStates.downloaded;				
+
+				item.state = ItemStates.downloaded;
+				item.planNextCheck(1); /// So that renames goes on right away.				
+
+				if (notifier)
+					notifier.notifyDownloaded(item);
+					
 			} else {
+				
 				console.log(body.arguments.torrents[0].isFinished);
-				item.nextCheck = new Date(new Date().getTime() + 10000).toJSON(); //TODO hardcoded
+				item.planNextCheck(10); //TODO hardcoded
+				
 			}
+			
 		}
 		
 		console.log('Check finished for item ' + item.name + ', state: ' + item.state); 
@@ -91,8 +109,12 @@ function checkFinished(item) {
 }
 
 function fetchBestMovieResult(item, $rootElements) {
-	if ($rootElements.length == 0)
+	if ($rootElements.length == 0) {
+		console.log("No result for " + item.name + ", rescheduling (1 min)."); //TODO should be like 1 day or what.
+		item.planNextCheck(10);
+		item.save(function(err) {}); //TODO err
 		return;
+	}
 	
 	doNext(item, $rootElements, 0);
 }
@@ -155,11 +177,15 @@ function addTorrent(item, magnetLink) {
 
 		console.log(body);
 
-		item.nextCheck = new Date(new Date().getTime() + 10000).toJSON(); //TODO hardcoded
+		item.planNextCheck(10); //TODO hardcoded
 
 		if (body.result === 'success') {		
 			item.state = ItemStates.snatched;
 			item.torrentId = body.arguments['torrent-added'].id;
+			
+			if (notifier)
+				notifier.notifySnatched(item);
+				
 			console.log('Success. Torrent id ' + item.torrentId + '.');
 		} else {
 			console.log('No success. Sorry. Transmission down or what?');
@@ -183,5 +209,10 @@ function tryAgainOrFail(doWhat, message) {
 	}
 }
 
+function setNotifier(notifierToSet) {
+	notifier = notifierToSet;
+}
+
 module.exports.findTorrent = findTorrent;
 module.exports.checkFinished = checkFinished;
+module.exports.setNotifier = setNotifier;

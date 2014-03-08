@@ -1,3 +1,5 @@
-/**
- * New node file
- */
+function findSubtitles(item) {
+	
+}
+
+module.exports.findSubtitles = findSubtitles;

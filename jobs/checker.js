@@ -1,9 +1,17 @@
 var torrenter = require('./torrenter');
+var renamer = require('./renamer');
+var subtitler = require('./subtitler');
+var notifier = require('./notifier');
+var xbmc = require('./xbmc');
+
 var Item = require('../models/item').Item;
 var ItemStates = require('../models/item').ItemStates;
 
+notifier.use(xbmc);
+torrenter.setNotifier(notifier);
+
 function check() {
-	Item.find({lastCheck : {$lt : nextCheck}, nextCheck : {$lte : new Date().toJSON()}}, function(err, items) {
+	Item.find({nextCheck : {$lte : new Date().toJSON()}, $where : function() { return this.lastCheck < this.nextCheck; }}, function(err, items) {
 		if (err) {
 			console.log(err);
 			return;
@@ -11,6 +19,8 @@ function check() {
 		
 		for (var index in items) {
 			var item = items[index];
+			
+			console.log('Checking ' + item.name);
 
 			item.lastCheck = new Date().toJSON();
 			item.save(function(err) {});
@@ -19,6 +29,10 @@ function check() {
 				torrenter.findTorrent(item);
 			else if (item.state === ItemStates.snatched)
 				torrenter.checkFinished(item);
+			else if (item.state === ItemStates.downloaded)
+				renamer.rename(item);
+			else if (item.state === ItemStates.renamed)
+				subtitler.findSubtitles(item);
 			else
 				console.log('Invalid state ' + item.state);
 		}

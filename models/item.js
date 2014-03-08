@@ -35,6 +35,10 @@ Item.setupMethods = function(item) {
 			});
 		}
 	};
+	
+	item.planNextCheck = function(seconds) {
+		item.nextCheck = new Date(new Date().getTime() + seconds * 1000).toJSON();		
+	}
 };
 
 Item.getAll = function(done) {
