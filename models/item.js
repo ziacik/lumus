@@ -1,5 +1,5 @@
 var ItemTypes = Object.freeze({film:"film", serie:"serie", music:"music"});
-var ItemStates = Object.freeze({wanted:"wanted", snatched:"snatched", downloaded:"downloaded"});
+var ItemStates = Object.freeze({wanted:"wanted", snatched:"snatched", downloaded:"downloaded", renamed:"renamed", subtitled:"subtitled"});
 
 var Datastore = require('nedb');
 
@@ -12,12 +12,17 @@ function Item() {
 	this.name = null;
 	this.type = null;
 	this.state = ItemStates.wanted;
+	this.lastCheck = new Date().toJSON();
+	this.nextCheck = new Date(new Date().getTime() + 10000).toJSON(); //TODO hardcoded
 	
 	Item.setupMethods(this);
 }
 
 Item.setupMethods = function(item) {
 	item.save = function(done) {
+		if (!done)
+			throw "Sorry, done callback is required.";
+		
 		console.log('s');
 		if (item._id) {
 			db.items.update({_id : item._id}, item, {}, done);
@@ -35,17 +40,16 @@ Item.setupMethods = function(item) {
 Item.getAll = function(done) {
 	console.log('0');
 	db.items.find({}, function(err, items) {
-		console.log('1');
 		if (err) {
 			console.log(err);
 			done(err, null);
 		}
 		
-		console.log('2');
-		for (item in items) {
+		for (index in items) {
+			var item = items[index];
 			Item.setupMethods(item);
 		}
-		console.log('3');
+
 		done(null, items);
 	});
 };
@@ -56,6 +60,23 @@ Item.findOne = function(what, done) {
 			Item.setupMethods(item);
 		
 		done(err, item);
+	});
+};
+
+Item.find = function(byWhat, done) {
+	db.items.find(byWhat, function(err, items) {
+		if (err) {
+			console.log(err);
+			done(err, null);
+		}
+		
+		for (index in items) {
+			var item = items[index];
+			console.log('setting up item ' + item);
+			Item.setupMethods(item);
+		}
+
+		done(null, items);
 	});
 };
 

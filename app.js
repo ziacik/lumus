@@ -9,6 +9,7 @@ var search = require('./routes/search');
 var list = require('./routes/list');
 var http = require('http');
 var path = require('path');
+var checker = require('./jobs/checker');
 
 var app = express();
 
@@ -36,6 +37,12 @@ app.get('/', routes.index);
 app.get('/search', search.runSearch);
 app.post('/add', list.add);
 app.get('/list', list.list);
+
+// start cron
+var CronJob = require('cron').CronJob;
+new CronJob('* * * * * *', function(){
+    checker();
+}, null, true);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
