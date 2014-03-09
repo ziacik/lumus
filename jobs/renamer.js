@@ -20,7 +20,7 @@ function rename(item) {
 		item.planNextCheck(1); //TODO hardcoded	
 	} catch (e) {
 		item.state = ItemStates.renameFailed;
-		console.log('CH' + e);
+		console.log(e);
 	}
 	
 	item.save(function(err) {}); //TODO: err handling	

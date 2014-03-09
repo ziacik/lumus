@@ -13,9 +13,9 @@ function notifyDownloaded(item) {
 
 function updateLibrary(type) {
 	if (type === ItemTypes.music) {
-		doRpc('{"jsonrpc":"2.0", "method":"AudioLibrary.Scan", "params":{}');
+		doRpc('{"jsonrpc":"2.0", "method":"AudioLibrary.Scan"}');
 	} else {
-		doRpc('{"jsonrpc":"2.0", "method":"VideoLibrary.Scan", "params":{}');
+		doRpc('{"jsonrpc":"2.0", "method":"VideoLibrary.Scan"}');
 	}
 }
 
