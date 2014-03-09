@@ -1,3 +1,8 @@
+var notifier = require('./notifier');
+var xbmc = require('../notifiers/xbmc');
+
+notifier.use(xbmc);
+
 var Item = require('../models/item').Item;
 var ItemTypes = require('../models/item').ItemTypes;
 var ItemStates = require('../models/item').ItemStates;
@@ -10,10 +15,12 @@ exports.changeState = function(req, res) {
 		} else {
 			item.state = req.query.state; //TODO vulnerability (validate)
 			
-			if (item.state === ItemStates.finished)
+			if (item.state === ItemStates.finished) {
 				item.planNextCheck(0); /// Cancel next check, if any.
-			else
+				notifier.updateLibrary(item);
+			} else {
 				item.planNextCheck(1);
+			}
 			
 			item.save(function(err) {
 				if (err) {
