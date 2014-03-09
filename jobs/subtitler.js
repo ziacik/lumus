@@ -6,9 +6,12 @@ function findSubtitles(item) {
 	console.log("Searching for subtitles for " + item.name);
 	//TODO Stub.
 	
-	item.state = ItemStates.subtitled;
-	item.planNextCheck(1); /// So that renames goes on right away.
-	item.save(function(err){});//TODO
+	item.state = ItemStates.subtitlerFailed;
+	item.planNextCheck(3600*24); /// Reschedule in 1 day.
+	item.save(function(err){
+		if (err)
+			console.log(err);
+	});
 }
 
 module.exports.findSubtitles = findSubtitles;

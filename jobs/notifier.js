@@ -1,3 +1,5 @@
+var ItemStates = require('../models/item').ItemStates;
+
 var services = [];
 
 function use(service) {
@@ -16,9 +18,9 @@ function notifyDownloaded(item) {
 	});
 }
 
-function updateLibrary(type) {
+function updateLibrary(item) {
 	withAllServices(function(service) {
-		service.updateLibrary(type);
+		service.updateLibrary(item);
 	});
 }
 
@@ -27,7 +29,13 @@ function withAllServices(doWhat) {
 		var service = services[index];
 		
 		doWhat(service);
-	};	
+	};
+	
+	item.state = ItemStates.finished;
+	item.save(function(err) {
+		if (err) 
+			console.log(err);
+	});
 }
 
 module.exports.use = use;

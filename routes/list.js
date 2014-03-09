@@ -24,9 +24,9 @@ exports.add = function(req, res) {
 		item.type = ItemTypes.movie;
 		item.save(function(err, doc) {
 			if (err) {
-				res.redirect('/error');
+				res.redirect('/error');	//TODO zle, loop
 			} else {
-				res.redirect('/list');			
+				res.redirect('/list');	//TODO zle, loop		
 			}				
 		});
 		

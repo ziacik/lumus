@@ -1,6 +1,7 @@
 var request = require('request');
 var cheerio = require('cheerio');
 var path = require('path');
+var config = require('../config');
 
 var Item = require('../models/item').Item;
 var ItemTypes = require('../models/item').ItemTypes;
@@ -13,8 +14,9 @@ var torrentAddTries = 5;
 
 function findTorrent(item) {
 	console.log("Searching for " + item.name);
-
-	var url = "http://thepiratebay.se/search/" + item.name + "/0/7/100"; //todo 207 //100 is audio
+	
+	var query = encodeURIComponent(item.name);
+	var url = config.torrentSearchUrl.replace('${query}', query);
 
 	request(url, function(err, resp, body) {
 		console.log(url + " done");

@@ -2,7 +2,7 @@ var torrenter = require('./torrenter');
 var renamer = require('./renamer');
 var subtitler = require('./subtitler');
 var notifier = require('./notifier');
-var xbmc = require('./xbmc');
+var xbmc = require('../notifiers/xbmc');
 
 var Item = require('../models/item').Item;
 var ItemStates = require('../models/item').ItemStates;
@@ -34,7 +34,7 @@ function check() {
 			else if (item.state === ItemStates.renamed)
 				subtitler.findSubtitles(item);
 			else if (item.state === ItemStates.subtitled)
-				notifier.updateLibrary(item.type);
+				notifier.updateLibrary(item);
 			else
 				console.log('Invalid state ' + item.state);
 		}

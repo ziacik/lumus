@@ -9,8 +9,12 @@ exports.changeState = function(req, res) {
 			res.redirect('/error', { error: err });
 		} else {
 			item.state = req.query.state; //TODO vulnerability (validate)
-			if (item.state != ItemStates.finished)
+			
+			if (item.state === ItemStates.finished)
+				item.planNextCheck(0); /// Cancel next check, if any.
+			else
 				item.planNextCheck(1);
+			
 			item.save(function(err) {
 				if (err) {
 					console.log(err);

@@ -11,8 +11,8 @@ function notifyDownloaded(item) {
 	doRpc('{"jsonrpc":"2.0", "method":"GUI.ShowNotification", "params":{"title":"Downloaded", "message":"' + item.name + '","image":"info"}}');
 }
 
-function updateLibrary(type) {
-	if (type === ItemTypes.music) {
+function updateLibrary(item) {
+	if (item.type === ItemTypes.music) {
 		doRpc('{"jsonrpc":"2.0", "method":"AudioLibrary.Scan"}');
 	} else {
 		doRpc('{"jsonrpc":"2.0", "method":"VideoLibrary.Scan"}');
