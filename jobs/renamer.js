@@ -12,20 +12,17 @@ var ItemStates = require('../models/item').ItemStates;
 function rename(item) {
 	console.log("Renaming " + item.name);
 	
-	console.log(config);
-	console.log(item.type);
-	console.log(config[item.type + 'TargetDir']);
-		
 	try {
 		var destinationDir = path.join(config[item.type + 'TargetDir'], item.name);	
-		fs.rename(item.downloadDir, destinationDir);
+		fs.renameSync(item.downloadDir, destinationDir);
 		item.renamedDir = destinationDir;
+		item.state = ItemStates.renamed;
+		item.planNextCheck(1); //TODO hardcoded	
 	} catch (e) {
-		console.log(e);
+		item.state = ItemStates.renameFailed;
+		console.log('CH' + e);
 	}
 	
-	item.state = ItemStates.renamed; /// Ignore failed renames.
-	item.planNextCheck(1); //TODO hardcoded	
 	item.save(function(err) {}); //TODO: err handling	
 }
 

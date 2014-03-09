@@ -7,6 +7,7 @@ var express = require('express');
 var routes = require('./routes');
 var search = require('./routes/search');
 var list = require('./routes/list');
+var item = require('./routes/item');
 var http = require('http');
 var path = require('path');
 var checker = require('./jobs/checker');
@@ -37,6 +38,7 @@ app.get('/', routes.index);
 app.get('/search', search.runSearch);
 app.post('/add', list.add);
 app.get('/list', list.list);
+app.get('/changeState', item.changeState);
 
 // start cron
 var CronJob = require('cron').CronJob;

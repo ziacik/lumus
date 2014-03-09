@@ -7,8 +7,18 @@ block content
 		+fa('search', 'List')
 	
 	each item in items
-		p
+		label(for=item._id)
 			strong
 				+fa(icons[item.type], item.name)
 			|   |  
-			span.state #{item.state}
+			span.state #{item.state}				
+			|   |  
+			if item.state === 'subtitled'
+				span Change state to 
+				a(href='/changeState?id=' + item._id + '&state=downloaded') Downloaded
+			if item.state === 'renameFailed'
+				a(href='/changeState?id=' + item._id + '&state=downloaded') Retry rename
+			if item.state === 'subtitlerFailed'
+				a(href='/changeState?id=' + item._id + '&state=renamed') Retry subtitle search
+				| or 
+				a(href='/changeState?id=' + item._id + '&state=finished') Set as finished				

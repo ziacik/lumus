@@ -1,6 +1,25 @@
-var ItemTypes = Object.freeze({movie:"movie", show:"show", music:"music"});
-var ItemTypeIcons = Object.freeze({movie:"film", show:"leaf", music:"music"});
-var ItemStates = Object.freeze({wanted:"wanted", snatched:"snatched", downloaded:"downloaded", renamed:"renamed", subtitled:"subtitled", finished:"finished"});
+var ItemTypes = Object.freeze({
+	movie:"movie", 
+	show:"show", 
+	music:"music"
+});
+
+var ItemTypeIcons = Object.freeze({
+	movie:"film", 
+	show:"leaf", 
+	music:"music"
+});
+
+var ItemStates = Object.freeze({
+	wanted:"wanted", 
+	snatched:"snatched", 
+	downloaded:"downloaded", 
+	renamed:"renamed",
+	renameFailed:"renameFailed", 
+	subtitled:"subtitled", 
+	subtitlerFailed:"subtitlerFailed",
+	finished:"finished"
+});
 
 var Datastore = require('nedb');
 
