@@ -18,6 +18,7 @@ block content
 			if item.state === 'subtitled'
 				span Change state to 
 				a(href='/changeState?id=' + item._id + '&state=downloaded') Downloaded
+				| &nbsp
 				a(href='/changeState?id=' + item._id + '&state=wanted') Wanted
 			if item.state === 'renameFailed'
 				span Change state to 

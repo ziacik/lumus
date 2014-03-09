@@ -22,6 +22,12 @@ function updateLibrary(item) {
 	withAllServices(function(service) {
 		service.updateLibrary(item);
 	});
+	
+	item.state = ItemStates.finished;
+	item.save(function(err) {
+		if (err) 
+			console.log(err);
+	});	
 }
 
 function withAllServices(doWhat) {
@@ -29,13 +35,7 @@ function withAllServices(doWhat) {
 		var service = services[index];
 		
 		doWhat(service);
-	};
-	
-	item.state = ItemStates.finished;
-	item.save(function(err) {
-		if (err) 
-			console.log(err);
-	});
+	};	
 }
 
 module.exports.use = use;
