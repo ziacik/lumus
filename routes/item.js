@@ -1,4 +1,4 @@
-var notifier = require('./notifier');
+var notifier = require('../jobs/notifier');
 var xbmc = require('../notifiers/xbmc');
 
 notifier.use(xbmc);
