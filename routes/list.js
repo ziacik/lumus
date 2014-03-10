@@ -26,7 +26,7 @@ exports.add = function(req, res) {
 			if (err) {
 				res.redirect('/error');	//TODO zle, loop
 			} else {
-				res.redirect('/list');	//TODO zle, loop		
+				res.redirect('/');	//TODO zle, loop		
 			}				
 		});
 		

@@ -28,7 +28,7 @@ exports.changeState = function(req, res) {
 					res.redirect('/error', { error: err });
 				}
 			}); //TODO log
-			res.redirect('/list');
+			res.redirect('/');
 		}
 	});
 };
