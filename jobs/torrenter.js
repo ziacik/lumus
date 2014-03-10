@@ -61,6 +61,8 @@ function checkFinished(item) {
 
 		if (error) {
 			console.log(error);
+			item.planNextCheck(config.defaultInterval);
+			item.save(function(err) {});
 			return;
 		}
 		

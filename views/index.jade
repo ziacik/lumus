@@ -23,6 +23,8 @@ block content
 				|   |  
 				if item.state === 'wanted'
 					a(href='/changeState?id=' + item._id + '&state=wanted') Try search now
+				if item.state === 'snatched'
+					a(href='/changeState?id=' + item._id + '&state=snatched') Re-check now
 				if item.state === 'subtitled'
 					span Change state to 
 					a(href='/changeState?id=' + item._id + '&state=downloaded') Downloaded
