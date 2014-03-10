@@ -144,10 +144,31 @@ function fetchBestMovieResult(item, $rootElements) {
 	doNext(item, $rootElements, 0);
 }
 
-function doNext(item, $rootElements, index) {
-	var $rootElement = $rootElements[index];	
+function doNext(item, rootElements, index) {
+	var rootElement = rootElements[index];
+	var $descElement = $(rootElement).siblings('font');
+	var desc = $descElement.text();
 	
-	var url = 'http://thepiratebay.se' + $($rootElement).children('.detLink').attr('href');
+	console.log(desc);
+	
+	var sizeMatches = desc.match(/([0-9]+[.]?[0-9]*)\s+(MiB|GiB)/);
+	console.log(sizeMatches);
+	
+	var size = parseFloat(sizeMatches[1]);
+	
+	if (sizeMatches[2] === 'GiB')
+		size = size * 1000;
+		
+	console.log(size);
+	console.log(config.movieSizeLimit);
+		
+	if (size > config.movieSizeLimit) {
+		console.log('Reached size limit'); //TODO better log
+		doNext(item, rootElements, index + 1);
+		return;
+	}
+	
+	var url = 'http://thepiratebay.se' + $(rootElement).children('.detLink').attr('href');
 	console.log(url);
 	
 	request(url, function(error, response, body) {
@@ -157,12 +178,19 @@ function doNext(item, $rootElements, index) {
 			console.log(error);
 			return;
 		}
+		
+		$ = cheerio.load(body);					
+		var nfo = $('.nfo').text();
+		var comments = $('#comments').text().toLowerCase();
+		
+		var isGoodAudio = nfo.indexOf('DTS') >= 0 || nfo.indexOf('AC3') >= 0 || nfo.indexOf('AC-3') >= 0;
+		var isNotShit = comments.indexOf('shit') < 0 && comments.indexOf('crap') < 0 && comments.indexOf('hardcoded') < 0  && comments.indexOf('hard coded') < 0; 				
 				
-		if (body.indexOf('DTS') >= 0 || body.indexOf('AC3') >= 0 || body.indexOf('AC-3') >= 0) {
-			addTorrent(item, $($rootElement).next().attr('href'));
+		if (isGoodAudio && isNotShit) {
+			addTorrent(item, $(rootElement).next().attr('href'));
 		} else {	
-			if (index < $rootElements.length) {
-				doNext(item, $rootElements, index + 1);
+			if (index < rootElements.length) {
+				doNext(item, rootElements, index + 1);
 			}
 		}
 	});
