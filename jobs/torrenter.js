@@ -25,7 +25,7 @@ function findTorrent(item) {
 			console.log(err);
 			//TODO done(err); 
 			item.state = ItemStates.wanted;
-			item.planNextCheck(10); //TODO hardcoded
+			item.planNextCheck(config.defaultInterval);
 			item.save(function(err) {
 				if (err)
 					console.log(err);
@@ -75,7 +75,7 @@ function checkFinished(item) {
 		if (body.result !== 'success') {
 		
 			console.log('Not success. What do?'); //TODO
-			item.planNextCheck(10); //TODO hardcoded
+			item.planNextCheck(config.defaultInterval);
 		
 		} else {
 				
@@ -83,7 +83,7 @@ function checkFinished(item) {
 			
 				console.log('Torrent removed.');
 				item.state = ItemStates.wanted;
-				item.planNextCheck(10); //TODO hardcoded
+				item.planNextCheck(config.defaultInterval);
 						
 			} else if (body.arguments.torrents[0].isFinished) {
 
@@ -110,7 +110,7 @@ function checkFinished(item) {
 				item.mainFile = fileName;				
 				
 				item.state = ItemStates.downloaded;
-				item.planNextCheck(1); /// So that renames goes on right away.				
+				item.planNextCheck(1); /// So that rename goes right on.				
 
 				if (notifier)
 					notifier.notifyDownloaded(item);
@@ -118,7 +118,7 @@ function checkFinished(item) {
 			} else {
 				
 				console.log(body.arguments.torrents[0].isFinished);
-				item.planNextCheck(10); //TODO hardcoded
+				item.planNextCheck(config.defaultInterval);
 				
 			}
 			
@@ -202,7 +202,7 @@ function addTorrent(item, magnetLink) {
 
 		console.log(body);
 
-		item.planNextCheck(10); //TODO hardcoded
+		item.planNextCheck(config.defaultInterval);
 
 		if (body.result === 'success') {		
 			item.state = ItemStates.snatched;
