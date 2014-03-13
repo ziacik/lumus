@@ -42,7 +42,7 @@ function checkFinished(item) {
 	var rpc = {};
 	rpc.arguments = {};
 	rpc.method = 'torrent-get';
-	rpc.arguments.ids = [ item.torrentId ];
+	rpc.arguments.ids = [ item.torrentHash ];
 	rpc.arguments.fields = [ 'isFinished', 'downloadDir', 'files', 'name' ];
 	
 	var options = {
@@ -109,7 +109,7 @@ function checkFinished(item) {
 				var fileName = path.basename(maxFileInfo.name); 
 
 				item.downloadDir = path.join(torrentInfo.downloadDir, fileDir);
-				item.mainFile = fileName;				
+				//TODO item.mainFile = fileName;				
 				
 				item.state = ItemStates.downloaded;
 				item.planNextCheck(1); /// So that rename goes right on.				
@@ -242,12 +242,12 @@ function addTorrent(item, magnetLink) {
 
 		if (body.result === 'success') {		
 			item.state = ItemStates.snatched;
-			item.torrentId = body.arguments['torrent-added'].id;
+			item.torrentHash = body.arguments['torrent-added'].hashString;
 			
 			if (notifier)
 				notifier.notifySnatched(item);
 				
-			console.log('Success. Torrent id ' + item.torrentId + '.');
+			console.log('Success. Torrent hash ' + item.torrentHash + '.');
 		} else {
 			console.log('No success. Sorry. Transmission down or what?');
 		}
