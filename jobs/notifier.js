@@ -33,6 +33,7 @@ function updateLibrary(item) {
 function withAllServices(doWhat) {
 	for (var index in services) {
 		var service = services[index];
+		console.log("Doing notification on service no " + index + ".");
 		
 		doWhat(service);
 	};	

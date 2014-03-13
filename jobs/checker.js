@@ -35,6 +35,8 @@ function check() {
 				subtitler.findSubtitles(item);
 			else if (item.state === ItemStates.subtitled)
 				notifier.updateLibrary(item);
+			else if (item.state === ItemStates.finished)
+				console.log('Item ' + item.name + ' finished');
 			else
 				console.log('Invalid state ' + item.state);
 		}
