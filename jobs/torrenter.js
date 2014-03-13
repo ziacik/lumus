@@ -185,10 +185,16 @@ function doNext(item, rootElements, index) {
 		var nfo = $('.nfo').text();
 		var comments = $('#comments').text().toLowerCase();
 		
-		var isGoodAudio = nfo.indexOf('DTS') >= 0 || nfo.indexOf('AC3') >= 0 || nfo.indexOf('AC-3') >= 0;
+		var isGoodKeywords = true; 
+		
+		for (var index in config.movieRequiredKeywords) {
+			isGoodKeywords = nfo.indexOf(config.movieRequiredKeywords[index]) >= 0;
+			if (isGoodKeywords)
+				break;
+		}
 		var isNotShit = comments.indexOf('shit') < 0 && comments.indexOf('crap') < 0 && comments.indexOf('hardcoded') < 0  && comments.indexOf('hard coded') < 0; 				
 				
-		if (isGoodAudio && isNotShit) {
+		if (isGoodKeywords && isNotShit) {
 			addTorrent(item, $(rootElement).next().attr('href'));
 		} else {	
 			if (index < rootElements.length) {

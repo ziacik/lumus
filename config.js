@@ -5,7 +5,8 @@ nconf.argv().env().file({ file : "config.json"});
 nconf.defaults({
 	'torrent-search-url': 'http://thepiratebay.se/search/${query}/0/7/207',
 	'size-limit-movies': 5200,
-	'default-interval': 60
+	'default-interval': 60,
+	'required-keywords-movies': ['DTS', 'AC3', 'AC-3']
 });
 
 var config = {};
@@ -21,5 +22,7 @@ config.showSizeLimit = nconf.get('size-limit-shows');
 config.musicSizeLimit = nconf.get('size-limit-music');
 
 config.defaultInterval = nconf.get('default-interval');
+
+config.movieRequiredKeywords = nconf.get('required-keywords-movies');
 
 module.exports = config;
