@@ -7,7 +7,7 @@ var Item = require('../models/item').Item;
 var ItemTypes = require('../models/item').ItemTypes;
 var ItemStates = require('../models/item').ItemStates;
 
-//TODO: moje lokalne transmission rpc vracia pri duplicate torrente aj ide, malina nie
+//TODO: moje lokalne transmission rpc vracia pri duplicate torrente aj id, malina nie
 
 function rename(item) {
 	console.log("Renaming " + item.name);
