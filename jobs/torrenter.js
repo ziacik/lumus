@@ -149,17 +149,12 @@ function fetchBestMovieResult(item, $rootElements) {
 function doNext(item, rootElements, index) {
 	var rootElement = rootElements[index];
 	
-	//TODO remove
-	console.log('**** START ****'); 
-	console.log($(rootElement).parent().html());
-	console.log('**** END ****');
-	
 	var $descElement = $(rootElement).siblings('font');
 	var desc = $descElement.text();
 	
 	console.log(desc);
 	
-	var sizeMatches = desc.match(/([0-9]+[.]?[0-9]*)\s+(MiB|GiB)/);
+	var sizeMatches = desc.match(/([0-9]+[.]?[0-9]*)[\s&nbsp;]+(MiB|GiB)/); //todo rewise
 	console.log(sizeMatches);
 	
 	var size = parseFloat(sizeMatches[1]);
