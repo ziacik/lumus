@@ -7,7 +7,6 @@ var xbmc = require('../notifiers/xbmc');
 var Item = require('../models/item').Item;
 var ItemStates = require('../models/item').ItemStates;
 
-notifier.use(xbmc);
 torrenter.setNotifier(notifier);
 
 function check() {
