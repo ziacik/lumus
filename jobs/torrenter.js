@@ -151,7 +151,7 @@ function doNext(item, rootElements, index) {
 	
 	//TODO remove
 	console.log('**** START ****'); 
-	console.log($(rootElement).html());
+	console.log($(rootElement).parent().html());
 	console.log('**** END ****');
 	
 	var $descElement = $(rootElement).siblings('font');
