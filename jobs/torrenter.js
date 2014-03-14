@@ -147,7 +147,7 @@ function fetchBestMovieResult(item, $rootElements) {
 }
 
 function doNext(item, rootElements, index) {
-	console.log('DoNext ' + index);
+	console.log('DoNext ' + (index + 0));
 
 	if (index >= rootElements.length) {
 		console.log('No result matches filters. Rescheduling in 1 day.'); //TODO better log
@@ -165,7 +165,7 @@ function doNext(item, rootElements, index) {
 	
 	if (sizeMatches == null || sizeMatches.length < 3) {
 	 	console.log('Reached size limit'); //TODO better log
-		doNext(item, rootElements, index + 1);
+		doNext(item, rootElements, 1 + index);
 		return;
 	}
 	 
@@ -182,7 +182,7 @@ function doNext(item, rootElements, index) {
 		
 	if (size > config.movieSizeLimit) {
 		console.log('Reached size limit'); //TODO better log
-		doNext(item, rootElements, index + 1);
+		doNext(item, rootElements, 1 + index);
 		return;
 	}
 	
@@ -214,7 +214,7 @@ function doNext(item, rootElements, index) {
 			addTorrent(item, $(rootElement).next().attr('href'));
 		} else {	
 			if (index < rootElements.length) {
-				doNext(item, rootElements, index + 1);
+				doNext(item, rootElements, 1 + index);
 			}
 		}
 	});
