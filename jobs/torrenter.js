@@ -147,6 +147,8 @@ function fetchBestMovieResult(item, $rootElements) {
 }
 
 function doNext(item, rootElements, index) {
+	console.log('DoNext ' + index);
+
 	if (index >= rootElements.length) {
 		console.log('No result matches filters. Rescheduling in 1 day.'); //TODO better log
 		item.planNextCheck(24*3600);
@@ -158,9 +160,7 @@ function doNext(item, rootElements, index) {
 	
 	var $descElement = $(rootElement).siblings('font');
 	var desc = $descElement.text();
-	
-	console.log("Desc-->" + desc + "<--");
-	
+		
 	var sizeMatches = desc.match(/([0-9]+[.]?[0-9]*)[^0-9]+(KiB|MiB|GiB)/); //todo rewise
 	
 	if (sizeMatches == null || sizeMatches.length < 3) {
