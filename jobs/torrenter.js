@@ -147,6 +147,13 @@ function fetchBestMovieResult(item, $rootElements) {
 }
 
 function doNext(item, rootElements, index) {
+	if (index >= rootElements.length) {
+		console.log('No result matches filters. Rescheduling in 1 day.'); //TODO better log
+		item.planNextCheck(24*3600);
+		item.save(function(err) {}); //TODO log
+		return;
+	}
+
 	var rootElement = rootElements[index];
 	
 	var $descElement = $(rootElement).siblings('font');
