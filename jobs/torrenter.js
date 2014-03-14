@@ -152,18 +152,26 @@ function doNext(item, rootElements, index) {
 	var $descElement = $(rootElement).siblings('font');
 	var desc = $descElement.text();
 	
-	console.log(desc);
+	console.log("Desc-->" + desc + "<--");
 	
-	var sizeMatches = desc.match(/([0-9]+[.]?[0-9]*)[\s&nbsp;]+(MiB|GiB)/); //todo rewise
-	console.log(sizeMatches);
+	var sizeMatches = desc.match(/([0-9]+[.]?[0-9]*)[^0-9]+(KiB|MiB|GiB)/); //todo rewise
+	
+	if (sizeMatches == null || sizeMatches.length < 3) {
+	 	console.log('Reached size limit'); //TODO better log
+		doNext(item, rootElements, index + 1);
+		return;
+	}
+	 
+	console.log("Matches: " + sizeMatches);
 	
 	var size = parseFloat(sizeMatches[1]);
 	
 	if (sizeMatches[2] === 'GiB')
 		size = size * 1000;
-		
-	console.log(size);
-	console.log(config.movieSizeLimit);
+	else if (sizeMatches[2] === 'KiB')
+		size = size / 1000;
+				
+	console.log('Size: ' + size);
 		
 	if (size > config.movieSizeLimit) {
 		console.log('Reached size limit'); //TODO better log
