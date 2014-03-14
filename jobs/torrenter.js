@@ -148,6 +148,12 @@ function fetchBestMovieResult(item, $rootElements) {
 
 function doNext(item, rootElements, index) {
 	var rootElement = rootElements[index];
+	
+	//TODO remove
+	console.log('**** START ****'); 
+	console.log($(rootElement).html());
+	console.log('**** END ****');
+	
 	var $descElement = $(rootElement).siblings('font');
 	var desc = $descElement.text();
 	
