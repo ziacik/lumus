@@ -95,8 +95,8 @@ function checkFinished(item) {
 				var maxLength = 0;
 				var maxFileInfo;
 				
-				for (var index in filesInfo) {
-					var fileInfo = filesInfo[index];
+				for (var i = 0; i < filesInfo.length; i++) {
+					var fileInfo = filesInfo[i];
 					if (fileInfo.length > maxLength) {
 						maxLength = fileInfo.length;
 						maxFileInfo = fileInfo;
@@ -146,17 +146,17 @@ function fetchBestMovieResult(item, $rootElements) {
 	doNext(item, $rootElements, 0);
 }
 
-function doNext(item, rootElements, index) {
-	console.log('DoNext ' + (index + 0));
+function doNext(item, rootElements, elementIndex) {
+	console.log('DoNext ' + elementIndex);
 
-	if (index >= rootElements.length) {
+	if (elementIndex >= rootElements.length) {
 		console.log('No result matches filters. Rescheduling in 1 day.'); //TODO better log
 		item.planNextCheck(24*3600);
 		item.save(function(err) {}); //TODO log
 		return;
 	}
 
-	var rootElement = rootElements[index];
+	var rootElement = rootElements[elementIndex];
 	
 	var $descElement = $(rootElement).siblings('font');
 	var desc = $descElement.text();
@@ -165,7 +165,7 @@ function doNext(item, rootElements, index) {
 	
 	if (sizeMatches == null || sizeMatches.length < 3) {
 	 	console.log('Reached size limit'); //TODO better log
-		doNext(item, rootElements, 1 + index);
+		doNext(item, rootElements, elementIndex + 1);
 		return;
 	}
 	 
@@ -182,7 +182,7 @@ function doNext(item, rootElements, index) {
 		
 	if (size > config.movieSizeLimit) {
 		console.log('Reached size limit'); //TODO better log
-		doNext(item, rootElements, 1 + index);
+		doNext(item, rootElements, elementIndex + 1);
 		return;
 	}
 	
@@ -201,21 +201,20 @@ function doNext(item, rootElements, index) {
 		var nfo = $('.nfo').text();
 		var comments = $('#comments').text().toLowerCase();
 		
-		var isGoodKeywords = true; 
+		var isGoodKeywords = true;
 		
-		for (var index in config.movieRequiredKeywords) {
-			isGoodKeywords = nfo.indexOf(config.movieRequiredKeywords[index]) >= 0;
+		for (var i = 0; i < config.movieRequiredKeywords.length; i++) { 
+			isGoodKeywords = nfo.indexOf(config.movieRequiredKeywords[i]) >= 0;
 			if (isGoodKeywords)
 				break;
 		}
+		
 		var isNotShit = comments.indexOf('shit') < 0 && comments.indexOf('crap') < 0 && comments.indexOf('hardcoded') < 0  && comments.indexOf('hard coded') < 0; 				
 				
 		if (isGoodKeywords && isNotShit) {
 			addTorrent(item, $(rootElement).next().attr('href'));
 		} else {	
-			if (index < rootElements.length) {
-				doNext(item, rootElements, 1 + index);
-			}
+			doNext(item, rootElements, elementIndex + 1);
 		}
 	});
 }
