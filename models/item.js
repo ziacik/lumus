@@ -104,6 +104,9 @@ Item.findById = function(id, done) {
 	Item.findOne({_id : id}, done);
 };
 
+Item.removeById = function(id, done) {
+	Item.remove({_id : id}, done);
+};
 
 module.exports.Item = Item;
 module.exports.ItemTypes = ItemTypes;

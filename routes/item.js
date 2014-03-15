@@ -32,3 +32,14 @@ exports.changeState = function(req, res) {
 		}
 	});
 };
+
+
+exports.remove = function(req, res) {
+	Item.removeById(req.query.id, function(err, item) {
+		if (err) {
+			res.redirect('/error', { error: err });
+		} else {
+			res.redirect('/');
+		}
+	});
+}
