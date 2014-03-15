@@ -33,7 +33,7 @@ function rename(item) {
 	
 	fs.exists(destinationDir, function(exists) {
 		if (exists) {
-			rmdir(destionationDir, function(error) {
+			rmdir(destinationDir, function(error) {
 				if (error) {
 					console.log(error);
 					item.state = ItemStates.renameFailed;
