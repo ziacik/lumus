@@ -105,7 +105,7 @@ Item.findById = function(id, done) {
 };
 
 Item.removeById = function(id, done) {
-	Item.remove({_id : id}, done);
+	db.items.remove({_id : id}, done);
 };
 
 module.exports.Item = Item;
