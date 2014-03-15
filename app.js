@@ -39,6 +39,7 @@ app.get('/search', search.runSearch);
 app.post('/add', list.add);
 app.get('/list', list.list);
 app.get('/changeState', item.changeState);
+app.get('/remove', item.remove);
 
 // start cron
 var CronJob = require('cron').CronJob;
