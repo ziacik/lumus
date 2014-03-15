@@ -156,7 +156,23 @@ function doNext(item, rootElements, elementIndex) {
 		return;
 	}
 
-	var rootElement = rootElements[elementIndex];
+	var rootElement = rootElements[elementIndex];	
+	var magnetLink = $(rootElement).next().attr('href');
+	
+	if (item.torrentLinks) {
+		console.log('Checking torrent links');
+		console.log('Comparing ' + magnetLink);
+	
+		for (i = 0; i < item.torrentLinks.length; i++) {
+			console.log('With ' + item.torrentLinks[i]);
+
+			if (item.torrentLinks[i] === magnetLink) {
+				console.log("Torrent already used before, skipping to try next: " + magnetLink);
+				doNext(item, rootElements, elementIndex + 1);
+				return;
+			}
+		}
+	}
 	
 	var $descElement = $(rootElement).siblings('font');
 	var desc = $descElement.text();
@@ -212,14 +228,14 @@ function doNext(item, rootElements, elementIndex) {
 		var isNotShit = comments.indexOf('shit') < 0 && comments.indexOf('crap') < 0 && comments.indexOf('hardcoded') < 0  && comments.indexOf('hard coded') < 0; 				
 				
 		if (isGoodKeywords && isNotShit) {
-			addTorrent(item, $(rootElement).next().attr('href'));
+			addTorrent(item, url, magnetLink);
 		} else {	
 			doNext(item, rootElements, elementIndex + 1);
 		}
 	});
 }
 
-function addTorrent(item, magnetLink) {	
+function addTorrent(item, infoUrl, magnetLink) {	
 	var rpc = {};
 	rpc.arguments = {};
 	rpc.method = 'torrent-add';
@@ -241,13 +257,13 @@ function addTorrent(item, magnetLink) {
 
 		if (error) {
 			console.log(error);
-			tryAgainOrFail(function() { addTorrent(item, magnetLink); }, "Too many tries, getting error, giving up.");
+			tryAgainOrFail(function() { addTorrent(item, infoUrl, magnetLink); }, "Too many tries, getting error, giving up.");
 			return;
 		}
 		
 		if (response.statusCode == 409) {
 			transmissionSessionId = response.headers['x-transmission-session-id'];
-			tryAgainOrFail(function() { addTorrent(item, magnetLink); }, "Too many tries, getting 409, giving up.");
+			tryAgainOrFail(function() { addTorrent(item, infoUrl, magnetLink); }, "Too many tries, getting 409, giving up.");
 			return;
 		}			
 
@@ -258,6 +274,12 @@ function addTorrent(item, magnetLink) {
 		if (body.result === 'success') {		
 			item.state = ItemStates.snatched;
 			item.torrentHash = body.arguments['torrent-added'].hashString;
+			item.torrentInfoUrl = infoUrl;
+			
+			if (!item.torrentLinks)
+				item.torrentLinks = [];
+				
+			item.torrentLinks.push(magnetLink);
 			
 			if (notifier)
 				notifier.notifySnatched(item);

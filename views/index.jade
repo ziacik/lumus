@@ -21,6 +21,9 @@ block content
 				|   |  
 				span.state #{item.state}				
 				|   |  
+				if item.torrentInfoUrl
+					a(href=item.torrentInfoUrl, target='_blank') T
+					|   |  
 				if item.state === 'wanted'
 					a(href='/changeState?id=' + item._id + '&state=wanted') Try search now
 				if item.state === 'snatched'

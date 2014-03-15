@@ -34,6 +34,7 @@ function Item() {
 	this.state = ItemStates.wanted;
 	this.lastCheck = new Date().toJSON();
 	this.nextCheck = new Date(new Date().getTime() + 10000).toJSON(); //TODO hardcoded
+	this.torrentLinks = []; 
 	
 	Item.setupMethods(this);
 }
