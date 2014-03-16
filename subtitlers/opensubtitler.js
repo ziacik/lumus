@@ -15,41 +15,64 @@ function findSubtitles(item, done) {
 	console.log(item.name);
 	console.log(item.torrentHash);
 	console.log(item.renamedDir);
-	console.log(item.mainFile);
 	
-	var filePath = path.join(item.renamedDir, item.mainFile);
-	
-	os.computeHash(filePath, function(err, hash){
+	fs.readdir(item.renamedDir, function(err, files) {
 		if (err) {
 			done(err);
 			return;
 		}
 		
+		findSubtitlesOne(os, item, done, files, 0);
+	});
+}
+
+function findSubtitlesOne(os, item, done, files, index, passedError) {
+	if (index >= files.length) {
+		console.log('Done, passed error (if any): ' + passedError);
+		done(passedError);
+		return;
+	}
+	
+	var file = files[index];
+	var extPattern = /[.](avi|mkv|mp4|mpeg4|mpg4|mpg|mpeg|divx|xvid)$/i;
+	
+	if (!extPattern.test(file)) {
+		console.log("Extension not matched, skipping " + file);
+		findSubtitlesOne(os, item, done, files, index + 1, passedError);
+		return;
+	}
+	
+	var filePath = path.join(item.renamedDir, file);
+	console.log("Looking up " + filePath);
+		
+	os.computeHash(filePath, function(err, hash){
+		if (err) {
+			console.log(err);
+			findSubtitlesOne(os, item, done, files, index + 1, err);
+			return;
+		}
+
 		os.api.LogIn(function(err, res){
 		    if (err) {
-		    	done(err);
-		    	return;
-		    }
+				console.log(err);
+				findSubtitlesOne(os, item, done, files, index + 1, err);
+				return;
+			}
 
-    		console.log(res);
-    		
-    		var token = res.token;
-    		
-    		console.log(hash);
-    		
+    		var token = res.token;    		    		
     		var size = fs.statSync(filePath).size;
-    		console.log(size);
     		
     		os.api.SearchSubtitles(function(err, res) {
-    	    	console.log(res); //TODO remove
-    
     			if (err) {
-    				console.log(err);
-			    	done(err);
-			    	return;
-			    }
+					console.log(err);
+					findSubtitlesOne(os, item, done, files, index + 1, err);
+					return;
+				}
 				
-				var downloadLink = res.data[0].SubDownloadLink;
+				var downloadLink;
+				
+				if (res.data)
+				 	downloadLink = res.data[0].SubDownloadLink;
 				
 				console.log(downloadLink);
 				
@@ -57,15 +80,17 @@ function findSubtitles(item, done) {
 					var out = fs.createWriteStream(filePath + '.srt');
 					var r = request(downloadLink); 
 			    	r.on('end', function() {
-			    		console.log('Done');
-			    		done();
+			    		console.log('Downloaded subtitles for ' + file);
+						findSubtitlesOne(os, item, done, files, index + 1, passedError);
 			    	});
 			    	r.on('error', function(error) {
 			    		console.log(error);
-			    		done(err);
+						findSubtitlesOne(os, item, done, files, index + 1, error);
 			    	});
 			    	console.log('Piping');
 			    	r.pipe(zlib.createGunzip()).pipe(out);
+			    } else {
+			    	findSubtitlesOne(os, item, done, files, index + 1, passedError || "No subtitles found.");
 			    }		    		
     		}, token, [{
     			sublanguageid: 'slo,cze',
