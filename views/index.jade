@@ -34,7 +34,7 @@ block content
 					a(href='/changeState?id=' + item._id + '&state=downloaded') Retry rename
 					| &nbsp;or&nbsp;
 					a(href='/changeState?id=' + item._id + '&state=wanted') Try another release
-				if item.state === 'subtitlerFailed'
+				if item.state === 'subtitlerFailed' || item.state === 'renamed'
 					a(href='/changeState?id=' + item._id + '&state=renamed') Retry subtitle search
 					| &nbsp;or&nbsp;
 					a(href='/changeState?id=' + item._id + '&state=wanted') Try another release

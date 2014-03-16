@@ -1,7 +1,4 @@
 var notifier = require('../jobs/notifier');
-var xbmc = require('../notifiers/xbmc');
-
-notifier.use(xbmc);
 
 var Item = require('../models/item').Item;
 var ItemTypes = require('../models/item').ItemTypes;

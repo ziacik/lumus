@@ -109,7 +109,7 @@ function checkFinished(item) {
 				var fileName = path.basename(maxFileInfo.name); 
 
 				item.downloadDir = path.join(torrentInfo.downloadDir, fileDir);
-				//TODO item.mainFile = fileName;				
+				item.mainFile = fileName;				
 				
 				item.state = ItemStates.downloaded;
 				item.planNextCheck(1); /// So that rename goes right on.				

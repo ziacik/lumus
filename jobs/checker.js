@@ -3,11 +3,14 @@ var renamer = require('./renamer');
 var subtitler = require('./subtitler');
 var notifier = require('./notifier');
 var xbmc = require('../notifiers/xbmc');
+var opensubtitler = require('../subtitlers/opensubtitler');
 
 var Item = require('../models/item').Item;
 var ItemStates = require('../models/item').ItemStates;
 
+notifier.use(xbmc);
 torrenter.setNotifier(notifier);
+subtitler.use(opensubtitler);
 
 function check() {
 	Item.find({nextCheck : {$lte : new Date().toJSON()}, $where : function() { return this.lastCheck < this.nextCheck; }}, function(err, items) {
@@ -30,7 +33,7 @@ function check() {
 				torrenter.checkFinished(item);
 			else if (item.state === ItemStates.downloaded)
 				renamer.rename(item);
-			else if (item.state === ItemStates.renamed)
+			else if (item.state === ItemStates.renamed || item.state === ItemStates.subtitlerFailed)
 				subtitler.findSubtitles(item);
 			else if (item.state === ItemStates.subtitled)
 				notifier.updateLibrary(item);
