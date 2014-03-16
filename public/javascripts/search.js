@@ -30,7 +30,7 @@ function listMovies(results) {
 	});
 	
 	$.each(movieResults, function(key, val) {
-		$(getItem("film", val.Title, val.Year)).appendTo("#results");
+		$(getItem("movie", "film", val.Title, val.Year)).appendTo("#results");
 	});
 }
 
@@ -40,14 +40,14 @@ function listShows(results) {
 	});
 	
 	$.each(showResults, function(key, val) {
-		$(getItem("leaf", val.Title, val.Year)).appendTo("#results");
+		$(getItem("show", "leaf", val.Title, val.Year)).appendTo("#results");
 	});
 }
 
 function listArtists(results) {
 	$.each(results, function(key, val) {
 		var name = val.name + (val.disambiguation ? " (" + val.disambiguation + ")" : "");
-		$(getItem("music", name)).appendTo("#results");
+		$(getItem("music", "music", name)).appendTo("#results");
 	});
 }
 
@@ -55,8 +55,8 @@ function encodeName(value){
 	return value.replace('\'', '&#39;');
 }
 
-function getItem(type, name, year) {
-	var item = "<div class='checkbox'><label><input type='checkbox' name='" + encodeName(name) + "' /> <span class='fa fa-" + type + "'></span> " + name + (year ? " (" + year + ")" : "") + "</div>";
+function getItem(type, icon, name, year) {
+	var item = "<div class='checkbox'><label><input type='checkbox' name='" + type + "-" + encodeName(name) + "' /> <span class='fa fa-" + icon + "'></span> " + name + (year ? " (" + year + ")" : "") + "</div>";
 	return item;
 }
 

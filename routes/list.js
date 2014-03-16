@@ -19,17 +19,19 @@ exports.list = function(req, res) {
 
 exports.add = function(req, res) {
 	for (var key in req.body) {
+		var delimiterIndex = key.indexOf('-');
+				
 		var item = new Item();
-		item.name = key;
-		item.type = ItemTypes.movie;
+		item.name = key.slice(delimiterIndex + 1);
+		item.type = key.slice(0, delimiterIndex);
+		
 		item.save(function(err, doc) {
 			if (err) {
 				res.redirect('/error');	//TODO zle, loop
-			} else {
-				res.redirect('/');	//TODO zle, loop		
+				return;
 			}				
 		});
-		
-		break; //TODO
-	}	
+	}
+	
+	res.redirect('/');	
 };

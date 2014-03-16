@@ -9,7 +9,6 @@ var Item = require('../models/item').Item;
 var ItemStates = require('../models/item').ItemStates;
 
 notifier.use(xbmc);
-torrenter.setNotifier(notifier);
 subtitler.use(opensubtitler);
 
 function check() {
