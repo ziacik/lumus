@@ -14,7 +14,7 @@ var torrentAddTries = 5;
 function searchFor(item) {
 	console.log("Searching for " + item.name);
 	
-	var query = encodeURIComponent(item.name);
+	var query = encodeURIComponent(item.name) + "%20" + item.year;
 	var url = config.torrentSearchUrl.replace('${query}', query);
 
 	request(url, function(err, resp, body) {
