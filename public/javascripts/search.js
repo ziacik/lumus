@@ -56,7 +56,12 @@ function encodeName(value){
 }
 
 function getItem(type, icon, name, year) {
-	var item = "<div class='checkbox'><label><input type='checkbox' name='" + type + "-" + encodeName(name) + "' /> <span class='fa fa-" + icon + "'></span> " + name + (year ? " (" + year + ")" : "") + "</div>";
+	var item = 
+		"<p><span class='fa fa-" + icon + "'></span> " +
+		name + (year ? " (" + year + ")" : "") +
+		" <a class='btn btn-default btn-xs' href='/add?type=" + type + "&name=" + encodeName(name) + "&year=" + year + "'>" +
+			"<span class='glyphicon glyphicon-plus'></span>" +			
+		"</a></p>";
 	return item;
 }
 
