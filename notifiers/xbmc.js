@@ -1,4 +1,5 @@
 var request = require('request');
+var config = require('../config');
 
 var Item = require('../models/item').Item;
 var ItemTypes = require('../models/item').ItemTypes;
@@ -20,7 +21,9 @@ function updateLibrary(item) {
 }
 
 function doRpc(payLoad) {
-	var url = "http://malina/jsonrpc?request=" + encodeURIComponent(payLoad);
+	console.log(payLoad);
+	var url = "http://" + config.get('xbmc-host', 'localhost') + "/jsonrpc?request=" + encodeURIComponent(payLoad);
+	console.log(url);
 
 	request(url, function(err, resp, body) {
 		console.log(url + " done");

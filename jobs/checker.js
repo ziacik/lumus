@@ -7,9 +7,14 @@ var opensubtitler = require('../subtitlers/opensubtitler');
 
 var Item = require('../models/item').Item;
 var ItemStates = require('../models/item').ItemStates;
+var ItemTypes = require('../models/item').ItemTypes;
 
 notifier.use(xbmc);
 subtitler.use(opensubtitler);
+
+function isMusic(item) {
+	return item.type === ItemTypes.music;
+}
 
 function check() {
 	Item.find({nextCheck : {$lte : new Date().toJSON()}, $where : function() { return this.lastCheck < this.nextCheck; }}, function(err, items) {
@@ -32,9 +37,9 @@ function check() {
 				torrenter.checkFinished(item);
 			else if (item.state === ItemStates.downloaded)
 				renamer.rename(item);
-			else if (item.state === ItemStates.renamed || item.state === ItemStates.subtitlerFailed)
+			else if (item.state === ItemStates.subtitlerFailed || (!isMusic(item) && item.state === ItemStates.renamed))
 				subtitler.findSubtitles(item);
-			else if (item.state === ItemStates.subtitled)
+			else if (item.state === ItemStates.subtitled || (isMusic(item) && item.state === ItemStates.renamed))
 				notifier.updateLibrary(item);
 			else if (item.state === ItemStates.finished)
 				console.log('Item ' + item.name + ' finished');

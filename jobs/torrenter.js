@@ -6,6 +6,7 @@ var notifier = require('./notifier');
 
 var showSearcher = require('./showSearcher');
 var movieSearcher = require('./movieSearcher');
+var musicSearcher = require('./musicSearcher');
 
 var Item = require('../models/item').Item;
 var ItemTypes = require('../models/item').ItemTypes;
@@ -19,6 +20,8 @@ function findTorrent(item) {
 		movieSearcher.searchFor(item);
 	else if (item.type === ItemTypes.show)
 		showSearcher.searchFor(item);
+	else if (item.type === ItemTypes.music)
+		musicSearcher.searchFor(item);
 	else		
 		console.log("Not supported.");
 }

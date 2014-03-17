@@ -9,7 +9,17 @@ nconf.defaults({
 	'required-keywords-movies': ['DTS', 'AC3', 'AC-3']
 });
 
-var config = {};
+var config = {
+	get : function(key, fallback) {
+		if (!config[key])
+			config[key] = nconf.get(key);
+		
+		if (!config[key])
+			config[key] = fallback;
+			
+		return config[key];			
+	}
+};
 
 config.torrentSearchUrl = nconf.get('torrent-search-url');
 

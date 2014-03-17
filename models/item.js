@@ -25,8 +25,9 @@ var Datastore = require('nedb');
 
 db = {};
 db.items = new Datastore("items.db");
-
 db.items.loadDatabase();
+
+db.items.persistence.setAutocompactionInterval(3600000); /// Compact every hour.
 
 function Item() {
 	this.name = null;
