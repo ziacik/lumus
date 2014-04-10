@@ -1,0 +1,19 @@
+extends layout
+
+block headScript
+	script(src="/javascripts/music.js")
+
+block content
+	h1
+		+fa('music', item.artist)
+
+	hr
+	h2 Albums
+	#albums
+		
+	hr
+	h2 Other
+	#other
+
+	hr
+	+buttonPrimary('/', 'Back')

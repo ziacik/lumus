@@ -47,7 +47,7 @@ function listShows(results) {
 function listArtists(results) {
 	$.each(results, function(key, val) {
 		var name = val.name + (val.disambiguation ? " (" + val.disambiguation + ")" : "");
-		$(getItem("music", "music", name)).appendTo("#results");
+		$(getItem("music", "music", name, undefined, val.id)).appendTo("#results");
 	});
 }
 
@@ -55,14 +55,16 @@ function encodeName(value){
 	return value.replace('\'', '&#39;');
 }
 
-function getItem(type, icon, name, year) {
+function getItem(type, icon, name, year, artistId) {
+	var ref = (type === "music") ? "artist/add" : "add";	
 	var yearQuery = (type === "movie") ? "&year=" + year : "";
+	var artistQuery = (type === "music") ? "&artistId=" + artistId : "";
 	var yearInfo = year ? " (" + year + ")" : "";
 
 	var item = 
 		"<p><span class='fa fa-" + icon + "'></span> " +
 		name + yearInfo +
-		" <a class='btn btn-default btn-xs' href='/add?type=" + type + "&name=" + encodeName(name) + yearQuery + "'</a>" +
+		" <a class='btn btn-default btn-xs' href='/" + ref + "?type=" + type + "&name=" + encodeName(name) + yearQuery + artistQuery + "'</a>" +
 			"<span class='glyphicon glyphicon-plus'></span>" +			
 		"</a></p>";
 	return item;

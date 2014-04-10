@@ -40,3 +40,19 @@ exports.remove = function(req, res) {
 		}
 	});
 }
+
+exports.add = function(req, res) {
+	var item = new Item();
+	item.name = req.query.name;
+	item.type = req.query.type;
+	item.year = req.query.year;
+	
+	item.save(function(err, doc) {
+		if (err) {
+			res.redirect('/error');	//TODO zle, loop
+			return;
+		}
+		
+		res.redirect('/');	
+	});
+};

@@ -32,7 +32,7 @@ function rename(item) {
 	var destinationDir = path.join(config[item.type + 'TargetDir'], item.name);
 	
 	fs.exists(destinationDir, function(exists) {
-		if (exists) {
+		if (exists && item.type != 'music') { //TODO hardcoded
 			rmdir(destinationDir, function(error) {
 				if (error) {
 					console.log(error);

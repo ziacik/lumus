@@ -1,6 +1,8 @@
+var itemRoute = require('./item');
 var Item = require('../models/item').Item;
 var ItemTypes = require('../models/item').ItemTypes;
 var ItemTypeIcons = require('../models/item').ItemTypeIcons;
+var Music = require('../models/music').Music;
 
 exports.list = function(req, res) {
 	Item.getAll(function(err, items) {
@@ -18,17 +20,5 @@ exports.list = function(req, res) {
 };
 
 exports.add = function(req, res) {
-	var item = new Item();
-	item.name = req.query.name;
-	item.type = req.query.type;
-	item.year = req.query.year;
-	
-	item.save(function(err, doc) {
-		if (err) {
-			res.redirect('/error');	//TODO zle, loop
-			return;
-		}
-		
-		res.redirect('/');	
-	});
+	itemRoute.add(req, res);
 };

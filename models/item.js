@@ -23,7 +23,9 @@ var ItemStates = Object.freeze({
 
 var Datastore = require('nedb');
 
-db = {};
+if (typeof db == 'undefined') 
+	db = {};
+	
 db.items = new Datastore("items.db");
 db.items.loadDatabase();
 
