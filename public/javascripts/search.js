@@ -40,7 +40,7 @@ function listShows(results) {
 	});
 	
 	$.each(showResults, function(key, val) {
-		$(getItem("show", "leaf", val.Title, val.Year)).appendTo("#results");
+		$(getItem("show", "leaf", val.Title, val.Year, val.Title)).appendTo("#results"); //TODO show id
 	});
 }
 
@@ -55,10 +55,11 @@ function encodeName(value){
 	return value.replace('\'', '&#39;');
 }
 
-function getItem(type, icon, name, year, artistId) {
-	var ref = (type === "music") ? "artist/add" : "add";	
+function getItem(type, icon, name, year, artistId, showId) {
+	var ref = (type === "music") ? "artist/add" : ((type === "show") ? "show/add" : "add");	
 	var yearQuery = (type === "movie") ? "&year=" + year : "";
 	var artistQuery = (type === "music") ? "&artistId=" + artistId : "";
+	var showQuery = (type === "show") ? "&showId=" + showId : "";
 	var yearInfo = year ? " (" + year + ")" : "";
 
 	var item = 

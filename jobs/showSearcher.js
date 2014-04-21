@@ -63,7 +63,7 @@ function doNext(item, rootElements, elementIndex) {
 	
 	var itemTitle = $(rootElement).children('.detLink').attr('title');
 	
-	if (itemTitle.indexOf('Season 1') < 0) {
+	if (itemTitle.indexOf('Season ' + item.no) < 0) {
 		doNext(item, rootElements, elementIndex + 1);
 		return;
 	}

@@ -7,6 +7,7 @@ var express = require('express');
 var routes = require('./routes');
 var search = require('./routes/search');
 var music = require('./routes/music');
+var show = require('./routes/show');
 var list = require('./routes/list');
 var item = require('./routes/item');
 var http = require('http');
@@ -43,6 +44,8 @@ app.get('/changeState', item.changeState);
 app.get('/remove', item.remove);
 app.get('/artist', music.artist);
 app.get('/artist/add', music.add);
+app.get('/show', show.show);
+app.get('/show/add', show.add);
 
 // start cron
 var CronJob = require('cron').CronJob;

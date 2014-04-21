@@ -1,0 +1,15 @@
+extends layout
+
+block headScript
+	script(src="/javascripts/show.js")
+
+block content
+	h1
+		+fa('leaf', item.name)
+
+	hr
+	h2 Seasons
+	#seasons
+			
+	hr
+	+buttonPrimary('/', 'Back')

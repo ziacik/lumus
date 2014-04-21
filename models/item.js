@@ -34,6 +34,8 @@ db.items.persistence.setAutocompactionInterval(3600000); /// Compact every hour.
 function Item() {
 	this.name = null;
 	this.type = null;
+	this.no = null;
+	this.year = null;
 	this.state = ItemStates.wanted;
 	this.lastCheck = new Date().toJSON();
 	this.nextCheck = new Date(new Date().getTime() + 10000).toJSON(); //TODO hardcoded
