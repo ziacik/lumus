@@ -15,6 +15,7 @@ var path = require('path');
 var checker = require('./jobs/checker');
 
 var app = express();
+app.locals.moment = require('moment');
 
 // all environments
 app.set('port', process.env.PORT || 3001);

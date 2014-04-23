@@ -37,6 +37,7 @@ function Item() {
 	this.no = null;
 	this.year = null;
 	this.state = ItemStates.wanted;
+	this.createdAt = new Date().toJSON();
 	this.lastCheck = new Date().toJSON();
 	this.nextCheck = new Date(new Date().getTime() + 10000).toJSON(); //TODO hardcoded
 	this.torrentLinks = []; 
@@ -65,7 +66,7 @@ Item.setupMethods = function(item) {
 };
 
 Item.getAll = function(done) {
-	db.items.find({}, function(err, items) {
+	db.items.find({}).sort({ createdAt: -1 }).exec(function(err, items) {
 		if (err) {
 			console.log(err);
 			done(err, null);

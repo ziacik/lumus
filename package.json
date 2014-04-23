@@ -15,6 +15,7 @@
     "cron": "*",
     "nconf": "*",
     "rimraf": "*",
-    "opensubtitles": "*"
+    "opensubtitles": "*",
+    "moment": "2.6.x"
   }
 }
