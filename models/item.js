@@ -46,6 +46,13 @@ function Item() {
 }
 
 Item.setupMethods = function(item) {
+	item.getDisplayName = function() {			
+		if (item.type === ItemTypes.show)
+			return item.name + " Season " + item.no;
+		
+		return item.name;		
+	}
+
 	item.save = function(done) {
 		if (!done)
 			throw "Sorry, done callback is required.";

@@ -1,7 +1,7 @@
 mixin item(item)
 	div
 		strong
-			+fa(icons[item.type], item.name)					 
+			+fa(icons[item.type], item.getDisplayName())					 
 	div
 		span.state(style='float:right') #{item.state}
 		if item.torrentInfoUrl
