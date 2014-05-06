@@ -15,7 +15,7 @@ function searchFor(item) {
 	console.log("Searching for " + item.name);
 	
 	var query = encodeURIComponent(item.name);
-	var url = "http://thepiratebay.se/search/${query}/0/7/100".replace('${query}', query);
+	var url = "https://thepiratebay.se/search/${query}/0/7/100".replace('${query}', query);
 
 	request(url, function(err, resp, body) {
 		console.log(url + " done");
@@ -107,7 +107,7 @@ function doNext(item, rootElements, elementIndex) {
 		return;
 	}
 	
-	var url = 'http://thepiratebay.se' + $(rootElement).children('.detLink').attr('href');
+	var url = 'https://thepiratebay.se' + $(rootElement).children('.detLink').attr('href');
 	console.log(url);
 
 	addTorrent(item, url, magnetLink);

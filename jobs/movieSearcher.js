@@ -201,7 +201,7 @@ function doNext(item, rootElements, elementIndex) {
 		return;
 	}
 	
-	var url = 'http://thepiratebay.se' + $(rootElement).children('.detLink').attr('href');
+	var url = 'https://thepiratebay.se' + $(rootElement).children('.detLink').attr('href');
 	console.log(url);
 	
 	request(url, function(error, response, body) {
