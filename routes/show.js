@@ -5,7 +5,7 @@ exports.add = function(req, res) {
 		if (!show) {	
 			show = new Show();
 			show.name = req.query.name;
-			show.showId = req.query.nameId;
+			show.showId = req.query.showId;
 			
 			show.save(function(err) {
 				if (err) {

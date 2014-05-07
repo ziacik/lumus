@@ -4,36 +4,22 @@ function getParameter(name) {
 	);
 }
 
+function showInfo(showId) {
+	$.getJSON("http://api.trakt.tv/show/summary.json/18607462d7b7bfd44d68a4721c732900/" + showId + "?callback=?", function(info) {
+		$("#banner").attr("src", info.images.banner);
+		$("#basicInfo").text(info.year + ", " + info.runtime + "min" + ", " + info.status);
+		$("#overview").text(info.overview);	
+	}).fail(function() {
+		console.log('Error getting season info.'); //TODO
+	});	
+}
+
 function findSeasons(showId, showName) {
-	var seasonInfos = [{
-		no : 1,
-		year: 2000
-	}, {
-		no : 2,
-		year: 2001
-	}, {
-		no : 3,
-		year: 2002
-	}, {
-		no : 4,
-		year: 2003
-	}, {
-		no : 5,
-		year: 2004
-	}, {
-		no : 6,
-		year: 2005
-	}, {
-		no : 7,
-		year: 2006
-	}, {
-		no : 8,
-		year: 2007
-	}, {
-		no : 9,
-		year: 2008
-	}]; //TODO hardcoded
-	listSeasons(showId, showName, seasonInfos);
+	$.getJSON("http://api.trakt.tv/show/seasons.json/18607462d7b7bfd44d68a4721c732900/" + showId + "?callback=?", function(seasonInfos) {
+		listSeasons(showId, showName, seasonInfos);		
+	}).fail(function() {
+		console.log('Error getting season info.'); //TODO
+	});	
 }
 
 function sortByYear(results) {
@@ -65,9 +51,9 @@ function encodeName(value){
 
 function getSeasonItem(showId, showName, seasonInfo) {
 	var item = 
-		"<p><span class='fa fa-show'></span> Season " +
-		seasonInfo.no + " (" + seasonInfo.year + ")" +
-		" <a class='btn btn-default btn-xs' href='/add?type=show&name=" + encodeName(showName) + "&no=" + seasonInfo.no + "'</a>" +
+		"<p><img height='40px' src='" + seasonInfo.poster + "' /><span class='fa fa-show'></span> Season " +
+		seasonInfo.season + " (" + seasonInfo.episodes + " episodes)" +
+		" <a class='btn btn-default btn-xs' href='/add?type=show&name=" + encodeName(showName) + "&no=" + seasonInfo.season + "'</a>" +
 			"<span class='glyphicon glyphicon-plus'></span>" +			
 		"</a></p>";
 	return item;
@@ -76,5 +62,6 @@ function getSeasonItem(showId, showName, seasonInfo) {
 $(document).ready(function(){
 	var showId = getParameter("showId");
 	var showName = getParameter("name");
+	showInfo(showId);
 	findSeasons(showId, showName);	
 });

@@ -40,7 +40,7 @@ function listShows(results) {
 	});
 	
 	$.each(showResults, function(key, val) {
-		$(getItem("show", "leaf", val.Title, val.Year, val.Title)).appendTo("#results"); //TODO show id
+		$(getItem("show", "leaf", val.Title, val.Year, undefined, val.imdbID)).appendTo("#results");
 	});
 }
 
@@ -65,7 +65,7 @@ function getItem(type, icon, name, year, artistId, showId) {
 	var item = 
 		"<p><span class='fa fa-" + icon + "'></span> " +
 		name + yearInfo +
-		" <a class='btn btn-default btn-xs' href='/" + ref + "?type=" + type + "&name=" + encodeName(name) + yearQuery + artistQuery + "'</a>" +
+		" <a class='btn btn-default btn-xs' href='/" + ref + "?type=" + type + "&name=" + encodeName(name) + yearQuery + artistQuery + showQuery + "'</a>" +
 			"<span class='glyphicon glyphicon-plus'></span>" +			
 		"</a></p>";
 	return item;
