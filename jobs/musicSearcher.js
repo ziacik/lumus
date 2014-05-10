@@ -15,7 +15,7 @@ function searchFor(item) {
 	console.log("Searching for " + item.name);
 	
 	var query = encodeURIComponent(item.name);
-	var url = "https://thepiratebay.se/search/${query}/0/7/100".replace('${query}', query);
+	var url = config.musicSearchUrl.replace('${query}', query);
 
 	request(url, function(err, resp, body) {
 		console.log(url + " done");

@@ -15,7 +15,7 @@ function searchFor(item) {
 	console.log("Searching for " + item.name);
 	
 	var query = encodeURIComponent(item.name + " season -seasons -episode -episodes");
-	var url = "https://thepiratebay.se/search/${query}/0/7/205".replace('${query}', query);
+	var url = config.showSearchUrl.replace('${query}', query);
 
 	request(url, function(err, resp, body) {
 		console.log(url + " done");

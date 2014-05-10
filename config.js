@@ -3,8 +3,12 @@ var nconf = require('nconf');
 nconf.argv().env().file({ file : "config.json"});
 
 nconf.defaults({
-	'torrent-search-url': 'https://thepiratebay.se/search/${query}/0/7/207',
+	'search-url-movies': 'https://thepiratebay.se/search/${query}/0/7/207',
+	'search-url-shows': 'https://thepiratebay.se/search/${query}/0/7/205',
+	'search-url-music': 'https://thepiratebay.se/search/${query}/0/7/100',
 	'size-limit-movies': 5200,
+	'size-limit-shows': 5200,
+	'size-limit-music': 300,
 	'default-interval': 60,
 	'required-keywords-movies': ['DTS', 'AC3', 'AC-3']
 });
@@ -21,7 +25,9 @@ var config = {
 	}
 };
 
-config.torrentSearchUrl = nconf.get('torrent-search-url');
+config.movieSearchUrl = nconf.get('search-url-movies');
+config.showSearchUrl = nconf.get('search-url-shows');
+config.musicSearchUrl = nconf.get('search-url-music');
 
 config.movieTargetDir = nconf.get('target-dir-movies');
 config.showTargetDir = nconf.get('target-dir-shows');
