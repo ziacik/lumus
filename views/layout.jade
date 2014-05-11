@@ -16,15 +16,15 @@ mixin faButtonPrimary(faType, href, text)
 mixin buttonPrimary(href, text)
 	a.btn.btn-primary(href=href)= text
 		
-mixin inputRequired(type, id, text)
+mixin inputRequired(type, id, text, value)
 	.form-group
 		label= text
-		input.form-control(type=type, name=id, id=id, required)
+		input.form-control(type=type, name=id, id=id, required, value=value)
 
-mixin input(type, id, text)
+mixin input(type, id, text, value)
 	.form-group
 		label= text
-		input.form-control(type=type, name=id, id=id)
+		input.form-control(type=type, name=id, id=id, value=value)
 
 
 html

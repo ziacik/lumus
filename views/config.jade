@@ -1,0 +1,29 @@
+extends layout
+include includes/item
+
+block content
+	.col-sm-6.col-sm-offset-3
+		h1
+			+fa('search', 'Settings')
+
+		//-if message.length > 0
+		//-	.alert.alert-danger= message
+
+		form(action='/config', method='POST')
+			+input("text", "movieSearchUrl", "Movie Search Url", config.movieSearchUrl)
+			+input("text", "showSearchUrl", "Show Search Url", config.showSearchUrl)
+			+input("text", "musicSearchUrl", "Music Search Url", config.musicSearchUrl)
+			
+			+input("text", "movieTargetDir", "Movie Target Dir", config.movieTargetDir)
+			+input("text", "showTargetDir", "Show Target Dir", config.showTargetDir)
+			+input("text", "musicTargetDir", "Music Target Dir", config.musicTargetDir)
+			
+			+input("text", "movieSizeLimit", "Movie Size Limit (MB)", config.movieSizeLimit)
+			+input("text", "showSizeLimit", "Show Size Limit (MB)", config.showSizeLimit)
+			+input("text", "musicSizeLimit", "Music Size Limit (MB)", config.musicSizeLimit)
+			
+			+input("text", "defaultInterval", "Default Interval (s)", config.defaultInterval)
+			
+			+input("text", "movieRequiredKeywords", "Movie Required Keywords", config.movieRequiredKeywords)			
+			
+			button#save.btn.btn-warning.btn-lg(type='submit') Save
