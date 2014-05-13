@@ -33,6 +33,10 @@ mixin input(type, id, text, value)
 		label= text
 		input.form-control(type=type, name=id, id=id, value=value)
 
+mixin inputWithPlaceholder(type, id, text, value)
+	.form-group		
+		input.form-control(type=type, name=id, id=id, value=value, placeholder=text)
+
 
 html
 	head

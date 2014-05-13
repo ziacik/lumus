@@ -17,17 +17,21 @@ exports.save = function(req, res) {
 	config.showTargetDir = req.body.showTargetDir;
 	config.musicTargetDir = req.body.musicTargetDir;
 	
-	config.movieSizeLimit = req.body.movieSizeLimit;
-	config.showSizeLimit = req.body.showSizeLimit;
-	config.musicSizeLimit = req.body.musicSizeLimit;
+	config.movieSizeLimit = parseInt(req.body.movieSizeLimit);
+	config.showSizeLimit = parseInt(req.body.showSizeLimit);
+	config.musicSizeLimit = parseInt(req.body.musicSizeLimit);
 	
-	config.defaultInterval = req.body.defaultInterval;
+	config.defaultInterval = parseInt(req.body.defaultInterval);
 	
-	config.movieRequiredKeywords = req.body.movieRequiredKeywords;
+	config.movieRequiredKeywords = req.body.movieRequiredKeywords.split(',');
+	
+	var isFirstSave = config.version === 0;
 	
 	config.save(function(err) {
 		if (err)
 			res.redirect('/error'); //TODO
+		else if (isFirstSave)
+			res.redirect('/');
 		else
 			res.redirect('/config?success');
 	});

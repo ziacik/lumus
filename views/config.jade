@@ -4,7 +4,7 @@ include includes/item
 block content
 	.col-sm-6.col-sm-offset-3
 		h1
-			+fa('search', 'Settings')
+			+fa('wrench', 'Settings')
 
 		//-if message.length > 0
 		//-	.alert.alert-danger= message
@@ -26,9 +26,10 @@ block content
 			
 			+input("number", "defaultInterval", "Default Interval (s)", config.defaultInterval)
 			
-			+input("text", "movieRequiredKeywords", "Movie Required Keywords", config.movieRequiredKeywords)
+			+input("text", "movieRequiredKeywords", "Movie Required Keywords (comma delimited, at least one to be found)", config.movieRequiredKeywords)
 						
 			+faButtonSubmit('save', 'Save')
-			|  
-			+buttonPrimary('/', 'Back')
+			if config.version != 0
+				|  
+				+buttonPrimary('/', 'Back')
 			#bottom &nbsp;

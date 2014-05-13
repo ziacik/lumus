@@ -4,14 +4,18 @@ include includes/item
 block content
 	.col-sm-6.col-sm-offset-3
 		h1
-			+fa('search', 'What do you want to find')
+			+fa('search', 'Find movie, show or music')
 
 		//-if message.length > 0
 		//-	.alert.alert-danger= message
 
 		form(action='/search', method='GET')
-			+input('text', 'what', 'Movie, Show or Music')
-			button#search.btn.btn-warning.btn-lg(type='submit') Search
+			+inputWithPlaceholder('text', 'what', 'Enter Movie, Show, Artist or Group Name')
+			button#search.btn.btn-warning(type='submit')
+				+fa('search', 'Search')
+			|  
+			div(style='float:right')
+				+faButtonDefault('wrench', '/config', 'Settings')			
 
 	.col-sm-6.col-sm-offset-3
 		h2 Today

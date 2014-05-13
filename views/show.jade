@@ -4,14 +4,16 @@ block headScript
 	script(src="/javascripts/show.js")
 
 block content
-	h1
-		+fa('leaf', item.name)
+	#info
+		#qe(style='float:left')
+			img#poster(style='width: 200px')
+
+		#xy
+			h1
+				+fa('leaf', item.name)
 	
-	img#banner
-	
-	hr
-	#basicInfo
-	#overview
+			#basicInfo
+			#overview
 
 	hr
 	h2 Seasons
