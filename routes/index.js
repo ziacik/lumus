@@ -1,3 +1,4 @@
+var config = require('../config');
 var Item = require('../models/item').Item;
 var ItemTypeIcons = require('../models/item').ItemTypeIcons;
 
@@ -6,17 +7,21 @@ var ItemTypeIcons = require('../models/item').ItemTypeIcons;
  */
 
 exports.index = function(req, res){
-	Item.getAll(function(err, items) {
-		if (err) {
-			res.render('error', {
-				error: err
-			});
-		} else {
-			res.render('index', {
-				title: 'lumus',
-				items: items,
-				icons: ItemTypeIcons
-			});		
-		}
-	});	
+	if (config.version === 0) {
+		res.redirect('/config');
+	} else {
+		Item.getAll(function(err, items) {
+			if (err) {
+				res.render('error', {
+					error: err
+				});
+			} else {
+				res.render('index', {
+					title: 'lumus',
+					items: items,
+					icons: ItemTypeIcons
+				});		
+			}
+		});
+	}	
 };

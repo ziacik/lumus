@@ -15,7 +15,14 @@ mixin faButtonPrimary(faType, href, text)
 		
 mixin buttonPrimary(href, text)
 	a.btn.btn-primary(href=href)= text
-		
+	
+mixin faButtonSubmit(faType, text)
+	button.btn.btn-warning(type='submit')
+		+fa(faType, text)
+
+mixin buttonSubmit(text)
+	button.btn.btn-warning(type='submit')= text	
+
 mixin inputRequired(type, id, text, value)
 	.form-group
 		label= text

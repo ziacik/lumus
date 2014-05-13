@@ -22,7 +22,7 @@ function updateLibrary(item) {
 
 function doRpc(payLoad) {
 	console.log(payLoad);
-	var url = "http://" + config.get('xbmc-host', 'localhost') + "/jsonrpc?request=" + encodeURIComponent(payLoad);
+	var url = "http://" + config.xbmcHost + "/jsonrpc?request=" + encodeURIComponent(payLoad);
 	console.log(url);
 
 	request(url, function(err, resp, body) {

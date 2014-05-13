@@ -1,8 +1,11 @@
 var nconf = require('nconf');
+var fs = require('fs');
 
 nconf.argv().env().file({ file : "config.json"});
 
 nconf.defaults({
+	'version': 0,
+	'xbmc-host': 'localhost',
 	'search-url-movies': 'https://thepiratebay.se/search/${query}/0/7/207',
 	'search-url-shows': 'https://thepiratebay.se/search/${query}/0/7/205',
 	'search-url-music': 'https://thepiratebay.se/search/${query}/0/7/100',
@@ -14,16 +17,34 @@ nconf.defaults({
 });
 
 var config = {
-	get : function(key, fallback) {
-		if (!config[key])
-			config[key] = nconf.get(key);
+	save : function(callback) {
+		config.version = 1;
+	
+		nconf.set('version', config.version);
+		nconf.set('xbmc-host', config.xbmcHost);
 		
-		if (!config[key])
-			config[key] = fallback;
-			
-		return config[key];			
-	}
+		nconf.set('search-url-movies', config.movieSearchUrl);
+		nconf.set('search-url-shows', config.showSearchUrl);
+		nconf.set('search-url-music', config.musicSearchUrl);
+		
+		nconf.set('target-dir-movies', config.movieTargetDir);
+		nconf.set('target-dir-shows', config.showTargetDir);
+		nconf.set('target-dir-music', config.musicTargetDir);
+		
+		nconf.set('size-limit-movies', config.movieSizeLimit);
+		nconf.set('size-limit-shows', config.showSizeLimit);
+		nconf.set('size-limit-music', config.musicSizeLimit);
+		
+		nconf.set('default-interval', config.defaultInterval);
+		
+		nconf.set('required-keywords-movies', config.movieRequiredKeywords);
+		
+		nconf.save(callback);
+	}	
 };
+
+config.version = nconf.get('version');
+config.xbmcHost = nconf.get('xbmc-host');
 
 config.movieSearchUrl = nconf.get('search-url-movies');
 config.showSearchUrl = nconf.get('search-url-shows');

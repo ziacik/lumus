@@ -49,6 +49,7 @@ app.get('/artist/add', music.add);
 app.get('/show', show.show);
 app.get('/show/add', show.add);
 app.get('/config', config.form);
+app.post('/config', config.save);
 
 // start cron
 var CronJob = require('cron').CronJob;
