@@ -4,20 +4,24 @@ block headScript
 	script(src="/javascripts/show.js")
 
 block content
-	#info
-		#qe(style='float:left')
-			img#poster(style='width: 200px')
-
-		#xy
+	.row
+		.col-sm-3
+			img#poster(style='width: 100%;margin-top: 2em')
+	
+		.col-sm-6
 			h1
 				+fa('leaf', item.name)
 	
+			#error.alert.alert-info(style='display:none')
+						
 			#basicInfo
 			#overview
-
-	hr
-	h2 Seasons
-	#seasons
+		
+			hr
+			h2 Seasons
 			
-	hr
-	+buttonPrimary('/', 'Back')
+			#error2.alert.alert-info(style='display:none')
+			#seasons
+					
+			hr
+			+buttonPrimary('/', 'Back')

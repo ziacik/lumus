@@ -4,41 +4,45 @@ function getParameter(name) {
 	);
 }
 
+function showError(e, errorDivId, what) {
+	var message = e.statusText + ' (' + e.status + ')';
+	
+	if (e.status === 404)
+		message = what + ' info not found.';
+
+	$(errorDivId).text(message);
+	$(errorDivId).show();
+	
+	console.log('Error getting info.');
+	console.log(e);
+}
+
 function showInfo(showId) {
 	$.getJSON("http://api.trakt.tv/show/summary.json/18607462d7b7bfd44d68a4721c732900/" + showId + "?callback=?", function(info) {
-		$("#banner").attr("src", info.images.banner);
+		$("#poster").attr("src", info.images.poster.replace('.jpg', '-300.jpg'));
 		$("#basicInfo").text(info.year + ", " + info.runtime + "min" + ", " + info.status);
 		$("#overview").text(info.overview);	
-	}).fail(function() {
-		console.log('Error getting season info.'); //TODO
+	}).fail(function(e) {
+		showError(e, '#error', 'Show');
 	});	
 }
 
 function findSeasons(showId, showName) {
 	$.getJSON("http://api.trakt.tv/show/seasons.json/18607462d7b7bfd44d68a4721c732900/" + showId + "?callback=?", function(seasonInfos) {
 		listSeasons(showId, showName, seasonInfos);		
-	}).fail(function() {
-		console.log('Error getting season info.'); //TODO
+	}).fail(function(e) {
+		showError(e, '#error2', 'Season');
 	});	
 }
 
-function sortByYear(results) {
+function sort(results) {
 	results.sort(function (result1, result2) {
-		var year1 = result1["first-release-date"];
-		year1 = year1.substr(0, year1.indexOf('-')) || year1;
-		
-		var year2 = result2["first-release-date"];
-		year2 = year2.substr(0, year2.indexOf('-')) || year2;
-		
-		result1.Year = year1;
-		result2.Year = year2;
-
-		return (year1 < year2) ? 1 : -1;
+		return (result1.season < result2.season) ? -1 : 1;
 	});
 }
 
 function listSeasons(showId, showName, results) {
-	//sortByYear(results);
+	sort(results);
 
 	$.each(results, function(key, val) {
 		$(getSeasonItem(showId, showName, val)).appendTo("#seasons");
