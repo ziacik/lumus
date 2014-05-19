@@ -4,10 +4,25 @@ function getParameter(name) {
 	);
 }
 
+function showError(e, errorDivId, what) {
+	var message = e.statusText + ' (' + e.status + ')';
+	
+	if (e.status === 404)
+		message = what + ' info not found.';
+
+	$(errorDivId).text(message);
+	$(errorDivId).show();
+	
+	console.log('Error getting info.');
+	console.log(e);
+}
+
 function findAlbums(artistId, artistName) {
 	$.getJSON("http://musicbrainz.org/ws/2/release-group?artist=" + artistId + "&fmt=json", function(data) {
 		listAlbums(artistId, artistName, data["release-groups"]);
-	});	
+	}).fail(function(e) {
+		showError(e, '#error', 'Show');
+	});
 }
 
 function sortByYear(results) {
