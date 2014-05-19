@@ -22,7 +22,8 @@ function searchFor(item) {
 
 		if (err) {
 			console.log(err);
-			//TODO done(err); 
+			//TODO done(err);
+			item.stateInfo = err; 
 			item.state = ItemStates.wanted;
 			item.planNextCheck(config.defaultInterval);
 			item.save(function(err) {
@@ -41,6 +42,7 @@ function searchFor(item) {
 function fetchBestResult(item, $rootElements) {
 	if ($rootElements.length == 0) {
 		console.log("No result for " + item.name + ", rescheduling (1 day)."); //TODO should be like 1 day or what.
+		item.stateInfo = "No result, rescheduled for tommorow."
 		item.planNextCheck(24*3600);
 		item.save(function(err) {}); //TODO err
 		return;
@@ -54,6 +56,7 @@ function doNext(item, rootElements, elementIndex) {
 
 	if (elementIndex >= rootElements.length) {
 		console.log('No result matches filters. Rescheduling in 1 day.'); //TODO better log
+		item.stateInfo = "No result matched filters, rescheduled for tommorow."
 		item.planNextCheck(24*3600);
 		item.save(function(err) {}); //TODO log
 		return;
@@ -171,6 +174,7 @@ function addTorrent(item, infoUrl, magnetLink) {
 			console.log('Success. Torrent hash ' + item.torrentHash + '.');
 		} else {
 			console.log('No success. Sorry. Transmission down or what?');
+			item.stateInfo = "Unable to add to transmission."
 		}
 			
 		item.save(function(err) {

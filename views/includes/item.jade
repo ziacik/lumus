@@ -3,7 +3,12 @@ mixin item(item)
 		strong
 			+fa(icons[item.type], item.getDisplayName())					 
 	div
-		span.state(style='float:right') #{item.state}
+		span.state(style='float:right')
+			if item.state === 'wanted' && item.stateInfo
+				a(href="#", title="#{item.stateInfo}")
+					+fa('info-circle')
+				| 
+			= item.state
 		if item.torrentInfoUrl
 			a(href=item.torrentInfoUrl, target='_blank'): +fa('download', 'Info')
 			| &nbsp;or&nbsp;

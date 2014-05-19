@@ -23,6 +23,7 @@ function searchFor(item) {
 		if (err) {
 			console.log(err);
 			//TODO done(err); 
+			item.stateInfo = err;
 			item.state = ItemStates.wanted;
 			item.planNextCheck(config.defaultInterval);
 			item.save(function(err) {
@@ -136,7 +137,8 @@ function checkFinished(item) {
 
 function fetchBestMovieResult(item, $rootElements) {
 	if ($rootElements.length == 0) {
-		console.log("No result for " + item.name + ", rescheduling (1 day)."); //TODO should be like 1 day or what.
+		console.log("No result for " + item.name + ", rescheduling (1 day).");
+		item.stateInfo = "No result, rescheduled for tommorow."
 		item.planNextCheck(24*3600);
 		item.save(function(err) {}); //TODO err
 		return;
@@ -150,6 +152,7 @@ function doNext(item, rootElements, elementIndex) {
 
 	if (elementIndex >= rootElements.length) {
 		console.log('No result matches filters. Rescheduling in 1 day.'); //TODO better log
+		item.stateInfo = "No result matched filters, rescheduled for tommorow."
 		item.planNextCheck(24*3600);
 		item.save(function(err) {}); //TODO log
 		return;
@@ -270,7 +273,8 @@ function addTorrent(item, infoUrl, magnetLink) {
 
 		item.planNextCheck(config.defaultInterval);
 
-		if (body.result === 'success') {		
+		if (body.result === 'success') {
+			item.stateInfo = null;
 			item.state = ItemStates.snatched;
 			item.torrentHash = body.arguments['torrent-added'].hashString;
 			item.torrentInfoUrl = infoUrl;
@@ -285,6 +289,7 @@ function addTorrent(item, infoUrl, magnetLink) {
 				
 			console.log('Success. Torrent hash ' + item.torrentHash + '.');
 		} else {
+			item.stateInfo = "Unable to add to transmission."
 			console.log('No success. Sorry. Transmission down or what?');
 		}
 			

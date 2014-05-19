@@ -2,8 +2,9 @@ doctype html
 
 mixin fa(type, text)
 	span(class='fa fa-'+type)
-	| 
-	= text
+	if text
+		| 	
+		= text
 
 mixin faButtonDefault(faType, href, text)
 	a.btn.btn-default(href=href)
