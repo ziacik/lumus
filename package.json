@@ -1,7 +1,7 @@
 {
   "name": "lumus",
   "author": "František Žiačik <ziacik@gmail.com>",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Lightweight web application for convenient automatic torrent searching and managing of movies, shows and music.",
   "keywords": [
     "lumus",
@@ -13,7 +13,7 @@
   ],
   "preferGlobal" : true,
   "bin": {
-    "lumus": "./bin/lumus.js"
+    "lumus": "./bin/lumus"
   },
   "dependencies": {
     "express": "3.4.x",
