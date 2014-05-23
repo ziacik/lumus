@@ -20,7 +20,7 @@
     <header>
       <div class="inner">
         <h1>Lumus</h1>
-        <h2>SickBeard, CouchPotato and Headphones lightweight alternative for automated downloading movies, shows and music with torrents written in node.js.</h2>
+        <h2>Lightweight web application for convenient automatic torrent searching and managing of movies, shows and music. Alternative to SickBeard, CouchPotato and Headphones. Integration with transmission and XBMC.</h2>
         <a href="https://github.com/ziacik/lumus" class="button"><small>View project on</small>GitHub</a>
       </div>
     </header>
@@ -29,14 +29,15 @@
       <div class="inner clearfix">
         <section id="main-content">
           <h2>
-<a name="how-to-install-on-raspbmc--linux" class="anchor" href="#how-to-install-on-raspbmc--linux"><span class="octicon octicon-link"></span></a>How to install on Raspbmc / Linux</h2>
-
-<p>First we need to install a torrent downloader called <a href="http://www.transmissionbt.com/">transmission</a>. Skip this step if you already have transmission configured.</p>
+<a name="how-to-install" class="anchor" href="#how-to-install"><span class="octicon octicon-link"></span></a>How to install</h2>
 
 <h3>
-<a name="transmission" class="anchor" href="#transmission"><span class="octicon octicon-link"></span></a>Transmission</h3>
+<a name="linux" class="anchor" href="#linux"><span class="octicon octicon-link"></span></a>Linux</h3>
 
-<p>We only need to install a daemon (service running at background) instead of full-featured client. Thanks to that, less memory will be used.</p>
+<h4>
+<a name="transmission" class="anchor" href="#transmission"><span class="octicon octicon-link"></span></a>Transmission</h4>
+
+<p>Only a daemon is needed (service running at background) instead of full-featured client.</p>
 
 <ol>
 <li><p>Install transmission<br><code>$ sudo apt-get install transmission-daemon</code></p></li>
@@ -60,31 +61,70 @@
 <code>rpc-enabled</code> to <code>true</code>.</li>
 </ul>
 </li>
-</ol><h3>
-<a name="nodejs" class="anchor" href="#nodejs"><span class="octicon octicon-link"></span></a>Node.js</h3>
+</ol><h4>
+<a name="nodejs" class="anchor" href="#nodejs"><span class="octicon octicon-link"></span></a>Node.js</h4>
 
-<p>This is a required step so that the application can run.</p>
+<p>Node.js is a platform which this application runs on. Npm is a package manager for node.js.</p>
 
 <p><code>sudo apt-get install nodejs npm</code><br>
 Answer <code>Y</code> if asked.</p>
 
-<h3>
-<a name="lumus" class="anchor" href="#lumus"><span class="octicon octicon-link"></span></a>Lumus</h3>
+<h4>
+<a name="lumus" class="anchor" href="#lumus"><span class="octicon octicon-link"></span></a>Lumus</h4>
 
 <ol>
-<li><p>Clone lumus sources<br><code>git clone https://github.com/ziacik/lumus.git</code></p></li>
-<li><p>Go to the lumus directory
-<code>cd lumus</code></p></li>
-<li><p>Install dependencies<br><code>npm install</code></p></li>
-<li><p>Run<br><code>node app.js</code></p></li>
-<li><p>Browse to configure<br><a href="http://localhost:3001">http://localhost:3001</a></p></li>
-</ol><h2>
+<li><p>Install lumus<br><code>sudo npm install -g lumus</code></p></li>
+<li><p>Run the application
+<code>lumus</code></p></li>
+<li><p>Browse the application url in your webbrowser.<br>
+Use correct ip address or hostname instead of <em>localhost</em> if you installed the application on a dedicated server.<br><a href="http://localhost:3001">http://localhost:3001</a></p></li>
+</ol><h4>
+<a name="xbmc-optional" class="anchor" href="#xbmc-optional"><span class="octicon octicon-link"></span></a>XBMC (optional)</h4>
+
+<p>Optionally, you may want to install <a href="http://xbmc.org/">XBMC</a> to get automatic library updates and notifications from lumus.</p>
+
+<h3>
+<a name="windows" class="anchor" href="#windows"><span class="octicon octicon-link"></span></a>Windows</h3>
+
+<h4>
+<a name="transmission-1" class="anchor" href="#transmission-1"><span class="octicon octicon-link"></span></a>Transmission</h4>
+
+<ol>
+<li><p>Install transmission<br>
+Windows support is not yet official, but there is an unofficial port <a href="http://sourceforge.net/projects/trqtw/">here</a>.    </p></li>
+<li><p>Configure to allow rpc  </p></li>
+</ol><h4>
+<a name="nodejs-1" class="anchor" href="#nodejs-1"><span class="octicon octicon-link"></span></a>Node.js</h4>
+
+<p>Node.js is a platform which this application runs on. Npm is a package manager for node.js.</p>
+
+<p>Download and install with <a href="http://nodejs.org/download/">node.js installer</a>.  </p>
+
+<h4>
+<a name="lumus-1" class="anchor" href="#lumus-1"><span class="octicon octicon-link"></span></a>Lumus</h4>
+
+<p>There is no windows installer yet, so you need to use command line.</p>
+
+<ol>
+<li><p>Open command line 
+<code>cmd</code></p></li>
+<li><p>Install lumus 
+<code>npm install -g lumus</code></p></li>
+<li><p>Run the application<br><code>lumus</code></p></li>
+<li><p>Browse the application url in your webbrowser.<br>
+Use correct ip address or hostname instead of <em>localhost</em> if you installed the application on a dedicated server.<br><a href="http://localhost:3001">http://localhost:3001</a></p></li>
+</ol><h4>
+<a name="xbmc-optional-1" class="anchor" href="#xbmc-optional-1"><span class="octicon octicon-link"></span></a>XBMC (optional)</h4>
+
+<p>Optionally, you may want to install <a href="http://xbmc.org/">XBMC</a> to get automatic library updates and notifications from lumus.</p>
+
+<h2>
 <a name="notes" class="anchor" href="#notes"><span class="octicon octicon-link"></span></a>Notes</h2>
 
 <ul>
-<li>This howto is incomplete.</li>
+<li>This how-to is incomplete.</li>
 <li>This project is a work in progress.</li>
-<li>This tool does not download any content. It only provides a convenient search interface to transmission client.</li>
+<li>This tool does not download any content. It only provides a convenient search interface. You should only download content that is legal in your country.</li>
 </ul>
         </section>
 
@@ -105,6 +145,16 @@ Answer <code>Y</code> if asked.</p>
       </div>
     </div>
 
-  
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-51300988-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
   </body>
 </html>
