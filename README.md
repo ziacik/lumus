@@ -45,10 +45,10 @@ Answer `Y` if asked.
 #### Lumus
 
 1. Install lumus  
-`sudo npm install -g lumus`
+`$ sudo npm install -g lumus`
 
-2. Run the application
-`lumus`
+2. Run the application  
+`$ lumus`
 
 3. Browse the application url in your webbrowser.  
 Use correct ip address or hostname instead of *localhost* if you installed the application on a dedicated server.  
