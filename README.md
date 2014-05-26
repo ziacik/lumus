@@ -39,7 +39,7 @@ Only a daemon is needed (service running at background) instead of full-featured
 #### Node.js
 Node.js is a platform which this application runs on. Npm is a package manager for node.js.
 
-`sudo apt-get install nodejs npm`  
+`$ sudo apt-get install nodejs npm`  
 Answer `Y` if asked.
 
 #### Lumus
