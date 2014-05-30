@@ -12,6 +12,8 @@ block content
 		form(action='/config', method='POST')
 			+input("text", "xbmcHost", "XBMC Host", config.xbmcHost)
 			
+			+input("url", "transmissionUrl", "Transmission Url", config.transmissionUrl)
+			
 			+input("url", "movieSearchUrl", "Movie Search Url", config.movieSearchUrl)
 			+input("url", "showSearchUrl", "Show Search Url", config.showSearchUrl)
 			+input("url", "musicSearchUrl", "Music Search Url", config.musicSearchUrl)

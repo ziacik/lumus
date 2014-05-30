@@ -8,6 +8,8 @@ exports.form = function(req, res) {
 
 exports.save = function(req, res) {
 	config.xbmcHost = req.body.xbmcHost;
+	
+	config.transmissionUrl = req.body.transmissionUrl;
 
 	config.movieSearchUrl = req.body.movieSearchUrl;
 	config.showSearchUrl = req.body.showSearchUrl;

@@ -130,7 +130,7 @@ function addTorrent(item, infoUrl, magnetLink) {
 	rpc.arguments.filename = magnetLink;
 	
 	var options = {
-		url : 'http://localhost:9091/transmission/rpc',
+		url : config.transmissionUrl + '/transmission/rpc',
 		method : 'POST',
 		json : rpc,
 		headers : {
