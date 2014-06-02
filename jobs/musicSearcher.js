@@ -110,10 +110,11 @@ function doNext(item, rootElements, elementIndex) {
 		return;
 	}
 	
-	var url = 'https://thepiratebay.se' + $(rootElement).children('.detLink').attr('href');
-	console.log(url);
+	var musicSearchUrlParts = url.parse(config.musicSearchUrl);
+	var torrentPageUrl = movieSearchUrlParts.protocol + '//' + movieSearchUrlParts.host + $(rootElement).children('.detLink').attr('href');
+	console.log(torrentPageUrl);
 
-	addTorrent(item, url, magnetLink);
+	addTorrent(item, torrentPageUrl, magnetLink);
 }
 
 function addTorrent(item, infoUrl, magnetLink) {	
