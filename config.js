@@ -6,6 +6,7 @@ nconf.argv().env().file({ file : "config.json"});
 nconf.defaults({
 	'version': 0,
 	'xbmc-host': 'localhost',
+	'transmission-url': 'http://localhost:9091',
 	'search-url-movies': 'https://thepiratebay.se/search/${query}/0/7/207',
 	'search-url-shows': 'https://thepiratebay.se/search/${query}/0/7/205',
 	'search-url-music': 'https://thepiratebay.se/search/${query}/0/7/100',
@@ -19,9 +20,11 @@ nconf.defaults({
 var config = {
 	save : function(callback) {
 		config.version = 1;
-	
+			
 		nconf.set('version', config.version);
 		nconf.set('xbmc-host', config.xbmcHost);
+		
+		nconf.set('transmission-url', config.transmissionUrl);
 		
 		nconf.set('search-url-movies', config.movieSearchUrl);
 		nconf.set('search-url-shows', config.showSearchUrl);
@@ -45,6 +48,8 @@ var config = {
 
 config.version = nconf.get('version');
 config.xbmcHost = nconf.get('xbmc-host');
+
+config.transmissionUrl = nconf.get('transmission-url');
 
 config.movieSearchUrl = nconf.get('search-url-movies');
 config.showSearchUrl = nconf.get('search-url-shows');

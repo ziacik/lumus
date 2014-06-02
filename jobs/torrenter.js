@@ -34,7 +34,7 @@ function checkFinished(item) {
 	rpc.arguments.fields = [ 'isFinished', 'downloadDir', 'files', 'name' ];
 	
 	var options = {
-		url : 'http://localhost:9091/transmission/rpc',
+		url : config.transmissionUrl + '/transmission/rpc',
 		method : 'POST',
 		json : rpc,
 		headers : {

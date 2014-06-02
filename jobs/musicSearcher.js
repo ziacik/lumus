@@ -110,11 +110,10 @@ function doNext(item, rootElements, elementIndex) {
 		return;
 	}
 	
-	var musicSearchUrlParts = url.parse(config.musicSearchUrl);
-	var torrentPageUrl = movieSearchUrlParts.protocol + '//' + movieSearchUrlParts.host + $(rootElement).children('.detLink').attr('href');
-	console.log(torrentPageUrl);
+	var url = 'https://thepiratebay.se' + $(rootElement).children('.detLink').attr('href');
+	console.log(url);
 
-	addTorrent(item, torrentPageUrl, magnetLink);
+	addTorrent(item, url, magnetLink);
 }
 
 function addTorrent(item, infoUrl, magnetLink) {	
@@ -124,7 +123,7 @@ function addTorrent(item, infoUrl, magnetLink) {
 	rpc.arguments.filename = magnetLink;
 	
 	var options = {
-		url : 'http://localhost:9091/transmission/rpc',
+		url : config.transmissionUrl + '/transmission/rpc',
 		method : 'POST',
 		json : rpc,
 		headers : {

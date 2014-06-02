@@ -1,7 +1,6 @@
 var request = require('request');
 var cheerio = require('cheerio');
 var path = require('path');
-var url = require('url');
 var config = require('../config');
 var notifier = require('./notifier');
 
@@ -47,7 +46,7 @@ function checkFinished(item) {
 	rpc.arguments.fields = [ 'isFinished', 'downloadDir', 'files', 'name' ];
 	
 	var options = {
-		url : 'http://localhost:9091/transmission/rpc',
+		url : config.transmissionUrl + '/transmission/rpc',
 		method : 'POST',
 		json : rpc,
 		headers : {
@@ -205,12 +204,11 @@ function doNext(item, rootElements, elementIndex) {
 		return;
 	}
 	
-	var movieSearchUrlParts = url.parse(config.movieSearchUrl);
-	var torrentPageUrl = movieSearchUrlParts.protocol + '//' + movieSearchUrlParts.host + $(rootElement).children('.detLink').attr('href');
-	console.log(torrentPageUrl);
+	var url = 'https://thepiratebay.se' + $(rootElement).children('.detLink').attr('href');
+	console.log(url);
 	
-	request(torrentPageUrl, function(error, response, body) {
-		console.log(torrentPageUrl + " done");
+	request(url, function(error, response, body) {
+		console.log(url + " done");
 
 		if (error) {
 			console.log(error);
@@ -246,7 +244,7 @@ function addTorrent(item, infoUrl, magnetLink) {
 	rpc.arguments.filename = magnetLink;
 	
 	var options = {
-		url : 'http://localhost:9091/transmission/rpc',
+		url : config.transmissionUrl + '/transmission/rpc',
 		method : 'POST',
 		json : rpc,
 		headers : {
