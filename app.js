@@ -10,6 +10,7 @@ var music = require('./routes/music');
 var show = require('./routes/show');
 var list = require('./routes/list');
 var item = require('./routes/item');
+var torrent = require('./routes/torrent');
 var config = require('./routes/config');
 var http = require('http');
 var path = require('path');
@@ -48,6 +49,8 @@ app.get('/artist', music.artist);
 app.get('/artist/add', music.add);
 app.get('/show', show.show);
 app.get('/show/add', show.add);
+app.get('/torrent', torrent.list);
+app.get('/torrent/add', torrent.add);
 app.get('/config', config.form);
 app.post('/config', config.save);
 

@@ -1,0 +1,39 @@
+extends layout
+
+block headScript
+	script(src="/javascripts/music.js")
+
+block content
+	.row
+		.col-sm-3
+			img#poster(style='width: 100%;margin-top: 2em')
+	
+		.col-sm-6
+			h1
+				+fa('th-large', item.name)
+		
+			hr
+			each result in results
+				div
+					strong
+						a(href=result.torrentInfo.torrentPageUrl, target='_blank')= result.torrentInfo.name
+					
+					span.state(style='float:right')
+						+faButtonDefault('download', '/torrent/add?id=' + item._id + '&magnet=' + encodeURIComponent(result.torrentInfo.magnetLink)) + '&page=' + encodeURIComponent(result.torrentInfo.torrentPageUrl)
+						
+				div
+					span.state
+						+fa('cube', result.torrentInfo.size + ' MB')
+					span.state
+						| &nbsp;
+						+fa('arrow-down', result.torrentInfo.peers.leechs + '')
+					span.state
+						| &nbsp;
+						+fa('arrow-up', result.torrentInfo.peers.seeds + '')
+				
+				div
+					= result.info
+				
+				hr
+		
+			+buttonPrimary('/', 'Back')

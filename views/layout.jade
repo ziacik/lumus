@@ -6,6 +6,10 @@ mixin fa(type, text)
 		| 	
 		= text
 
+mixin faButtonSmall(faType, href, text)
+	a.btn.btn-default.btn-xs(href=href)
+		+fa(faType, text)
+		
 mixin faButtonDefault(faType, href, text)
 	a.btn.btn-default(href=href)
 		+fa(faType, text)
@@ -44,7 +48,7 @@ html
 		title= title
 		meta(name='viewport', content='width=device-width, initial-scale=1')
 		link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css')
-		link(rel='stylesheet', href='//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css')
+		link(rel='stylesheet', href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css')
 		script(src='https://code.jquery.com/jquery-2.1.0.min.js')
 		block headScript
 	body

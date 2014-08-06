@@ -30,4 +30,6 @@ mixin item(item)
 			a(href='/changeState?id=' + item._id + '&state=wanted'): +fa('refresh', 'Try other release')					
 		| &nbsp;or&nbsp;
 		a(href='/remove?id=' + item._id): +fa('times', 'Remove')
+		| &nbsp;or&nbsp;
+		a(href='/torrent?id=' + item._id): +fa('list', 'Choose')
 	hr(style='margin-top: 5px; margin-bottom: 5px')

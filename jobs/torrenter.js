@@ -123,6 +123,69 @@ function checkFinished(item) {
 	});
 }
 
+function addTorrent(item, infoUrl, magnetLink) {	
+	var rpc = {};
+	rpc.arguments = {};
+	rpc.method = 'torrent-add';
+	rpc.arguments.filename = magnetLink;
+	
+	var options = {
+		url : config.transmissionUrl + '/transmission/rpc',
+		method : 'POST',
+		json : rpc,
+		headers : {
+			'X-Transmission-Session-Id' : transmissionSessionId
+		}
+	};
+
+	console.log(options.url);
+	
+	request(options, function(error, response, body) {
+		console.log(options.url + " done");
+
+		if (error) {
+			console.log(error);
+			tryAgainOrFail(function() { addTorrent(item, infoUrl, magnetLink); }, "Too many tries, getting error, giving up.");
+			return;
+		}
+		
+		if (response.statusCode == 409) {
+			transmissionSessionId = response.headers['x-transmission-session-id'];
+			tryAgainOrFail(function() { addTorrent(item, infoUrl, magnetLink); }, "Too many tries, getting 409, giving up.");
+			return;
+		}			
+
+		console.log(body);
+
+		item.planNextCheck(config.defaultInterval);
+
+		if (body.result === 'success') {
+			item.stateInfo = null;
+			item.state = ItemStates.snatched;
+			item.torrentHash = body.arguments['torrent-added'].hashString;
+			item.torrentInfoUrl = infoUrl;
+			
+			if (!item.torrentLinks)
+				item.torrentLinks = [];
+				
+			item.torrentLinks.push(magnetLink);
+			
+			if (notifier)
+				notifier.notifySnatched(item);
+				
+			console.log('Success. Torrent hash ' + item.torrentHash + '.');
+		} else {
+			item.stateInfo = "Unable to add to transmission."
+			console.log('No success. Sorry. Transmission down or what?');
+		}
+			
+		item.save(function(err) {
+			if (err)
+				console.log(err);
+		});
+	});
+}
+
 function tryAgainOrFail(doWhat, message) {
 	torrentAddTries--;
 	
