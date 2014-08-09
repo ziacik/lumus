@@ -51,10 +51,6 @@ function listArtists(results) {
 	});
 }
 
-function encodeName(value){
-	return value.replace('\'', '&#39;');
-}
-
 function getItem(type, icon, name, year, artistId, showId) {
 	var ref = (type === "music") ? "artist/add" : ((type === "show") ? "show/add" : "add");	
 	var yearQuery = (type === "movie") ? "&year=" + year : "";
@@ -65,7 +61,7 @@ function getItem(type, icon, name, year, artistId, showId) {
 	var item = 
 		"<p><span class='fa fa-" + icon + "'></span> " +
 		name + yearInfo +
-		" <a class='btn btn-default btn-xs' href='/" + ref + "?type=" + type + "&name=" + encodeName(name) + yearQuery + artistQuery + showQuery + "'</a>" +
+		" <a class='btn btn-default btn-xs' href='/" + ref + "?type=" + type + "&name=" + encodeURIComponent(name) + yearQuery + artistQuery + showQuery + "'</a>" +
 			"<span class='glyphicon glyphicon-plus'></span>" +			
 		"</a></p>";
 	return item;

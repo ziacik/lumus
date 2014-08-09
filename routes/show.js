@@ -13,10 +13,10 @@ exports.add = function(req, res) {
 					return;
 				}
 				
-				res.redirect('/show?id=' + show._id + '&showId=' + show.showId + '&name=' + show.name);	
+				res.redirect('/show?id=' + show._id + '&showId=' + show.showId + '&name=' + encodeURIComponent(show.name));	
 			});
 		} else {
-			res.redirect('/show?id=' + show._id + '&showId=' + show.showId + '&name=' + show.name);	
+			res.redirect('/show?id=' + show._id + '&showId=' + show.showId + '&name=' + encodeURIComponent(show.name));	
 		}
 	});	
 };

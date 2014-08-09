@@ -49,15 +49,11 @@ function listSeasons(showId, showName, results) {
 	});
 }
 
-function encodeName(value){
-	return value.replace('\'', '&#39;');
-}
-
 function getSeasonItem(showId, showName, seasonInfo) {
 	var item = 
 		"<p><img height='40px' src='" + seasonInfo.poster + "' /><span class='fa fa-show'></span> Season " +
 		seasonInfo.season + " (" + seasonInfo.episodes + " episodes)" +
-		" <a class='btn btn-default btn-xs' href='/add?type=show&name=" + encodeName(showName) + "&no=" + seasonInfo.season + "'</a>" +
+		" <a class='btn btn-default btn-xs' href='/add?type=show&name=" + encodeURIComponent(showName) + "&no=" + seasonInfo.season + "'</a>" +
 			"<span class='glyphicon glyphicon-plus'></span>" +			
 		"</a></p>";
 	return item;
