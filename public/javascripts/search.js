@@ -1,5 +1,5 @@
 function getParameter(name) {
-	return decodeURI(
+	return decodeURIComponent(
 		(RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
 	);
 }
