@@ -1,7 +1,7 @@
 mixin item(item)
 	div
 		strong
-			+fa(icons[item.type], item.getDisplayName())					 
+			+fa(icons[item.type], item.getDisplayName())
 	div
 		span.state(style='float:right')
 			if item.state === 'wanted' && item.stateInfo
@@ -27,7 +27,7 @@ mixin item(item)
 			| &nbsp;or&nbsp;
 			a(href='/changeState?id=' + item._id + '&state=finished'): +fa('check', 'Set finished')
 		if item.state === 'finished'
-			a(href='/changeState?id=' + item._id + '&state=wanted'): +fa('refresh', 'Try other release')					
+			a(href='/changeState?id=' + item._id + '&state=wanted'): +fa('refresh', 'Try other release')
 		| &nbsp;or&nbsp;
 		a(href='/remove?id=' + item._id): +fa('times', 'Remove')
 		| &nbsp;or&nbsp;

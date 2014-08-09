@@ -76,6 +76,9 @@ function findSubtitlesOne(os, item, done, files, index, passedError) {
 				
 				console.log(downloadLink);
 				
+				if (!downloadLink)
+					console.log('No link: ' + JSON.stringify(res));
+				
 				if (downloadLink) {				
 					var out = fs.createWriteStream(filePath + '.srt');
 					var r = request(downloadLink); 
@@ -93,12 +96,12 @@ function findSubtitlesOne(os, item, done, files, index, passedError) {
 			    	findSubtitlesOne(os, item, done, files, index + 1, passedError || "No subtitles found.");
 			    }		    		
     		}, token, [{
-    			sublanguageid: 'slo,cze',
+    			sublanguageid: 'slo,cze', //TODO
     			moviehash: hash,
     			moviebytesize: size
     		}]);
     		
-		}, "", "", "en", "OS Test User Agent");
+		}, "", "", "en", "OS Test User Agent"); //TODO
 	});	
 }
 
