@@ -14,7 +14,8 @@ nconf.defaults({
 	'size-limit-shows': 5200,
 	'size-limit-music': 300,
 	'default-interval': 60,
-	'required-keywords-movies': ['DTS', 'AC3', 'AC-3']
+	'required-keywords-movies': ['DTS', 'AC3', 'AC-3'],
+	'subtitle-languages': 'eng'
 });
 
 var config = {
@@ -42,6 +43,8 @@ var config = {
 		
 		nconf.set('required-keywords-movies', config.movieRequiredKeywords);
 		
+		nconf.set('subtitle-languages', config.subtitleLanguages);
+		
 		nconf.save(callback);
 	}	
 };
@@ -66,5 +69,7 @@ config.musicSizeLimit = nconf.get('size-limit-music');
 config.defaultInterval = nconf.get('default-interval');
 
 config.movieRequiredKeywords = nconf.get('required-keywords-movies');
+
+config.subtitleLanguages = nconf.get('subtitle-languages');
 
 module.exports = config;

@@ -27,6 +27,8 @@ exports.save = function(req, res) {
 	
 	config.movieRequiredKeywords = req.body.movieRequiredKeywords.split(',');
 	
+	config.subtitleLanguages = req.body.subtitleLanguages;
+	
 	var isFirstSave = config.version === 0;
 	
 	config.save(function(err) {

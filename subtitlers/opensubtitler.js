@@ -1,3 +1,5 @@
+var config = require('../config');
+
 var path = require('path');
 var fs = require('fs');
 
@@ -96,7 +98,7 @@ function findSubtitlesOne(os, item, done, files, index, passedError) {
 			    	findSubtitlesOne(os, item, done, files, index + 1, passedError || "No subtitles found.");
 			    }		    		
     		}, token, [{
-    			sublanguageid: 'slo,cze', //TODO
+    			sublanguageid: config.subtitleLanguages,
     			moviehash: hash,
     			moviebytesize: size
     		}]);

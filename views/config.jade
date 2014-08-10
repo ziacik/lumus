@@ -29,6 +29,8 @@ block content
 			+input("number", "defaultInterval", "Default Interval (s)", config.defaultInterval)
 			
 			+input("text", "movieRequiredKeywords", "Movie Required Keywords (comma delimited, at least one to be found)", config.movieRequiredKeywords)
+
+			+input("text", "subtitleLanguages", "Subtitle Languages", config.subtitleLanguages)
 						
 			+faButtonSubmit('save', 'Save')
 			if config.version != 0
