@@ -1,0 +1,15 @@
+extends layout
+
+block headScript
+	script(src="/javascripts/yify.js")
+
+block content
+	.col-sm-6.col-sm-offset-3
+		h1
+			+fa('search', 'Recommendations')
+	
+		hr
+		#results
+	
+		hr
+		+buttonPrimary('/', 'Back')
