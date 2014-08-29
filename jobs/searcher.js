@@ -45,7 +45,6 @@ Searcher.prototype.setError = function(err) {
 	
 	this.item.stateInfo = err;
 	this.item.state = ItemStates.wanted;
-	this.item.planNextCheck(config.defaultInterval);
 	
 	this.item.save(function(err) {
 		if (err)
@@ -55,7 +54,7 @@ Searcher.prototype.setError = function(err) {
 	
 Searcher.prototype.setFail = function(reason) {
 	this.item.stateInfo = reason;
-	this.item.planNextCheck(24*3600);
+	this.item.planNextCheck(24*3600); //TODO hardcoded
 	this.item.save(function(err) {
 		if (err)
 			console.log(err);
@@ -201,8 +200,6 @@ Searcher.prototype.addTorrent = function() {
 
 		console.log(body);
 
-		this.item.planNextCheck(config.defaultInterval);
-
 		if (body.result === 'success') {		
 			this.item.state = ItemStates.snatched;
 			this.item.torrentHash = body.arguments['torrent-added'].hashString;				
@@ -217,15 +214,15 @@ Searcher.prototype.addTorrent = function() {
 				notifier.notifySnatched(this.item);
 				
 			console.log('Success. Torrent hash ' + this.item.torrentHash + '.');
+			
+			this.item.save(function(err) {
+				if (err)
+					console.log(err);
+			});
 		} else {
 			console.log('No success. Sorry. Transmission down or what?');
-			this.item.stateInfo = "Unable to add to transmission."
+			this.item.stateInfo = "Unable to add to transmission." //TODO should be reason?
 		}
-			
-		this.item.save(function(err) {
-			if (err)
-				console.log(err);
-		});
 	}.bind(this));	
 };
 	

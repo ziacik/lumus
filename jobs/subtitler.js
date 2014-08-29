@@ -10,13 +10,13 @@ function use(service) {
 
 function setSubtitlerFail(item) {
 	item.state = ItemStates.subtitlerFailed;
-	item.planNextCheck(3600*24); /// Reschedule in 1 day.
+	item.planNextCheck(3600*24); //TODO hardcoded
 	item.save(function(err) {}); //TODO
 }
 
 function setSubtitlerSuccess(item) {
 	item.state = ItemStates.subtitled;
-	item.planNextCheck(1);
+	//TODO should trigger next step immediately
 	item.save(function(err) {}); //TODO
 }
 

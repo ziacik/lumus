@@ -17,7 +17,10 @@ function isMusic(item) {
 }
 
 function check() {
-	Item.find({nextCheck : {$lte : new Date().toJSON()}, $where : function() { return this.lastCheck < this.nextCheck; }}, function(err, items) {
+	//FIXME: fix reentrancy
+	console.log('Gonna check.');
+
+	Item.find({state : {$nin : [ItemStates.finished, ItemStates.renameFailed, ItemStates.subtitlerFailes]}, nextCheck : {$lte : new Date().toJSON()}}, function(err, items) {
 		if (err) {
 			console.log(err);
 			return;
@@ -27,9 +30,6 @@ function check() {
 			var item = items[index];
 			
 			console.log('Checking ' + item.name);
-
-			item.lastCheck = new Date().toJSON();
-			item.save(function(err) {});
 			
 			if (item.state === ItemStates.wanted)
 				torrenter.findTorrent(item);

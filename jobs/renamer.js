@@ -34,7 +34,6 @@ function doRename(item, destinationDir) {
 		
 		item.renamedDir = destinationDir;
 		item.state = ItemStates.renamed;
-		item.planNextCheck(1); //TODO hardcoded			
 		item.save(function(err) {}); //TODO: err handling
 	});
 }

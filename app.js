@@ -59,7 +59,7 @@ app.post('/config', config.save);
 
 // start cron
 var CronJob = require('cron').CronJob;
-new CronJob('* * * * * *', function(){
+new CronJob('*/60 * * * * *', function(){
     checker();
 }, null, true);
 

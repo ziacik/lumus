@@ -49,8 +49,6 @@ function checkFinished(item) {
 
 		if (error) {
 			console.log(error);
-			item.planNextCheck(config.defaultInterval);
-			item.save(function(err) {});
 			return;
 		}
 		
@@ -63,18 +61,21 @@ function checkFinished(item) {
 		console.log(body);
 		
 		if (body.result !== 'success') {
-		
+				
 			console.log('Not success. What do?'); //TODO
-			item.planNextCheck(config.defaultInterval);
-		
+					
 		} else {
 				
 			if (body.arguments.torrents.length == 0) {
 			
 				console.log('Torrent removed.');
 				item.state = ItemStates.wanted;
-				item.planNextCheck(config.defaultInterval);
-						
+				
+				item.save(function(err) {
+					if (err)
+						console.log(err);
+				});	
+										
 			} else if (body.arguments.torrents[0].isFinished) {
 
 				var torrentInfo = body.arguments.torrents[0];
@@ -100,26 +101,19 @@ function checkFinished(item) {
 				item.mainFile = fileName;				
 				
 				item.state = ItemStates.downloaded;
-				item.planNextCheck(1); /// So that rename goes right on.				
+				//TODO should call renamer right away or what.
+				item.save(function(err) {
+					if (err)
+						console.log(err);
+				});	
 
 				if (notifier)
 					notifier.notifyDownloaded(item);
 					
-			} else {
-				
-				console.log(body.arguments.torrents[0].isFinished);
-				item.planNextCheck(config.defaultInterval);
-				
-			}
-			
+			}			
 		}
 		
-		console.log('Check finished for item ' + item.name + ', state: ' + item.state); 
-		
-		item.save(function(err) {
-			if (err)
-				console.log(err);
-		});	
+		console.log('Check finished for item ' + item.name + ', state: ' + item.state); 		
 	});
 }
 
@@ -154,10 +148,6 @@ function addTorrent(item, infoUrl, magnetLink) {
 			tryAgainOrFail(function() { addTorrent(item, infoUrl, magnetLink); }, "Too many tries, getting 409, giving up.");
 			return;
 		}			
-
-		console.log(body);
-
-		item.planNextCheck(config.defaultInterval);
 
 		if (body.result === 'success') {
 			item.stateInfo = null;
