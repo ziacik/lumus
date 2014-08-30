@@ -12,7 +12,7 @@ var ItemStates = require('../models/item').ItemStates;
 //TODO: moje lokalne transmission rpc vracia pri duplicate torrente aj id, malina nie
 
 function doRename(item, destinationDir) {
-	console.log('Goind to rename ' + item.downloadDir + ' -> ' + destinationDir);
+	console.log('Going to rename ' + item.downloadDir + ' -> ' + destinationDir);
 	console.log('Exists source : ' + fs.existsSync(item.downloadDir));
 	console.log('Exists destination : ' + fs.existsSync(destinationDir));
 	
@@ -20,21 +20,29 @@ function doRename(item, destinationDir) {
 		mkdirp.sync(destinationDir);
 	}
 
-	if (fs.existsSync(destinationDir)) {
-		fs.rmdirSync(destinationDir);
-	}
-	
-	fs.rename(item.downloadDir, destinationDir, function(error) {
+	//TODO Removing an existing directory should be configurable.
+	rmdir(destinationDir, function(error) {
 		if (error) {
 			console.log(error);
+			item.stateInfo = error;
 			item.state = ItemStates.renameFailed;
 			item.save(function(err) {}); //TODO: err handling
 			return;	
 		}
 		
-		item.renamedDir = destinationDir;
-		item.state = ItemStates.renamed;
-		item.save(function(err) {}); //TODO: err handling
+		fs.rename(item.downloadDir, destinationDir, function(error) {
+			if (error) {
+				console.log(error);
+				item.stateInfo = error;
+				item.state = ItemStates.renameFailed;
+				item.save(function(err) {}); //TODO: err handling
+				return;	
+			}
+			
+			item.renamedDir = destinationDir;
+			item.state = ItemStates.renamed;
+			item.save(function(err) {}); //TODO: err handling
+		});
 	});
 }
 
@@ -47,22 +55,6 @@ function rename(item) {
 		destinationDir = path.join(destinationDir, 'Season ' + item.no);
 
 	doRename(item, destinationDir);			
-	
-	/*fs.exists(destinationDir, function(exists) {
-		if (exists) {
-			rmdir(destinationDir, function(error) {
-				if (error) {
-					console.log(error);
-					item.state = ItemStates.renameFailed;
-					item.save(function(err) {}); //TODO: err handling
-					return;	
-				}
-				
-			});			
-		} else {
-			doRename(item, destinationDir);
-		}
-	});*/
 }
 
 module.exports.rename = rename;
