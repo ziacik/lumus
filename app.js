@@ -52,8 +52,8 @@ app.get('/show/add', show.add);
 app.get('/torrent', torrent.list);
 app.get('/torrent/add', torrent.add);
 app.get('/config', config.form);
-app.get('/recommend', function(req, res) {
-  res.render('recommend');
+app.get('/newReleases', function(req, res) {
+  res.render('newReleases');
 });
 app.post('/config', config.save);
 
