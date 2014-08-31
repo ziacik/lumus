@@ -22,7 +22,6 @@
     "cheerio": "*",
     "request": "*",
     "nedb": "*",
-    "cron": "*",
     "nconf": "*",
     "rimraf": "*",
     "opensubtitles": "*",

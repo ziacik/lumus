@@ -57,12 +57,8 @@ app.get('/recommend', function(req, res) {
 });
 app.post('/config', config.save);
 
-// start cron
-var CronJob = require('cron').CronJob;
-new CronJob('*/60 * * * * *', function(){
-    checker();
-}, null, true);
-
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+
+process.nextTick(checker);
