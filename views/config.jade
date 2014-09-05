@@ -31,6 +31,8 @@ block content
 			+input("text", "movieRequiredKeywords", "Movie Required Keywords (comma delimited, at least one to be found)", config.movieRequiredKeywords)
 
 			+input("text", "subtitleLanguages", "Subtitle Languages", config.subtitleLanguages)
+
+			+check("removeTorrent", "Remove Torrent When Finished", config.removeTorrent)
 						
 			+faButtonSubmit('save', 'Save')
 			if config.version != 0

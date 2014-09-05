@@ -28,7 +28,7 @@ ShowSearcher.prototype.finalize = function() {
 	if (itemTitle.indexOf('Season ' + this.item.no) < 0)
 		this.skipTorrent('not the season looking for');		
 	else
-		this.addTorrent();
+		Searcher.prototype.finalize.call(this);
 };
 
 module.exports.searchFor = searchFor;

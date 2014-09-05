@@ -18,6 +18,8 @@ exports.changeState = function(req, res) {
 				item.planNextCheck(1); /// To cancel possible postpone.
 			}
 			
+			console.log('saving item ' + item.name + ' to sched ' + item.nextCheck);
+			
 			item.save(function(err) {
 				if (err) {
 					console.log(err);

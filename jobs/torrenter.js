@@ -1,191 +1,158 @@
-var request = require('request');
-var cheerio = require('cheerio');
+var Transmission = require('transmission');
+var url = require('url');
+
 var path = require('path');
 var config = require('../config');
 var notifier = require('./notifier');
 
-var showSearcher = require('./showSearcher');
-var movieSearcher = require('./movieSearcher');
-var musicSearcher = require('./musicSearcher');
-
 var Item = require('../models/item').Item;
-var ItemTypes = require('../models/item').ItemTypes;
 var ItemStates = require('../models/item').ItemStates;
 
-var transmissionSessionId;
-var torrentAddTries = 5;
-
-function findTorrent(item) {
-	if (item.type === ItemTypes.movie)
-		movieSearcher.searchFor(item);
-	else if (item.type === ItemTypes.show)
-		showSearcher.searchFor(item);
-	else if (item.type === ItemTypes.music)
-		musicSearcher.searchFor(item);
-	else		
-		console.log("Not supported.");
-}
-
 function checkFinished(item) {
-	var rpc = {};
-	rpc.arguments = {};
-	rpc.method = 'torrent-get';
-	rpc.arguments.ids = [ item.torrentHash ];
-	rpc.arguments.fields = [ 'isFinished', 'downloadDir', 'files', 'name' ];
+	var transmission = getTransmission();
 	
-	var options = {
-		url : config.transmissionUrl + '/transmission/rpc',
-		method : 'POST',
-		json : rpc,
-		headers : {
-			'X-Transmission-Session-Id' : transmissionSessionId
-		}
-	};
-
-	console.log(options.url);
-	
-	request(options, function(error, response, body) {
-		console.log(options.url + " done");
-
-		if (error) {
-			console.log(error);
+	transmission.get(item.torrentHash, function(err, result) {
+		if (err) {
+			//TODO probably should postpone the item a bit.
+			console.log(err);
 			return;
 		}
 		
-		if (response.statusCode == 409) {
-			transmissionSessionId = response.headers['x-transmission-session-id'];
-			tryAgainOrFail(function() { checkFinished(item); }, "Too many tries, getting 409, giving up.");
-			return;
-		}			
-
-		console.log(body);
-		
-		if (body.result !== 'success') {
-				
-			console.log('Not success. What do?'); //TODO
-					
-		} else {
-				
-			if (body.arguments.torrents.length == 0) {
+		if (result.torrents.length == 0) {
+			console.log('Torrent removed.');
+			item.state = ItemStates.wanted;
 			
-				console.log('Torrent removed.');
-				item.state = ItemStates.wanted;
-				
-				item.save(function(err) {
-					if (err)
-						console.log(err);
-				});	
-										
-			} else if (body.arguments.torrents[0].isFinished) {
-
-				var torrentInfo = body.arguments.torrents[0];
-				var filesInfo = torrentInfo.files;
-				
-				var maxLength = 0;
-				var maxFileInfo;
-				
-				for (var i = 0; i < filesInfo.length; i++) {
-					var fileInfo = filesInfo[i];
-					if (fileInfo.length > maxLength) {
-						maxLength = fileInfo.length;
-						maxFileInfo = fileInfo;
-					}
-				}
-				
-				console.log(torrentInfo);
-
-				var fileDir = path.dirname(maxFileInfo.name);
-				var fileName = path.basename(maxFileInfo.name); 
-
-				item.downloadDir = path.join(torrentInfo.downloadDir, fileDir);
-				item.mainFile = fileName;				
-				
-				item.state = ItemStates.downloaded;
-				//TODO should call renamer right away or what.
-				item.save(function(err) {
-					if (err)
-						console.log(err);
-				});	
-
-				if (notifier)
-					notifier.notifyDownloaded(item);
-					
-			}			
+			item.save(function(err) {
+				if (err)
+					console.log(err);
+			});
+			
+			return;
 		}
 		
+		if (result.torrents.length > 1) {
+			console.log("Unexpected count of torrents returned from transmission.");			
+			return;
+		}
+		
+		var torrent = result.torrents[0];
+				
+		if (torrent.isFinished) {
+			finishItem(item, torrent);
+			
+			if (config.removeTorrent)
+				removeTorrent(item);
+		}
+										
 		console.log('Check finished for item ' + item.name + ', state: ' + item.state); 		
 	});
 }
 
-function addTorrent(item, infoUrl, magnetLink) {	
-	var rpc = {};
-	rpc.arguments = {};
-	rpc.method = 'torrent-add';
-	rpc.arguments.filename = magnetLink;
-	
-	var options = {
-		url : config.transmissionUrl + '/transmission/rpc',
-		method : 'POST',
-		json : rpc,
-		headers : {
-			'X-Transmission-Session-Id' : transmissionSessionId
-		}
-	};
+var removeTorrent = function(item) {
+	var transmission = getTransmission();
 
-	console.log(options.url);
-	
-	request(options, function(error, response, body) {
-		console.log(options.url + " done");
-
-		if (error) {
-			console.log(error);
-			tryAgainOrFail(function() { addTorrent(item, infoUrl, magnetLink); }, "Too many tries, getting error, giving up.");
-			return;
+	transmission.remove([item.torrentHash], false, function(err, arg) {
+		if (err) {
+			console.log('Unable to remove torrent: ' + err);
 		}
-		
-		if (response.statusCode == 409) {
-			transmissionSessionId = response.headers['x-transmission-session-id'];
-			tryAgainOrFail(function() { addTorrent(item, infoUrl, magnetLink); }, "Too many tries, getting 409, giving up.");
-			return;
-		}			
-
-		if (body.result === 'success') {
-			item.stateInfo = null;
-			item.state = ItemStates.snatched;
-			item.torrentHash = body.arguments['torrent-added'].hashString;
-			item.torrentInfoUrl = infoUrl;
-			
-			if (!item.torrentLinks)
-				item.torrentLinks = [];
-				
-			item.torrentLinks.push(magnetLink);
-			
-			if (notifier)
-				notifier.notifySnatched(item);
-				
-			console.log('Success. Torrent hash ' + item.torrentHash + '.');
-		} else {
-			item.stateInfo = "Unable to add to transmission."
-			console.log('No success. Sorry. Transmission down or what?');
-		}
-			
-		item.save(function(err) {
-			if (err)
-				console.log(err);
-		});
 	});
 }
 
-function tryAgainOrFail(doWhat, message) {
-	torrentAddTries--;
+var finishItem = function(item, torrent) {
+	var filesInfo = torrent.files;
 	
-	if (torrentAddTries >= 0) {
-		doWhat();
-	} else {
-		console.log(message);
-		return;
+	var maxLength = 0;
+	var maxFileInfo;
+	
+	for (var i = 0; i < filesInfo.length; i++) {
+		var fileInfo = filesInfo[i];
+		if (fileInfo.length > maxLength) {
+			maxLength = fileInfo.length;
+			maxFileInfo = fileInfo;
+		}
 	}
+	
+	var fileDir = path.dirname(maxFileInfo.name);
+	var fileName = path.basename(maxFileInfo.name); 
+
+	item.downloadDir = path.join(torrent.downloadDir, fileDir);
+	item.mainFile = fileName;				
+	
+	item.state = ItemStates.downloaded;
+	
+	//TODO should call renamer right away or what.
+	item.save(function(err) {
+		if (err)
+			console.log(err);
+	});	
+
+	if (notifier)
+		notifier.notifyDownloaded(item);
 }
 
-module.exports.findTorrent = findTorrent;
+var _transmission;
+var _transmissionUrl;
+
+
+var getTransmission = function() {
+	if (_transmission && config.transmissionUrl === _transmissionUrl)
+		return _transmission;
+		
+	var transmissionUrl = config.transmissionUrl;
+
+	var parsedUrl = url.parse(transmissionUrl, false, true);	
+	var transmission = new Transmission({
+		host : parsedUrl.hostname,
+		port : parsedUrl.port
+	});
+	
+	_transmission = transmission;
+	_transmissionUrl = transmissionUrl;
+
+	return transmission;
+}
+
+var add = function(item, magnetLink, torrentPageUrl) {
+	var transmission = getTransmission();
+	
+	/// Item already has a torrent, remove it first.
+	if (item.torrentHash)
+		removeTorrent(item);
+
+	transmission.addUrl(magnetLink, function(err, result) {
+		if (err) {
+			console.log(err);
+			item.stateInfo = err.syscall + ' ' + err.code;
+			item.save(function(err) {
+				console.log(err);
+			});
+			return; //TODO reschedule?
+		}
+
+		item.state = ItemStates.snatched;
+		item.stateInfo = null;
+		item.torrentHash = result.hashString;				
+		item.torrentInfoUrl = torrentPageUrl;
+
+		if (!item.torrentLinks)
+			item.torrentLinks = [];
+
+		item.torrentLinks.push(magnetLink);
+
+		if (notifier)
+			notifier.notifySnatched(item);
+
+		console.log('Success. Torrent hash ' + item.torrentHash + '.');
+
+		item.planNextCheck(1); /// To cancel possible postpone.
+
+		item.save(function(err) {
+			if (err)
+				console.log(err);
+		});			
+	});
+};
+
+
+module.exports.add = add;
 module.exports.checkFinished = checkFinished;

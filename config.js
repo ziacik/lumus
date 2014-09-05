@@ -15,7 +15,8 @@ nconf.defaults({
 	'size-limit-music': 300,
 	'default-interval': 60,
 	'required-keywords-movies': ['DTS', 'AC3', 'AC-3'],
-	'subtitle-languages': 'eng'
+	'subtitle-languages': 'eng',
+	'remove-torrent' : true
 });
 
 var config = {
@@ -45,6 +46,8 @@ var config = {
 		
 		nconf.set('subtitle-languages', config.subtitleLanguages);
 		
+		nconf.set('remove-torrent', config.removeTorrent);
+		
 		nconf.save(callback);
 	}	
 };
@@ -71,5 +74,7 @@ config.defaultInterval = nconf.get('default-interval');
 config.movieRequiredKeywords = nconf.get('required-keywords-movies');
 
 config.subtitleLanguages = nconf.get('subtitle-languages');
+
+config.removeTorrent = nconf.get('remove-torrent');
 
 module.exports = config;

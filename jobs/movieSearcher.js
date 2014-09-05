@@ -50,7 +50,7 @@ MovieSearcher.prototype.finalize = function() {
 		} else if (!isNotShit) {	
 			this.skipTorrent('is commented as crap');
 		} else {
-			this.addTorrent();
+			Searcher.prototype.finalize.call(this);
 		}
 		
 	}.bind(this));

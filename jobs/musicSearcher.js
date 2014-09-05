@@ -22,9 +22,5 @@ MusicSearcher.prototype.constructUrl = function(item) {
 	return url;
 };
 
-MusicSearcher.prototype.finalize = function() {
-	this.addTorrent();
-};
-
 module.exports.searchFor = searchFor;
 module.exports.MusicSearcher = MusicSearcher;

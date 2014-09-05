@@ -4,7 +4,7 @@ mixin item(item)
 			+fa(icons[item.type], item.getDisplayName())
 	div
 		span.state(style='float:right')
-			if item.state === 'wanted' && item.stateInfo
+			if item.stateInfo
 				a(href="#", title="#{item.stateInfo}")
 					+fa('info-circle')
 				| 

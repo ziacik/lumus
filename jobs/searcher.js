@@ -1,6 +1,6 @@
+var torrenter = require('./torrenter');
 var request = require('request');
 var cheerio = require('cheerio');
-var path = require('path');
 var config = require('../config');
 var notifier = require('./notifier');
 
@@ -9,7 +9,6 @@ var ItemTypes = require('../models/item').ItemTypes;
 var ItemStates = require('../models/item').ItemStates;
 
 var Searcher = function(item) {
-	this.torrentAddTries = 5;
 	this.item = item;
 	this.torrentInfo = {};	
 };
@@ -159,82 +158,11 @@ Searcher.prototype.nextResult = function() {
 };
 	
 Searcher.prototype.finalize = function() {
-	this.addTorrent();
+	torrenter.add(this.item, this.torrentInfo.magnetLink, this.torrentInfo.torrentPageUrl);
 };
 
 Searcher.prototype.skipTorrent = function(reason) {
 	this.nextResult();
-};
-	
-Searcher.prototype.addTorrent = function() {
-	var rpc = {};
-	rpc.arguments = {};
-	rpc.method = 'torrent-add';
-	rpc.arguments.filename = this.torrentInfo.magnetLink;
-	
-	var options = {
-		url : config.transmissionUrl + '/transmission/rpc',
-		method : 'POST',
-		json : rpc,
-		headers : {
-			'X-Transmission-Session-Id' : this.transmissionSessionId
-		}
-	};
-	
-	console.log(options.url);
-	
-	request(options, function(error, response, body) {
-		console.log(options.url + " done");
-
-		if (error) {
-			console.log(error);
-			this.tryAgainOrFail(function() { this.addTorrent(); }.bind(this), "Too many tries, getting error, giving up.");
-			return;
-		}
-		
-		if (response.statusCode == 409) {
-			this.transmissionSessionId = response.headers['x-transmission-session-id'];
-			this.tryAgainOrFail(function() { this.addTorrent(); }.bind(this), "Too many tries, getting 409, giving up.");
-			return;
-		}			
-
-		console.log(body);
-
-		if (body.result === 'success') {		
-			this.item.state = ItemStates.snatched;
-			this.item.torrentHash = body.arguments['torrent-added'].hashString;				
-			this.item.torrentInfoUrl = this.torrentInfo.torrentPageUrl;
-			
-			if (!this.item.torrentLinks)
-				this.item.torrentLinks = [];
-				
-			this.item.torrentLinks.push(this.torrentInfo.magnetLink);
-			
-			if (notifier)
-				notifier.notifySnatched(this.item);
-				
-			console.log('Success. Torrent hash ' + this.item.torrentHash + '.');
-			
-			this.item.save(function(err) {
-				if (err)
-					console.log(err);
-			});
-		} else {
-			console.log('No success. Sorry. Transmission down or what?');
-			this.item.stateInfo = "Unable to add to transmission." //TODO should be reason?
-		}
-	}.bind(this));	
-};
-	
-Searcher.prototype.tryAgainOrFail = function(doWhat, message) {
-	this.torrentAddTries--;
-	
-	if (this.torrentAddTries >= 0) {
-		doWhat();
-	} else {
-		console.log(message);
-		return;
-	}
 };	
-
+	
 module.exports.Searcher = Searcher;

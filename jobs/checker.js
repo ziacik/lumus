@@ -1,5 +1,8 @@
 var config = require('../config');
 var torrenter = require('./torrenter');
+var movieSearcher = require('./movieSearcher');
+var musicSearcher = require('./musicSearcher');
+var showSearcher = require('./showSearcher');
 var renamer = require('./renamer');
 var subtitler = require('./subtitler');
 var notifier = require('./notifier');
@@ -17,10 +20,27 @@ function isMusic(item) {
 	return item.type === ItemTypes.music;
 }
 
+function isMovie(item) {
+	return item.type === ItemTypes.movie;
+}
+
+function isShow(item) {
+	return item.type === ItemTypes.show;
+}
+
+function search(item) {
+	if (isMovie(item))
+		movieSearcher.searchFor(item);
+	else if (isShow(item))
+		showSearcher.searchFor(item);
+	else if (isMusic(item))
+		musicSearcher.searchFor(item);
+	else		
+		console.log("Not supported.");
+}
+
 function check() {
-	console.log('Gonna check.');
-	
-	Item.find({state : {$nin : [ItemStates.finished, ItemStates.renameFailed, ItemStates.subtitlerFailes]}, nextCheck : {$lte : new Date().toJSON()}}, function(err, items) {
+	Item.find({state : {$nin : [ItemStates.finished, ItemStates.renameFailed]}, nextCheck : {$lte : new Date().toJSON()}}, function(err, items) {
 		if (err) {
 			console.log(err);
 		} else {		
@@ -30,7 +50,7 @@ function check() {
 				console.log('Checking ' + item.name);
 				
 				if (item.state === ItemStates.wanted)
-					torrenter.findTorrent(item);
+					search(item);
 				else if (item.state === ItemStates.snatched)
 					torrenter.checkFinished(item);
 				else if (item.state === ItemStates.downloaded)

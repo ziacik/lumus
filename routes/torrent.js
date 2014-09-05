@@ -1,6 +1,7 @@
 var lister = require('../jobs/lister');
 var Item = require('../models/item').Item;
 var Searcher = require('../jobs/searcher').Searcher;
+var torrenter = require('../jobs/torrenter');
 
 exports.list = function(req, res){
 	Item.findById(req.query.id, function(err, item) {
@@ -21,10 +22,7 @@ exports.add = function(req, res) {
 		if (err) {
 			res.redirect('/error', { error: err });
 		} else {
-			var searcher = new Searcher(item);
-			searcher.torrentInfo.magnetLink = req.query.magnet;
-			searcher.torrentInfo.torrentPageUrl = req.query.page;
-			searcher.addTorrent(); //FIXME should be in torrenter, probably
+			torrenter.add(item, req.query.magnet, req.query.page);
 			res.redirect('/');
 		}
 	});

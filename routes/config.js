@@ -29,6 +29,8 @@ exports.save = function(req, res) {
 	
 	config.subtitleLanguages = req.body.subtitleLanguages;
 	
+	config.removeTorrent = req.body.removeTorrent;
+	
 	var isFirstSave = config.version === 0;
 	
 	config.save(function(err) {

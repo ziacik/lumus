@@ -42,6 +42,15 @@ mixin inputWithPlaceholder(type, id, text, value)
 	.form-group
 		input.form-control(type=type, name=id, id=id, value=value, placeholder=text)
 
+mixin check(id, text, value)
+	.checkbox
+		label
+			if value
+				input(type='checkbox', name=id, id=id, checked='checked')
+			else
+				input(type='checkbox', name=id, id=id)
+			= text
+
 
 html
 	head

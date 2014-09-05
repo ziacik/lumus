@@ -26,7 +26,8 @@
     "rimraf": "*",
     "opensubtitles": "*",
     "moment": "2.6.x",
-    "mkdirp": "*"
+    "mkdirp": "*",
+    "transmission": "~0.4.0"
   },
   "repository": {
     "type": "git",

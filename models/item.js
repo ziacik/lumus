@@ -38,8 +38,6 @@ function Item() {
 	this.year = null;
 	this.state = ItemStates.wanted;
 	this.createdAt = new Date().toJSON();
-	this.lastCheck = new Date().toJSON();
-	this.nextCheck = new Date(new Date().getTime() + 10000).toJSON(); //TODO hardcoded
 	this.torrentLinks = []; 
 	
 	Item.setupMethods(this);
