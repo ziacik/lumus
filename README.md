@@ -2,6 +2,7 @@ lumus
 =====
 
 [![Build Status](https://travis-ci.org/ziacik/lumus.svg?branch=master)](https://travis-ci.org/ziacik/lumus)
+[![NPM version](https://badge.fury.io/js/lumus.svg)](http://badge.fury.io/js/lumus)
 
 Lightweight web application for convenient automatic torrent searching and managing of movies, shows and music.
 Alternative to SickBeard, CouchPotato and Headphones. Integration with transmission and XBMC.
