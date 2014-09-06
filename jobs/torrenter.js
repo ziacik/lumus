@@ -48,10 +48,13 @@ function checkFinished(item) {
 	});
 }
 
-var removeTorrent = function(item) {
+var removeTorrent = function(item, removeData) {
+	if (!item.torrentHash)
+		return;
+
 	var transmission = getTransmission();
 
-	transmission.remove([item.torrentHash], false, function(err, arg) {
+	transmission.remove([item.torrentHash], removeData, function(err, arg) {
 		if (err) {
 			console.log('Unable to remove torrent: ' + err);
 		}
@@ -115,9 +118,8 @@ var getTransmission = function() {
 var add = function(item, magnetLink, torrentPageUrl) {
 	var transmission = getTransmission();
 	
-	/// Item already has a torrent, remove it first.
-	if (item.torrentHash)
-		removeTorrent(item);
+	/// Item already has a torrent, remove it first (with data too).
+	removeTorrent(item, true);
 
 	transmission.addUrl(magnetLink, function(err, result) {
 		if (err) {
@@ -156,3 +158,4 @@ var add = function(item, magnetLink, torrentPageUrl) {
 
 module.exports.add = add;
 module.exports.checkFinished = checkFinished;
+module.exports.removeTorrent = removeTorrent;

@@ -1,4 +1,5 @@
 var notifier = require('../jobs/notifier');
+var torrenter = require('../jobs/torrenter');
 
 var Item = require('../models/item').Item;
 var ItemTypes = require('../models/item').ItemTypes;
@@ -33,12 +34,23 @@ exports.changeState = function(req, res) {
 
 
 exports.remove = function(req, res) {
-	Item.removeById(req.query.id, function(err, item) {
+	Item.findById(req.query.id, function(err, item) {
 		if (err) {
 			res.redirect('/error', { error: err });
-		} else {
-			res.redirect('/');
+			console.log(err);
+			return;
 		}
+		
+		Item.removeById(req.query.id, function(err, removedId) {
+			if (err) {
+				res.redirect('/error', { error: err });
+				console.log(err);
+				return;
+			}
+			
+			torrenter.removeTorrent(item, true);
+			res.redirect('/');
+		});
 	});
 }
 
