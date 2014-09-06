@@ -76,11 +76,6 @@ function findSubtitlesOne(os, item, done, files, index, passedError) {
 				if (res.data)
 				 	downloadLink = res.data[0].SubDownloadLink;
 				
-				console.log(downloadLink);
-				
-				if (!downloadLink)
-					console.log('No link: ' + JSON.stringify(res));
-				
 				if (downloadLink) {				
 					var out = fs.createWriteStream(filePath + '.srt');
 					var r = request(downloadLink); 

@@ -40,7 +40,7 @@ function search(item) {
 }
 
 function check() {
-	Item.find({state : {$nin : [ItemStates.finished, ItemStates.renameFailed]}, nextCheck : {$lte : new Date().toJSON()}}, function(err, items) {
+	Item.find({state : {$nin : [ItemStates.finished, ItemStates.renameFailed]}, $not: {nextCheck : {$gt : new Date().toJSON()}}}, function(err, items) {
 		if (err) {
 			console.log(err);
 		} else {		
