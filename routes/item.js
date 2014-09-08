@@ -60,6 +60,7 @@ exports.add = function(req, res) {
 	item.type = req.query.type;
 	item.year = req.query.year;
 	item.no = req.query.no;
+	item.externalId = req.query.externalId;
 	
 	item.save(function(err, doc) {
 		if (err) {

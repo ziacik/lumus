@@ -36,6 +36,7 @@ function Item() {
 	this.type = null;
 	this.no = null;
 	this.year = null;
+	this.externalId = null;
 	this.state = ItemStates.wanted;
 	this.createdAt = new Date().toJSON();
 	this.torrentLinks = []; 

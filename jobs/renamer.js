@@ -4,6 +4,8 @@ var path = require('path');
 var process = require('child_process');
 var rmdir = require('rimraf');
 var mkdirp = require('mkdirp');
+var TvdbClient = require("node-tvdb");
+var tvdb = new TvdbClient("6E61D6699D0B1CB0");
 
 var Item = require('../models/item').Item;
 var ItemTypes = require('../models/item').ItemTypes;
@@ -49,12 +51,37 @@ function doRename(item, destinationDir) {
 function rename(item) {
 	console.log("Renaming " + item.name);
 	
-	var destinationDir = path.join(config[item.type + 'TargetDir'], item.name);
+	var itemName = item.name;
 	
+	if (item.type === ItemTypes.show && item.externalId) {
+		getShowNameAndRename(item);
+	} else {
+		renameTo(item, item.name);
+	}
+}
+
+function renameTo(item, itemName) {
+	var destinationDir = path.join(config[item.type + 'TargetDir'], itemName);
+
 	if (item.type === ItemTypes.show)
 		destinationDir = path.join(destinationDir, 'Season ' + item.no);
 
-	doRename(item, destinationDir);			
+	doRename(item, destinationDir);
+}
+
+function getShowNameAndRename(item) {
+	tvdb.getSeriesByRemoteId(item.externalId, function(error, response) {
+		var itemName = item.name;
+	
+		if (error)
+			console.log(error);
+		else
+			itemName = response.SeriesName;
+			
+		console.log('Done with new or old NAME ' + itemName);
+			
+	    renameTo(item, itemName);
+	});
 }
 
 module.exports.rename = rename;

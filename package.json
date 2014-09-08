@@ -27,7 +27,8 @@
     "opensubtitles": "*",
     "moment": "2.6.x",
     "mkdirp": "*",
-    "transmission": "~0.4.0"
+    "transmission": "~0.4.0",
+    "node-tvdb": "~0.4.2"
   },
   "repository": {
     "type": "git",
