@@ -158,11 +158,15 @@ Searcher.prototype.nextResult = function() {
 };
 	
 Searcher.prototype.finalize = function() {
-	torrenter.add(this.item, this.torrentInfo.magnetLink, this.torrentInfo.torrentPageUrl);
+	this.addTorrent();
 };
 
 Searcher.prototype.skipTorrent = function(reason) {
 	this.nextResult();
-};	
+};
+
+Searcher.prototype.addTorrent = function() {
+	torrenter.add(this.item, this.torrentInfo.magnetLink, this.torrentInfo.torrentPageUrl);
+};
 	
 module.exports.Searcher = Searcher;
