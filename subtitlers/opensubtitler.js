@@ -87,8 +87,14 @@ function findSubtitlesOne(os, item, done, files, index, passedError) {
 			    		console.log(error);
 						findSubtitlesOne(os, item, done, files, index + 1, error);
 			    	});
-			    	console.log('Piping');
-			    	r.pipe(zlib.createGunzip()).pipe(out);
+			    	
+			    	var gunzip = zlib.createGunzip();
+			    	gunzip.on('error', function(e) {
+			    		console.log('Unzip error: ' + e);
+			    		findSubtitlesOne(os, item, done, files, index + 1, e);
+			    	});  
+			    	
+			    	r.pipe(gunzip).pipe(out);
 			    } else {
 			    	findSubtitlesOne(os, item, done, files, index + 1, passedError || "No subtitles found.");
 			    }		    		
