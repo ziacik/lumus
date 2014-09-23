@@ -114,7 +114,14 @@ Searcher.prototype.noNextResult = function() {
 
 Searcher.prototype.setNextResult = function() {
 	if (this.noNextResult()) {
-		this.setFail("No result matched filters, rescheduling for tommorow.");
+		var lastCheckDateTime = new Date();
+		var lastCheckDateTimeString = lastCheckDateTime.toLocaleDateString() + ' ' + lastCheckDateTime.toLocaleTimeString();
+	
+		if (this.index === 0)
+			this.setFail("No result. Last checked at " + lastCheckDateTimeString + ".");
+		else
+			this.setFail("No result matched filters. Last checked at " + lastCheckDateTimeString + ".");
+			
 		this.$resultElement = null;
 	} else {	
 		this.$resultElement = this.$(this.$resultElements[this.index]);
