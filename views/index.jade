@@ -6,19 +6,19 @@ block content
 		h1
 			+fa('search', 'Lumus')
 
-		//-if message.length > 0
-		//-	.alert.alert-danger= message
-
 		form(action='/search', method='GET')
 			+inputWithPlaceholder('text', 'what', 'Enter Movie, Show, Artist or Group Name')
 			button#search.btn.btn-warning(type='submit')
 				+fa('search', 'Search')
-			|  
-			newReleases
-				+faButtonDefault('fire', '/newReleases', 'New Releases')
-			|  
-			div(style='float:right')
-				+faButtonDefault('wrench', '/config', 'Settings')
+			.dropdown#menu(style='float:right')
+				a.btn.btn-default.dropdown-toggle(href='#', data-toggle='dropdown', type='button', title='Menu')
+					+fa('bars')
+				ul.dropdown-menu(role='menu', aria-labelledby='menu')
+					li(role='presentation')
+						+faLink('fire', '/newReleases', 'New Movie Releases (Yifi)')
+					li.divider(role='presentation')
+					li(role='presentation')
+						+faLink('wrench', '/config', 'Settings')
 
 	.col-sm-6.col-sm-offset-3
 		h2 Today
