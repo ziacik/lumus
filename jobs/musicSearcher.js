@@ -12,12 +12,19 @@ function searchFor(item) {
 	searcher.search();
 }
 
+MusicSearcher.prototype.getSearchTerm = function(item) {
+	if (item.searchTerm)
+		return item.searchTerm;
+	
+	return item.name;
+};
+
 MusicSearcher.prototype.getSizeLimit = function() {
 	return config.musicSizeLimit;
 };
 
 MusicSearcher.prototype.constructUrl = function(item) {
-	var query = encodeURIComponent(item.name);
+	var query = encodeURIComponent(this.getSearchTerm(item));
 	var url = config.musicSearchUrl.replace('${query}', query);
 	return url;
 };

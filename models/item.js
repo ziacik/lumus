@@ -39,7 +39,8 @@ function Item() {
 	this.externalId = null;
 	this.state = ItemStates.wanted;
 	this.createdAt = new Date().toJSON();
-	this.torrentLinks = []; 
+	this.torrentLinks = [];
+	this.searchTerm = null; 
 	
 	Item.setupMethods(this);
 }
@@ -50,7 +51,7 @@ Item.setupMethods = function(item) {
 			return item.name + " Season " + item.no;
 		
 		return item.name;		
-	}
+	};	
 
 	item.save = function(done) {
 		if (!done)

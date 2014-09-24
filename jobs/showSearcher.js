@@ -12,12 +12,19 @@ function searchFor(item) {
 	searcher.search();
 }
 
+ShowSearcher.prototype.getSearchTerm = function(item) {
+	if (item.searchTerm)
+		return item.searchTerm;
+	
+	return item.name + " season -seasons -episode -episodes";
+};
+
 ShowSearcher.prototype.getSizeLimit = function() {
 	return config.showSizeLimit;
 };
 
 ShowSearcher.prototype.constructUrl = function(item) {
-	var query = encodeURIComponent(item.name + " season -seasons -episode -episodes");
+	var query = encodeURIComponent(this.getSearchTerm(item));
 	var url = config.showSearchUrl.replace('${query}', query);
 	return url;
 };

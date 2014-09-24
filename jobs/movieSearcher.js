@@ -14,12 +14,19 @@ function searchFor(item) {
 	searcher.search();
 }
 
+MovieSearcher.prototype.getSearchTerm = function(item) {
+	if (item.searchTerm)
+		return item.searchTerm;
+	
+	return item.name + " " + item.year;
+};
+
 MovieSearcher.prototype.getSizeLimit = function() {
 	return config.movieSizeLimit;
 };
 
 MovieSearcher.prototype.constructUrl = function(item) {
-	var query = encodeURIComponent(item.name) + "%20" + item.year;
+	var query = encodeURIComponent(this.getSearchTerm(item));
 	var url = config.movieSearchUrl.replace('${query}', query);
 	return url;
 };

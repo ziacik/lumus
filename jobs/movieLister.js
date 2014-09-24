@@ -26,6 +26,7 @@ MovieLister.prototype.skipTorrent = function(reason) {
 function searchFor(item, resultsCallback) {
 	var searcher = new MovieLister(item, resultsCallback);	
 	searcher.search();
+	return searcher;
 }
 
 module.exports.searchFor = searchFor;

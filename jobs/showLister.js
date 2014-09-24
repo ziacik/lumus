@@ -26,6 +26,7 @@ ShowLister.prototype.skipTorrent = function(reason) {
 function searchFor(item, resultsCallback) {
 	var searcher = new ShowLister(item, resultsCallback);	
 	searcher.search();
+	return searcher;
 }
 
 module.exports.searchFor = searchFor;

@@ -9,9 +9,16 @@ exports.list = function(req, res){
 			res.redirect('/error', { error: err });
 		} else if (!item) {
 			res.send(404);			
-		} else {			
-			lister.searchFor(item, function(results) {
-				res.render('torrents', { item : item, results : results });
+		} else {
+			if (req.query.what) {
+				item.searchTerm = req.query.what;
+				item.save(function(err) {
+					console.log(err);
+				});
+			}
+		
+			var concreteLister = lister.searchFor(item, function(results) {
+				res.render('torrents', { item : item, results : results, searchTerm : concreteLister.getSearchTerm(item) });
 			});			
 		}
 	});

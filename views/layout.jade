@@ -32,6 +32,9 @@ mixin faButtonSubmit(faType, text)
 mixin buttonSubmit(text)
 	button.btn.btn-warning(type='submit')= text	
 
+mixin inputHidden(id, value)
+	input(type='hidden', name=id, id=id, value=value)
+
 mixin inputRequired(type, id, text, value)
 	.form-group
 		label= text

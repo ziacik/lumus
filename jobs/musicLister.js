@@ -26,6 +26,7 @@ MusicLister.prototype.skipTorrent = function(reason) {
 function searchFor(item, resultsCallback) {
 	var searcher = new MusicLister(item, resultsCallback);	
 	searcher.search();
+	return searcher;
 }
 
 module.exports.searchFor = searchFor;
