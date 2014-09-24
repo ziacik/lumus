@@ -18,7 +18,10 @@ MovieSearcher.prototype.getSearchTerm = function(item) {
 	if (item.searchTerm)
 		return item.searchTerm;
 	
-	return item.name + " " + item.year;
+	if (item.year)
+		return item.name + " " + item.year;
+	else
+		return item.name;
 };
 
 MovieSearcher.prototype.getSizeLimit = function() {
