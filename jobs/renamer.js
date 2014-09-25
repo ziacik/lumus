@@ -76,7 +76,7 @@ function getShowNameAndRename(item) {
 		if (error)
 			console.log(error);
 		else
-			itemName = response.SeriesName;
+			itemName = response[0].SeriesName;
 			
 		console.log('Done with new or old NAME ' + itemName);
 			
