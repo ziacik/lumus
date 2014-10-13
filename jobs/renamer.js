@@ -73,11 +73,14 @@ function getShowNameAndRename(item) {
 	tvdb.getSeriesByRemoteId(item.externalId, function(error, response) {
 		var itemName = item.name;
 	
-		if (error)
+		if (error) {
 			console.log(error);
-		else
+		} else if (response.SeriesName) {
+			itemName = response.SeriesName;
+		} else if (response[0] && response[0].SeriesName) {
 			itemName = response[0].SeriesName;
-			
+		}
+
 		console.log('Done with new or old NAME ' + itemName);
 			
 	    renameTo(item, itemName);
