@@ -23,7 +23,7 @@ function updateLibrary(item) {
 		service.updateLibrary(item);
 	});
 	
-	item.state = ItemStates.finished;
+	item.state = ItemStates.libraryUpdated;
 	item.save(function(err) {
 		if (err) 
 			console.log(err);

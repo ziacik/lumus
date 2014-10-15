@@ -39,6 +39,14 @@ function search(item) {
 		console.log("Not supported.");
 }
 
+function finish(item) {	
+	item.state = ItemStates.finished;
+	item.save(function(err) {
+		if (err) 
+			console.log(err);
+	});
+}
+
 function check() {
 	Item.find({state : {$nin : [ItemStates.finished, ItemStates.renameFailed]}, $not: {nextCheck : {$gt : new Date().toJSON()}}}, function(err, items) {
 		if (err) {
@@ -49,20 +57,26 @@ function check() {
 				
 				console.log('Checking ' + item.name);
 				
-				if (item.state === ItemStates.wanted)
+				if (item.state === ItemStates.wanted) {
 					search(item);
-				else if (item.state === ItemStates.snatched)
+				} else if (item.state === ItemStates.snatched) {
 					torrenter.checkFinished(item);
-				else if (item.state === ItemStates.downloaded)
+				} else if (item.state === ItemStates.downloaded) {
 					renamer.rename(item);
-				else if (item.state === ItemStates.subtitlerFailed || (!isMusic(item) && item.state === ItemStates.renamed))
-					subtitler.findSubtitles(item);
-				else if (item.state === ItemStates.subtitled || (isMusic(item) && item.state === ItemStates.renamed))
+				} else if (item.state === ItemStates.renamed) {
 					notifier.updateLibrary(item);
-				else if (item.state === ItemStates.finished)
-					console.log('Item ' + item.name + ' finished');
-				else
+				} else if (item.state === ItemStates.libraryUpdated) {
+					if (isMusic(item))
+						finish(item);
+					else
+						subtitler.findSubtitles(item);
+				} else if (item.state === ItemStates.subtitlerFailed) {
+					subtitler.findSubtitles(item);
+				} else if (item.state === ItemStates.subtitled) {
+					finish(item);
+				} else {
 					console.log('Invalid state ' + item.state);
+				}
 			}
 		}
 		

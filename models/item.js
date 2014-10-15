@@ -15,7 +15,8 @@ var ItemStates = Object.freeze({
 	snatched:"snatched", 
 	downloaded:"downloaded", 
 	renamed:"renamed",
-	renameFailed:"renameFailed", 
+	renameFailed:"renameFailed",
+	libraryUpdated:"libraryUpdated", 
 	subtitled:"subtitled", 
 	subtitlerFailed:"subtitlerFailed",
 	finished:"finished"
