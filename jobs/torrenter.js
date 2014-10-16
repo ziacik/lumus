@@ -124,11 +124,17 @@ var add = function(item, magnetLink, torrentPageUrl) {
 	transmission.addUrl(magnetLink, function(err, result) {
 		if (err) {
 			console.log(err);
-			item.stateInfo = err.syscall + ' ' + err.code;
-			item.save(function(err) {
-				if (err)
-					console.log(err);
-			});
+			
+			var reason = err.syscall + ' ' + err.code;
+			
+			if (reason !== item.stateInfo) {
+				item.stateInfo = reason;
+				item.save(function(err) {
+					if (err)
+						console.log(err);
+				});
+			}
+			
 			return; //TODO reschedule?
 		}
 
