@@ -20,8 +20,10 @@ mixin item(item)
 			a(href='/changeState?id=' + item._id + '&state=wanted'): +fa('refresh', 'Try other release')
 		if item.state === 'renameFailed'
 			a(href='/changeState?id=' + item._id + '&state=wanted'): +fa('refresh', 'Try other release')
+		if item.state === 'libraryUpdated'
+			a(href='/changeState?id=' + item._id + '&state=wanted'): +fa('refresh', 'Try other release')
 		if item.state === 'subtitlerFailed' || item.state === 'renamed'
-			a(href='/changeState?id=' + item._id + '&state=renamed'): +fa('refresh', 'Retry subtitles')
+			a(href='/changeState?id=' + item._id + '&state=libraryUpdated'): +fa('refresh', 'Retry subtitles')
 			| &nbsp;or&nbsp;
 			a(href='/changeState?id=' + item._id + '&state=wanted'): +fa('refresh', 'Try other release')
 			| &nbsp;or&nbsp;

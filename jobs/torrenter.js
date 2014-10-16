@@ -126,7 +126,8 @@ var add = function(item, magnetLink, torrentPageUrl) {
 			console.log(err);
 			item.stateInfo = err.syscall + ' ' + err.code;
 			item.save(function(err) {
-				console.log(err);
+				if (err)
+					console.log(err);
 			});
 			return; //TODO reschedule?
 		}
