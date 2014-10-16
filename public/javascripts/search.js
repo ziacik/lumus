@@ -14,7 +14,7 @@ function findShowsAndMovies(what) {
 
 function findMusic(what) {
 	$.getJSON("http://musicbrainz.org/ws/2/artist?query=%22" + what + "%22&fmt=json", function(data) {
-		listArtists(data.artist);
+		listArtists(data.artists);
 	});	
 }
 
