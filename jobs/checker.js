@@ -47,7 +47,22 @@ function finish(item) {
 	});
 }
 
+function isAfterSubtitlerRetryLimit(item) {
+	console.log('check if is after limit ' + config.subtitleRetryDays);
+	if (config.subtitleRetryDays !== undefined) {
+		var failCount = item.subtitlerFailCount || 0; 
+		console.log('failcount ' + failCount);
+		console.log('is ' + failCount >= config.subtitleRetryDays);
+		return failCount >= config.subtitleRetryDays;
+	}
+}
+
 function check() {
+	checkActive();
+	checkFinished();
+}
+
+function checkActive() {
 	Item.find({state : {$nin : [ItemStates.finished, ItemStates.renameFailed]}, $not: {nextCheck : {$gt : new Date().toJSON()}}}, function(err, items) {
 		if (err) {
 			console.log(err);
@@ -71,7 +86,11 @@ function check() {
 					else
 						subtitler.findSubtitles(item);
 				} else if (item.state === ItemStates.subtitlerFailed) {
-					subtitler.findSubtitles(item);
+					if (isAfterSubtitlerRetryLimit(item)) {
+						finish(item);
+					} else {
+						subtitler.findSubtitles(item);
+					}
 				} else if (item.state === ItemStates.subtitled) {
 					finish(item);
 				} else {
@@ -81,7 +100,33 @@ function check() {
 		}
 		
 		setTimeout(check, config.defaultInterval * 1000);
-	});	
+	});
+}
+
+function checkFinished() {
+	if (config.removeFinishedDays === undefined)
+		return;
+		
+	var now = new Date();
+	var deleteDate = new Date(now);
+    deleteDate.setDate(now.getDate() - config.removeFinishedDays);
+
+	Item.find({state : ItemStates.finished, createdAt : {$lt : deleteDate.toJSON()}}, function(err, items) {
+		if (err) {
+			console.log(err);
+		} else {		
+			for (var index in items) {
+				var item = items[index];
+				
+				console.log('Removing finished ' + item.name);
+				
+				item.remove(function(err) {
+					if (err)
+						console.log(err);
+				});
+			}
+		}
+	});
 }
 
 module.exports = check;

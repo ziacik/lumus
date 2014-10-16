@@ -33,6 +33,9 @@ block content
 			+input("text", "subtitleLanguages", "Subtitle Languages", config.subtitleLanguages)
 
 			+check("removeTorrent", "Remove Torrent When Finished", config.removeTorrent)
+
+			+input("number", "removeFinishedDays", "Remove Finished Item After ? Days", config.removeFinishedDays)
+			+input("number", "subtitleRetryDays", "Retry Finding Subtitles Max ? Days", config.subtitleRetryDays)
 						
 			+faButtonSubmit('save', 'Save')
 			if config.version != 0

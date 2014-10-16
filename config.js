@@ -46,6 +46,9 @@ var config = {
 		
 		nconf.set('subtitle-languages', config.subtitleLanguages);
 		
+		nconf.set('subtitle-retry-days', config.subtitleRetryDays);
+		nconf.set('remove-finished-days', config.removeFinishedDays);
+		
 		nconf.set('remove-torrent', config.removeTorrent);
 		
 		nconf.save(callback);

@@ -52,7 +52,14 @@ Item.setupMethods = function(item) {
 			return item.name + " Season " + item.no;
 		
 		return item.name;		
-	};	
+	};
+	
+	item.remove = function(done) {
+		if (!done)
+			throw "Sorry, done callback is required.";
+		
+		db.items.remove({_id : item._id}, {}, done);
+	}
 
 	item.save = function(done) {
 		if (!done)

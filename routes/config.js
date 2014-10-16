@@ -31,6 +31,9 @@ exports.save = function(req, res) {
 	
 	config.removeTorrent = req.body.removeTorrent;
 	
+	config.subtitleRetryDays = req.body.subtitleRetryDays;
+	config.removeFinishedDays = req.body.removeFinishedDays;
+	
 	var isFirstSave = config.version === 0;
 	
 	config.save(function(err) {

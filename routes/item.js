@@ -13,9 +13,7 @@ exports.changeState = function(req, res) {
 		} else {
 			item.state = req.query.state; //TODO vulnerability (validate)
 			
-			if (item.state === ItemStates.finished) {
-				notifier.updateLibrary(item);
-			} else {
+			if (item.state !== ItemStates.finished) {
 				item.planNextCheck(1); /// To cancel possible postpone.
 			}
 			

@@ -10,6 +10,7 @@ function use(service) {
 
 function setSubtitlerFail(item) {
 	item.state = ItemStates.subtitlerFailed;
+	item.subtitlerFailCount = 1 + (item.subtitlerFailCount || 0);
 	item.planNextCheck(3600*24); //TODO hardcoded
 	item.save(function(err) {}); //TODO
 }
