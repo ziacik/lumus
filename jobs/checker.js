@@ -1,8 +1,7 @@
 var config = require('../config');
 var torrenter = require('./torrenter');
-var movieSearcher = require('./movieSearcher');
-var musicSearcher = require('./musicSearcher');
-var showSearcher = require('./showSearcher');
+var searcher = require('./searcher');
+var kickassSearcher = require('../searchers/kickassSearcher');
 var renamer = require('./renamer');
 var subtitler = require('./subtitler');
 var notifier = require('./notifier');
@@ -15,6 +14,7 @@ var ItemTypes = require('../models/item').ItemTypes;
 
 notifier.use(xbmc);
 subtitler.use(opensubtitler);
+searcher.use(kickassSearcher);
 
 function isMusic(item) {
 	return item.type === ItemTypes.music;
@@ -29,14 +29,7 @@ function isShow(item) {
 }
 
 function search(item) {
-	if (isMovie(item))
-		movieSearcher.searchFor(item);
-	else if (isShow(item))
-		showSearcher.searchFor(item);
-	else if (isMusic(item))
-		musicSearcher.searchFor(item);
-	else		
-		console.log("Not supported.");
+	searcher.searchFor(item);
 }
 
 function finish(item) {	
