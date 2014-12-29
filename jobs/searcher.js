@@ -18,7 +18,7 @@ function searchFor(item) {
 				console.log('Found ' + results.length);
 				
 				if (results.length > 0) {
-					torrenter.add(item, results[0].magnetLink);
+					torrenter.add(item, results[0].magnetLink, results[0].torrentInfoUrl);
 				} else {
 					//TODO no results, postopne
 				}

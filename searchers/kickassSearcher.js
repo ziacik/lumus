@@ -46,6 +46,7 @@ var getSearchTerm = function(item) {
 var convertDataItemToResult = function(dataItem) {
 	var result = {};
 	result.magnetLink = dataItem['torrent:magneturi']['#'];
+	result.torrentInfoUrl = dataItem['link'];
 	return result;
 };
 
