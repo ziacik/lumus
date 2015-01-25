@@ -1,3 +1,5 @@
+var templates = [];
+
 function getParameter(name) {
 	return decodeURIComponent(
 		(RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
@@ -30,7 +32,7 @@ function listMovies(results) {
 	});
 	
 	$.each(movieResults, function(key, val) {
-		$(getItem("movie", "film", val.Title, val.Year)).appendTo("#results");
+		$(getItem("movie", val)).appendTo("#results");
 	});
 }
 
@@ -40,35 +42,26 @@ function listShows(results) {
 	});
 	
 	$.each(showResults, function(key, val) {
-		$(getItem("show", "leaf", val.Title, val.Year, undefined, val.imdbID)).appendTo("#results");
+		$(getItem("show", val)).appendTo("#results");
 	});
 }
 
 function listArtists(results) {
 	$.each(results, function(key, val) {
-		var name = val.name + (val.disambiguation ? " (" + val.disambiguation + ")" : "");
-		$(getItem("music", "music", name, undefined, val.id)).appendTo("#results");
+		$(getItem("music", val)).appendTo("#results");
 	});
 }
 
-function getItem(type, icon, name, year, artistId, showId) {
-	var ref = (type === "music") ? "artist/add" : ((type === "show") ? "show/add" : "add");	
-	var yearQuery = (type === "movie") ? "&year=" + year : "";
-	var artistQuery = (type === "music") ? "&artistId=" + artistId : "";
-	var showQuery = (type === "show") ? "&showId=" + showId : "";
-	var yearInfo = year ? " (" + year + ")" : "";
-
-	var item = 
-		"<p><span class='fa fa-" + icon + "'></span> " +
-		name + yearInfo +
-		" <a class='btn btn-default btn-xs' href='/" + ref + "?type=" + type + "&name=" + encodeURIComponent(name) + yearQuery + artistQuery + showQuery + "'</a>" +
-			"<span class='glyphicon glyphicon-plus'></span>" +			
-		"</a></p>";
-	return item;
+function getItem(type, info) {
+	return templates[type](info);
 }
 
 $(document).ready(function(){
-	var what = getParameter("what");
+	templates['movie'] = Handlebars.compile($("#movie-template").html());
+	templates['show'] = Handlebars.compile($("#show-template").html());
+	templates['music'] = Handlebars.compile($("#music-template").html());
+	
+	var what = getParameter("what");	
 	findShowsAndMovies(what);
 	findMusic(what);
 });
