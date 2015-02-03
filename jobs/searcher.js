@@ -1,57 +1,34 @@
+var Q = require('q');
 var ItemStates = require('../models/item').ItemStates;
 var torrenter = require('./torrenter');
+var serviceManager = require('./serviceDispatcher');
+var filter = require('./filter');
 
-var services = [];
+module.exports = new serviceManager.ServiceDispatcher();
 
-function use(service) {
-	services.push(service);
-}
-
-function searchFor(item) {
-	withServicesUntilSuccess(function(service, isDoneCallback) {
-		service.searchFor(item, function(results, err) {
-			if (err) {
-				console.log(err);
-			}
-			
-			if (results) {
-				console.log('Found ' + results.length);
-				
-				if (results.length > 0) {
-					torrenter.add(item, results[0].magnetLink, results[0].torrentInfoUrl);
-				} else {
-					//TODO no results, postopne
-				}
-			}
-			
-			if (err || results) {
-				isDoneCallback(true);
-			} else {
-				isDoneCallback(false);
-			}
-		});
-	}, function() {
-		console.log('None found.'); //TODO
+module.exports.findOne = function(item) {
+	this.untilSuccess(function(service) {
+		return service.searchFor(item).then(function(results) {
+			return filter.first(item, results);
+		}); 
+	}).then(function(result) {
+		if (result) {
+			torrenter.add(item, result.magnetLink, result.torrentInfoUrl);						
+		} else {
+			console.log('Not found.');
+			//TODO reschedule
+		}
+	}).catch(function(error) {
+		console.log(error); //TODO reschedule item?
 	});
 }
 
-function withServicesUntilSuccess(callback, noSuccessCallback, serviceNo) {
-	if (serviceNo === undefined) {
-		serviceNo = 0;
-	}
-	
-	if (serviceNo >= services.length) {
-		noSuccessCallback();
-		return;
-	}
-		
-	var service = services[serviceNo];
-	callback(service, function(isDone) {
-		if (!isDone) {
-			withServicesUntilSuccess(callback, noSuccessCallback, serviceNo + 1);
-		}
-	});	
+module.exports.findAll = function(item) {
+	this.forAll(function(service) {
+		return service.searchFor(item);
+	}).then(function(results) {
+		//TODO
+	}).catch(function(error) {
+		console.log(error); //TODO reschedule item?
+	});
 }
-
-module.exports.use = use;
-module.exports.searchFor = searchFor;

@@ -20,7 +20,7 @@
     "jade": "*",
     "less-middleware": "*",
     "cheerio": "*",
-    "request": "*",
+    "request": "^2.51.0",
     "nedb": "*",
     "nconf": "*",
     "rimraf": "*",
