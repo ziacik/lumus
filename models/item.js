@@ -1,3 +1,5 @@
+var Q = require('q');
+
 var ItemTypes = Object.freeze({
 	movie:"movie", 
 	show:"show", 
@@ -61,23 +63,46 @@ Item.setupMethods = function(item) {
 		db.items.remove({_id : item._id}, {}, done);
 	}
 
-	item.save = function(done) {
-		if (!done)
-			throw "Sorry, done callback is required.";
+	item.save = function() {
+		var deferred = Q.defer();
 		
 		if (item._id) {
-			db.items.update({_id : item._id}, item, {}, done);
+			db.items.update({_id : item._id}, item, {}, function(err) {
+				if (err) {
+					util.error(err);
+					deferred.reject(err);
+				} else {
+					deferred.resolve(item);
+				}
+			});
 		} else {
 			db.items.insert(item, function(err, newDoc) {
 				item._id = newDoc._id;
-				done(err);
+				if (err) {
+					util.error(err);
+					deferred.reject(err);
+				} else {
+					deferred.resolve(item);
+				}
 			});
 		}
+		
+		return deferred.promise;
 	};
 	
 	item.planNextCheck = function(seconds) {
 		item.nextCheck = new Date(new Date().getTime() + seconds * 1000).toJSON();		
-	}
+	};
+	
+	item.rescheduleNextDay = function() {
+		item.planNextCheck(60 * 60 * 24);
+		return item.save();
+	};
+	
+	item.rescheduleNextHour = function() {
+		item.planNextCheck(60 * 60);
+		return item.save();
+	};
 };
 
 Item.getAll = function(done) {

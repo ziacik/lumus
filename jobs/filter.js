@@ -68,7 +68,6 @@ var movieFilter = function(item, result) {
 	}
 	
 	return Q.when(result.getDescription()).then(function(description) {
-		console.log(description);
 		var isGoodKeywords = true;
 		for (var i = 0; i < config.movieRequiredKeywords.length; i++) {
 			isGoodKeywords = description.indexOf(config.movieRequiredKeywords[i]) >= 0;
