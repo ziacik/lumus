@@ -29,7 +29,7 @@ function isShow(item) {
 }
 
 function search(item) {
-	searcher.searchFor(item);
+	searcher.findOne(item);
 }
 
 function finish(item) {	
