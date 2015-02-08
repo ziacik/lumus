@@ -9,11 +9,10 @@ module.exports.ServiceDispatcher.prototype.use = function(service) {
 };
 
 module.exports.ServiceDispatcher.prototype.forAll = function(command) {
-	return Q.all(this.services.map(function(service) {
-		return function() {
-			return command(service);
-		};
-	}));
+	var promises = this.services.map(function(service) {
+		return Q.fcall(command, service);
+	});
+	return Q.all(promises);
 };
 
 module.exports.ServiceDispatcher.prototype.untilSuccess = function(command) {

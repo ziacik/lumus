@@ -29,7 +29,7 @@ function isShow(item) {
 }
 
 function search(item) {
-	searcher.findOne(item);
+	searcher.findAndAdd(item);
 }
 
 function finish(item) {	

@@ -1,36 +1,36 @@
 doctype html
 
-mixin fa(type, text)
-	span(class='fa fa-'+type)
+mixin fa(type, text, title)
+	span(class='fa fa-'+type, title=title)
 	if text
 		| 	
 		= text
 
-mixin faLink(faType, href, text)
+mixin faLink(faType, href, text, title)
 	a(href=href)
+		+fa(faType, text, title)
+		
+mixin faButtonSmall(faType, href, text, title)
+	a.btn.btn-default.btn-xs(href=href, title=title)
 		+fa(faType, text)
 		
-mixin faButtonSmall(faType, href, text)
-	a.btn.btn-default.btn-xs(href=href)
+mixin faButtonDefault(faType, href, text, title)
+	a.btn.btn-default(href=href, title=title)
 		+fa(faType, text)
 		
-mixin faButtonDefault(faType, href, text)
-	a.btn.btn-default(href=href)
+mixin faButtonPrimary(faType, href, text, title)
+	a.btn.btn-primary(href=href, title=title)
 		+fa(faType, text)
 		
-mixin faButtonPrimary(faType, href, text)
-	a.btn.btn-primary(href=href)
-		+fa(faType, text)
-		
-mixin buttonPrimary(href, text)
-	a.btn.btn-primary(href=href)= text
+mixin buttonPrimary(href, text, title)
+	a.btn.btn-primary(href=href, title=title)= text
 	
-mixin faButtonSubmit(faType, text)
-	button.btn.btn-warning(type='submit')
+mixin faButtonSubmit(faType, text, title)
+	button.btn.btn-warning(type='submit', title=title)
 		+fa(faType, text)
 
-mixin buttonSubmit(text)
-	button.btn.btn-warning(type='submit')= text	
+mixin buttonSubmit(text, title)
+	button.btn.btn-warning(type='submit', title=title)= text	
 
 mixin inputHidden(id, value)
 	input(type='hidden', name=id, id=id, value=value)

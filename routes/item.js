@@ -1,3 +1,4 @@
+var util = require('util');
 var notifier = require('../jobs/notifier');
 var torrenter = require('../jobs/torrenter');
 
@@ -11,6 +12,7 @@ exports.changeState = function(req, res) {
 		if (err) {
 			res.redirect('/error', { error: err });
 		} else {
+			item.stateInfo = undefined;
 			item.state = req.query.state; //TODO vulnerability (validate)
 			
 			if (item.state !== ItemStates.finished) {
@@ -19,13 +21,14 @@ exports.changeState = function(req, res) {
 			
 			console.log('saving item ' + item.name + ' to sched ' + item.nextCheck);
 			
-			item.save(function(err) {
-				if (err) {
-					console.log(err);
-					res.redirect('/error', { error: err });
-				}
-			}); //TODO log
-			res.redirect('/');
+			item
+			.save()
+			.then(function() {
+				res.redirect('/');
+			})
+			.catch(function(error) {
+				res.render('error', { error: error });
+			});
 		}
 	});
 };
@@ -60,12 +63,13 @@ exports.add = function(req, res) {
 	item.no = req.query.no;
 	item.externalId = req.query.externalId;
 	
-	item.save(function(err, doc) {
-		if (err) {
-			res.redirect('/error');	//TODO zle, loop
-			return;
-		}
-		
+	item
+	.save()
+	.then(function() {
 		res.redirect('/');	
+	})
+	.catch(function(error) {
+		util.error(error);
+		res.render('error', { error: error });
 	});
 };

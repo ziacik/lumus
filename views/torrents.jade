@@ -16,27 +16,32 @@ block content
 					+fa('search', 'Search')
 		
 			hr
-			each result in results
-				div
-					strong
-						a(href=result.torrentInfo.torrentPageUrl, target='_blank')= result.torrentInfo.name
-					
-					span.state(style='float:right')
-						+faButtonDefault('download', '/torrent/add?id=' + item._id + '&magnet=' + encodeURIComponent(result.torrentInfo.magnetLink)) + '&page=' + encodeURIComponent(result.torrentInfo.torrentPageUrl)
+			
+			each decoratedResult in results
+				h2= decoratedResult.serviceName
+				each result in decoratedResult.results
+					div
+						strong
+							a(href=result.torrentInfoUrl, target='_blank')= result.title
 						
-				div
-					span.state
-						+fa('cube', result.torrentInfo.size + ' MB')
-					span.state
-						| &nbsp;
-						+fa('arrow-down', result.torrentInfo.peers.leechs + '')
-					span.state
-						| &nbsp;
-						+fa('arrow-up', result.torrentInfo.peers.seeds + '')
-				
-				div
-					= result.info
-				
-				hr
-		
-			+buttonPrimary('/', 'Back')
+						span.state(style='float:right')
+							+faButtonDefault('download', '/torrent/add?id=' + item._id + '&magnet=' + encodeURIComponent(result.magnetLink) + '&page=' + encodeURIComponent(result.torrentInfoUrl), '', 'Download')
+							
+					div
+						span.state
+							+fa('cube', result.size + ' MB', 'Size')
+						span.state
+							| &nbsp;
+							+fa('arrow-up', result.seeds + '', 'Seeders')
+						span.state
+							| &nbsp;
+							+fa('arrow-down', result.leechs + '', 'Leechers')
+						if result.verified
+							span.state
+								| &nbsp;
+								+fa('check', '', 'Verified')
+					
+					div
+						= result.info
+					
+					hr

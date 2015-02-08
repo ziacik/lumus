@@ -17,10 +17,14 @@ module.exports.searchFor = function(item) {
 		sorder : "desc"
 	}).run(function(errors, searchResults) {
 		if (errors && errors.length) {
-			deferred.reject(errors);
+			if (errors[0].message === 'Not a feed') {
+				deferred.resolve([]);
+			} else {
+				deferred.reject(errors);
+			}
 			return;
 		}
-		
+
 		deferred.resolve(searchResults.map(convertDataItemToResult));	
 	});
 	
@@ -48,7 +52,10 @@ var convertDataItemToResult = function(dataItem) {
 	result.title = dataItem.title;
 	result.magnetLink = dataItem['torrent:magneturi']['#'];
 	result.torrentInfoUrl = dataItem['link'];
-	result.size = parseInt(dataItem['torrent:contentlength']['#']) / 1048576;
+	result.size = parseInt(dataItem['torrent:contentlength']['#']) / 1048576 | 0;
+	result.seeds = parseInt(dataItem['torrent:seeds']['#']);
+	result.leechs = parseInt(dataItem['torrent:peers']['#']) - result.seeds;
+	result.verified = '1' === dataItem['torrent:verified']['#'];
 	result.getDescription = function() {
 		return getDescription(dataItem.link);
 	};
@@ -69,7 +76,6 @@ var getDescription = function(link) {
 
 		$ = cheerio.load(body);
 		var description = $('#desc').text();
-		console.log(">" + description + "<");
 		deferred.resolve(description);
 	});
 	

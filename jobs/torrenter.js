@@ -1,4 +1,6 @@
 var Transmission = require('transmission');
+var Q = require('q');
+
 var url = require('url');
 
 var path = require('path');
@@ -117,6 +119,7 @@ var getTransmission = function() {
 
 var add = function(item, magnetLink, torrentPageUrl) {
 	var transmission = getTransmission();
+	var deferred = Q.defer();
 	
 	/// Item already has a torrent, remove it first (with data too).
 	removeTorrent(item, true);
@@ -129,11 +132,10 @@ var add = function(item, magnetLink, torrentPageUrl) {
 			
 			if (reason !== item.stateInfo) {
 				item.stateInfo = reason;
-				item.save(function(err) {
-					if (err)
-						console.log(err);
-				});
+				item.save();
 			}
+			
+			deferred.reject(err);
 			
 			return; //TODO reschedule?
 		}
@@ -143,8 +145,9 @@ var add = function(item, magnetLink, torrentPageUrl) {
 		item.torrentHash = result.hashString;				
 		item.torrentInfoUrl = torrentPageUrl;
 
-		if (!item.torrentLinks)
+		if (!item.torrentLinks) {
 			item.torrentLinks = [];
+		}
 
 		item.torrentLinks.push(magnetLink);
 
@@ -155,11 +158,10 @@ var add = function(item, magnetLink, torrentPageUrl) {
 
 		item.planNextCheck(1); /// To cancel possible postpone.
 
-		item.save(function(err) {
-			if (err)
-				console.log(err);
-		});			
+		item.save().then(deferred.resolve, deferred.reject);			
 	});
+	
+	return deferred.promise;
 };
 
 

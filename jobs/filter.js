@@ -1,19 +1,22 @@
 var Q = require('q');
+var util = require('util');
 var config = require('../config');
 var Item = require('../models/item').Item;
 var ItemStates = require('../models/item').ItemStates;
 var ItemTypes = require('../models/item').ItemTypes;
 
-module.exports.first = function(item, results) {
-	var filterFunction;
-	
+var getFilterFunction = function(item) {
 	if (item.type === ItemTypes.movie) {
-		filterFunction = movieFilter;
+		return movieFilter;
 	} else if (item.type === ItemTypes.show) {
-		filterFunction = showFilter;
+		return showFilter;
 	} else if (item.type === ItemTypes.music) {
-		filterFunction = musicFilter;
-	}	
+		return musicFilter;
+	}
+};
+
+module.exports.first = function(item, results) {
+	var filterFunction = getFilterFunction(item);
 
 	var deferred = Q.defer();	
 	var resultIndex = 0;
@@ -40,6 +43,16 @@ module.exports.first = function(item, results) {
 	return deferred.promise;
 }
 
+module.exports.all = function(item, results) {
+	var filterFunction = getFilterFunction(item);
+	var promises = results.map(function(result) {
+		return Q.fcall(filterFunction, item, result);
+	});
+	return Q.all(promises).then(function(dummy) {
+		return Q(results);
+	});
+};
+
 var isUsedAlready = function(item, magnetLink) {
 	if (!item.torrentLinks) {
 		return false;
@@ -58,12 +71,13 @@ var movieFilter = function(item, result) {
 	console.log('Filtering ' + result.title);
 	
 	if (isUsedAlready(item, result.magnetLink)) {
-		console.log('Already used.');
-		return false;
+		result.info = 'Already used.';
+		util.debug(result.info);
 	}
 	
 	if (result.size > config.movieSizeLimit) {
-		console.log('Size exceeded.');
+		result.info = 'Size exceeded the limit.';
+		util.debug(result.info);
 		return false;
 	}
 	
@@ -75,7 +89,11 @@ var movieFilter = function(item, result) {
 				break;
 		}
 		
-		console.log('Has good keywords: ' + isGoodKeywords);
+		if (!isGoodKeywords) {
+			result.info = 'Missing required keywords in description.';
+			util.debug(result.info);
+		}
+		
 		return isGoodKeywords;
 	});
 };
@@ -84,12 +102,14 @@ var showFilter = function(item, result) {
 	console.log('Filtering ' + result.title);
 	
 	if (isUsedAlready(item, result.magnetLink)) {
-		console.log('Already used.');
+		result.info = 'Already used.';
+		util.debug(result.info);
 		return false;
 	}
 	
 	if (result.size > config.showSizeLimit) {
-		console.log('Size exceeded.');
+		result.info = 'Size exceeded the limit.';
+		util.debug(result.info);
 		return false;
 	}
 	
@@ -100,12 +120,13 @@ var musicFilter = function(item, result) {
 	console.log('Filtering ' + result.title);
 	
 	if (isUsedAlready(item, result.magnetLink)) {
-		console.log('Already used.');
-		return false;
+		result.info = 'Already used.';
+		util.debug(result.info);
 	}
 	
 	if (result.size > config.musicSizeLimit) {
-		console.log('Size exceeded.');
+		result.info = 'Size exceeded the limit.';
+		util.debug(result.info);
 		return false;
 	}
 	
