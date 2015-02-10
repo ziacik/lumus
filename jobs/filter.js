@@ -16,6 +16,10 @@ var getFilterFunction = function(item) {
 };
 
 module.exports.first = function(item, results) {
+	if (results.length === 0) {
+		return undefined;
+	}
+
 	var filterFunction = getFilterFunction(item);
 
 	var deferred = Q.defer();	
