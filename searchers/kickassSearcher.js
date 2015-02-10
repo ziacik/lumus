@@ -10,7 +10,9 @@ module.exports.name = 'KickAss Searcher';
 module.exports.searchFor = function(item) {
 	var deferred = Q.defer();
 	
-	var query = getSearchTerm(item) + ' category:' + getCategory(item);
+	/// node-kickass doesn't encode the query for uri
+	var searchTerm = encodeURIComponent(getSearchTerm(item));
+	var query = searchTerm + ' category:' + getCategory(item);
 	
 	new Kickass().setQuery(query).setSort({
 		field : "seeders",
@@ -44,7 +46,7 @@ var getSearchTerm = function(item) {
 		term = item.name;
 	}
 	
-	return term.replace(/:/g, ' ').replace(/-/g, ' ');
+	return term.replace(/-/g, '"-"');
 };
 
 var convertDataItemToResult = function(dataItem) {

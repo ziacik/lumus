@@ -10,7 +10,10 @@ exports.list = function(req, res){
 		} else if (!item) {
 			res.send(404);
 		} else {
-			if (req.query.what) {
+			if (req.query.reset) {
+				delete item.searchTerm;
+				item.save();
+			} else if (req.query.what) {
 				item.searchTerm = req.query.what;
 				item.save();
 			}

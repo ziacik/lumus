@@ -12,8 +12,9 @@ block content
 			form(action='/torrent', method='GET')
 				+inputHidden('id', item._id) 
 				+input('text', 'what', 'Search Term', searchTerm)
-				button#search.btn(type='submit')
-					+fa('search', 'Search')
+				+faButtonSubmit('search', 'Search')
+				button#reset.btn(type='submit', name='reset', value='1', style='margin-left:1em')
+					+fa('undo', 'Reset')
 		
 			hr
 			
@@ -45,3 +46,5 @@ block content
 						= result.info
 					
 					hr
+			hr
+			+buttonHome()

@@ -32,6 +32,9 @@ mixin faButtonSubmit(faType, text, title)
 mixin buttonSubmit(text, title)
 	button.btn.btn-warning(type='submit', title=title)= text	
 
+mixin buttonHome()
+	a.btn.btn-primary(href='/', title='Home')= 'Home'
+
 mixin inputHidden(id, value)
 	input(type='hidden', name=id, id=id, value=value)
 
