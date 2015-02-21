@@ -4,37 +4,38 @@ var config = require('../config');
 var fs = require('fs');
 var path = require('path');
 var mkdirp = require('mkdirp');
-var tvdb = new require("node-tvdb")("6E61D6699D0B1CB0");
-
-var Item = require('../models/item').Item;
+var tvdb = new (require("node-tvdb"))("6E61D6699D0B1CB0");
 var ItemTypes = require('../models/item').ItemTypes;
 var ItemStates = require('../models/item').ItemStates;
-
-//TODO: moje lokalne transmission rpc vracia pri duplicate torrente aj id, malina nie
 
 function doRename(item, destinationDir) {
 	var rmdir = Q.denodeify(require('rimraf'));
 	var mkdir = Q.denodeify(require('mkdirp'));
-	var exists = Q.denodeify(fs.exists);
 	var rename = Q.denodeify(fs.rename);
-	
+		
 	var promise = 
 		mkdir(destinationDir)
 		.then(function() {
-			return rmdir(destinationDir);
-		}).then(function() {
-			return rename(item.downloadDir, destinationDir);
+			return rename(item.downloadDir, destinationDir).fail(function(error) {
+				if (error.code === 'ENOTEMPTY') {
+					return rmdir(destinationDir).then(function() {
+						return rename(item.downloadDir, destinationDir);
+					});
+				} else {
+					throw error;
+				}
+			});
 		}).then(function() {
 			item.renamedDir = destinationDir;
 			item.state = ItemStates.renamed;
 			return item.save();		
 		});
-	
+			
 	return promise;
 }
 
 function rename(item) {
-	console.log("Renaming " + item.name);		
+	util.log("Renaming " + item.name);		
 	
 	var itemName = item.name;
 	var promise;
@@ -63,7 +64,7 @@ function renameTo(item, itemName) {
 }
 
 function getShowNameAndRename(item) {
-	return Q.denodeify(tvdb.getSeriesByRemoteId)(item.externalId).then(function(response) {
+	return Q.nbind(tvdb.getSeriesByRemoteId, tvdb)(item.externalId).then(function(response) {
 		var itemName = item.name;
 	
 		if (response.SeriesName) {
