@@ -1,4 +1,5 @@
 var Q = require('q');
+var util = require('util');
 
 module.exports.ServiceDispatcher = function() {
 	this.services = [];
@@ -15,7 +16,7 @@ module.exports.ServiceDispatcher.prototype.forAll = function(command) {
 	return Q.all(promises);
 };
 
-module.exports.ServiceDispatcher.prototype.untilSuccess = function(command) {
+module.exports.ServiceDispatcher.prototype.untilSuccess = function(command, isSuccess) {
 	var deferred = Q.defer();
 	var serviceIndex = 0;
 	var services = this.services;
@@ -28,10 +29,10 @@ module.exports.ServiceDispatcher.prototype.untilSuccess = function(command) {
 		var service = services[serviceIndex];
 		serviceIndex++;
 
-		console.log('Trying service ' + service.name);		
+		util.log('Trying service ' + service.name);		
 		
 		Q.when(command(service), function(result) {
-			if (result) {
+			if (result && (!isSuccess || isSuccess(result))) {
 				deferred.resolve(result);
 			} else if (serviceIndex < services.length) {
 				loop();

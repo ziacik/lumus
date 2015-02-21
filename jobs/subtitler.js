@@ -1,53 +1,76 @@
-var Item = require('../models/item').Item;
-var ItemTypes = require('../models/item').ItemTypes;
+var util = require('util');
+var Q = require('q');
+var fs = require('fs');
+var path = require('path');
 var ItemStates = require('../models/item').ItemStates;
 
-var services = [];
+module.exports = new (require('./serviceDispatcher').ServiceDispatcher)();
 
-function use(service) {
-	services.push(service);
-}
-
-function setSubtitlerFail(item) {
+function setSubtitlerFail(item, why) {
 	item.state = ItemStates.subtitlerFailed;
+	item.stateInfo = why;
 	item.subtitlerFailCount = 1 + (item.subtitlerFailCount || 0);
-	item.planNextCheck(3600*24); //TODO hardcoded
-	item.save(function(err) {}); //TODO
+	item.rescheduleNextDay();
 }
 
 function setSubtitlerSuccess(item) {
 	item.state = ItemStates.subtitled;
-	//TODO should trigger next step immediately
-	item.save(function(err) {}); //TODO
+	delete item.stateInfo;
+	item.save();
 }
 
-function findSubtitles(item) {
-	findSubtitlesWithService(item, 0);
-}
+function getPathsForSubtitling(item) {
+	var readdir = Q.denodeify(fs.readdir);
+	var extPattern = /[.](avi|mkv|mp4|mpeg4|mpg4|mpg|mpeg|divx|xvid)$/i;
 
-function findSubtitlesWithService(item, serviceIndex, err) {
-	if (serviceIndex >= services.length) {
-		if (err)
-			setSubtitlerFail(item);
-		else
-			setSubtitlerSuccess(item);
-
-		console.log("Done looking for subtitles for item " + item.name + " (err: " + err + ")");
-
-		return; 
-	}
-	
-	console.log("Looking for subtitles for item " + item.name + " with service " + serviceIndex);	
-	
-	services[serviceIndex].findSubtitles(item, function(err) {
-		if (err) {
-			findSubtitlesWithService(item, serviceIndex + 1, err);
-			return;
-		}
+	return readdir(item.renamedDir).then(function(files) {
+		var relevantFiles = files.filter(function(file) {
+			return extPattern.test(file);
+		});
 		
-		setSubtitlerSuccess(item);		
+		var relevantPaths = relevantFiles.map(function(file) {
+			return path.join(item.renamedDir, file);
+		});
+
+		return relevantPaths;	
 	});
 }
 
-module.exports.use = use;
-module.exports.findSubtitles = findSubtitles;
+module.exports.findSubtitles =  function(item) {
+	var self = this;
+	var hadSomeSuccess = false;
+
+	getPathsForSubtitling(item)
+	.then(function(paths) {
+		if (paths.length == 0) {
+			return false;
+		}
+		
+		return self.untilSuccess(function(service) {
+			return service.findSubtitles(item, paths);
+		}, function isSuccess(results) {
+			var isSuccess = true;
+			
+			for (var i = results.length - 1; i >= 0; i--) {
+				if (results[i].state === 'fulfilled' && results[i].value) {
+					paths.splice(i, 1);
+					hadSomeSuccess = true;
+				} else {
+					isSuccess = false;
+				}
+			}
+			
+			return isSuccess;
+		});
+	}).then(function(overallResult) {
+		if (overallResult) {
+			setSubtitlerSuccess(item);
+		} else {
+			setSubtitlerFail(item, hadSomeSuccess ? 'Only some of the subtitles found' : 'No subtitles found');
+		}
+	}).catch(function(error) {
+		util.error(error);
+		item.stateInfo = error.message || error;
+		item.rescheduleNextHour();
+	});
+};
