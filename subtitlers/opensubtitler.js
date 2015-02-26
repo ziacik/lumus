@@ -5,6 +5,7 @@ var config = require('../config');
 var openSubtitles = require('opensubtitles-client');
 var Item = require('../models/item').Item;
 var ItemStates = require('../models/item').ItemStates;
+var ItemTypes = require('../models/item').ItemTypes;
 
 module.exports.name = 'OpenSubtitles.org';
 
@@ -25,8 +26,15 @@ module.exports.findSubtitles = function(item, filePaths) {
 
 function findSubtitlesOne(token, item, filePath) {
 	var deferred = Q.defer();
+	var searchFunction;
 	
-	openSubtitles.api.searchForFile(token, config.subtitleLanguages, filePath)
+	if (item.type === ItemTypes.movie) {
+		searchFunction = openSubtitles.api.searchForFileAndTag.bind(openSubtitles.api);
+	} else {
+		searchFunction = openSubtitles.api.searchForFile.bind(openSubtitles.api);
+	}	
+	
+	searchFunction(token, config.subtitleLanguages, filePath)
 	.then(function(results) {
 		if (results && results.length) {
 			openSubtitles.downloader.download(results, 1, filePath, function() {
