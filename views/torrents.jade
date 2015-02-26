@@ -40,7 +40,11 @@ block content
 						if result.verified
 							span.state
 								| &nbsp;
-								+fa('check', '', 'Verified')
+								+fa('check', 'Verified', 'Verified')
+						if result.hasSubtitles
+							span.state
+								| &nbsp;
+								+fa('check', 'Subtitles', 'Subtitles')
 					
 					div
 						= result.info

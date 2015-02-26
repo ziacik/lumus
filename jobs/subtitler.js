@@ -36,12 +36,21 @@ function getPathsForSubtitling(item) {
 	});
 }
 
+module.exports.hasSubtitlesForName = function(name) {
+	return this.untilSuccess(function(service) {
+		return service.hasSubtitlesForName(name);
+	});
+};
+
 module.exports.findSubtitles =  function(item) {
 	var self = this;
-	var hadSomeSuccess = false;
+	var completeness = 0;
+	var pathCount = 0;
 
 	getPathsForSubtitling(item)
 	.then(function(paths) {
+		pathCount = paths.length;
+	
 		if (paths.length == 0) {
 			return false;
 		}
@@ -52,9 +61,9 @@ module.exports.findSubtitles =  function(item) {
 			var isSuccess = true;
 			
 			for (var i = results.length - 1; i >= 0; i--) {
-				if (results[i].state === 'fulfilled' && results[i].value) {
+				if (results[i]) {
 					paths.splice(i, 1);
-					hadSomeSuccess = true;
+					completeness++;
 				} else {
 					isSuccess = false;
 				}
@@ -66,7 +75,7 @@ module.exports.findSubtitles =  function(item) {
 		if (overallResult) {
 			setSubtitlerSuccess(item);
 		} else {
-			setSubtitlerFail(item, hadSomeSuccess ? 'Only some of the subtitles found' : 'No subtitles found');
+			setSubtitlerFail(item, completeness + " of " + pathCount + ' subtitles found');
 		}
 	}).catch(function(error) {
 		util.error(error);

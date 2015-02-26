@@ -4,6 +4,7 @@ var ItemStates = require('../models/item').ItemStates;
 var torrenter = require('./torrenter');
 var serviceDispatcher = require('./serviceDispatcher');
 var filter = require('./filter');
+var decorator = require('./decorator');
 
 module.exports = new serviceDispatcher.ServiceDispatcher();
 
@@ -36,6 +37,8 @@ module.exports.findAll = function(item) {
 	return this.forAll(function(service) {
 		return service.searchFor(item).then(function(results) {
 			return filter.all(item, results);
+		}).then(function(results) {
+			return decorator.all(item, results);
 		}).then(function(results) {
 			return { serviceName : service.name, results : results };
 		});

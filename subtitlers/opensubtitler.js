@@ -9,33 +9,25 @@ var ItemStates = require('../models/item').ItemStates;
 module.exports.name = 'OpenSubtitles.org';
 
 module.exports.findSubtitles = function(item, filePaths) {
-	var deferred = Q.defer();
-	
-	openSubtitles.api.login()
-	.done(function(token) {
+	return openSubtitles.api.login()
+	.then(function(token) {
 
 		var promises = filePaths.map(function(filePath) {
 			return Q.fcall(findSubtitlesOne, token, item, filePath);
 		});
 
-		Q.allSettled(promises).then(function(results) {
-			openSubtitles.api.logout(token);
-			deferred.resolve(results);
-		}).catch(function(error) {
-			deferred.reject(error);
+		return Q.all(promises).then(function(results) {
+			openSubtitles.api.logout(token).done();
+			return results;
 		});
-	}).fail(function(error) {
-		deferred.reject(error);
 	});
-	
-	return deferred.promise;
 };
 
 function findSubtitlesOne(token, item, filePath) {
 	var deferred = Q.defer();
-
+	
 	openSubtitles.api.searchForFile(token, config.subtitleLanguages, filePath)
-	.done(function(results) {
+	.then(function(results) {
 		if (results && results.length) {
 			openSubtitles.downloader.download(results, 1, filePath, function() {
 				deferred.resolve(true);
@@ -43,9 +35,22 @@ function findSubtitlesOne(token, item, filePath) {
 		} else {
 			deferred.resolve(false);
 		}
-	}).fail(function(error) {
+	}).catch(function(error) {
 		deferred.reject(error);
 	});
 	
 	return deferred.promise;
 }
+
+module.exports.hasSubtitlesForName = function(name) {
+	var token;
+	
+	return openSubtitles.api.login()
+	.then(function(tok) {
+		token = tok;
+		return openSubtitles.api.searchAny(token, config.subtitleLanguages, { tag : name });
+	}).then(function(results) {
+		openSubtitles.api.logout(token).done();
+		return results && results.length;
+	});
+};

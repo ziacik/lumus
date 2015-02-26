@@ -50,7 +50,7 @@ var getSearchTerm = function(item) {
 };
 
 var convertDataItemToResult = function(dataItem) {
-	var result = {};
+	var result = {};	
 	result.title = dataItem.title;
 	result.magnetLink = dataItem['torrent:magneturi']['#'];
 	result.torrentInfoUrl = dataItem['link'];
@@ -58,6 +58,7 @@ var convertDataItemToResult = function(dataItem) {
 	result.seeds = parseInt(dataItem['torrent:seeds']['#']);
 	result.leechs = parseInt(dataItem['torrent:peers']['#']) - result.seeds;
 	result.verified = '1' === dataItem['torrent:verified']['#'];
+	result.releaseName = dataItem['torrent:filename']['#'].slice(0, -8);
 	result.getDescription = function() {
 		return getDescription(dataItem.link);
 	};
