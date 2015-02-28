@@ -1,52 +1,44 @@
-var torrenter = require('../jobs/torrenter');
+var Q = require('q');
 var request = require('request');
 var cheerio = require('cheerio');
-var config = require('../config');
-var notifier = require('./notifier');
 
-var Item = require('../models/item').Item;
+var tpb = require('thepiratebay');
 var ItemTypes = require('../models/item').ItemTypes;
-var ItemStates = require('../models/item').ItemStates;
 
-var TpbSearcher = function(item) {
-	this.item = item;
-	this.torrentInfo = {};	
+module.exports.name = 'The PirateBay Searcher';
+
+module.exports.searchFor = function(item) {
+	var searchTerm = getSearchTerm(item);
+	
+	return tpb.search(searchTerm, {
+		category : getCategory(item),
+		orderBy : '7'
+	}).then(function(searchResults) {
+		return searchResults.map(convertDataItemToResult);	
+	});
 };
 
-TpbSearcher.prototype.constructUrl = function() { };
+var getSearchTerm = function(item) {
+	var term;
 
-TpbSearcher.prototype.search = function() {
-	console.log('Searching for item ' + this.item.name);
+	if (item.searchTerm) {
+		term = item.searchTerm;
+	} else  if (item.type === ItemTypes.show) {
+		term = item.name + '"season ' + item.no + '" complete';
+	} else if (item.year) {
+		term = item.name + " " + item.year;
+	} else {
+		term = item.name;
+	}
 	
-	this.searchUrl = this.constructUrl(this.item);
-	
-	request(this.searchUrl, function(err, resp, body) {
-		if (err) {
-			this.setError(err);
-			return;
-		}
-
-		this.$ = cheerio.load(body);
-		this.$resultElements = this.getResultElements();
-		this.index = 0;
-		
-		this.nextResult();				
-	}.bind(this));
+	return term.replace(/-/g, '"-"');
 };
 
-TpbSearcher.prototype.getResultElements = function() {
-	return this.$('.detName');
-};
-	
-TpbSearcher.prototype.getSize = function() {
-	var $descElement = this.$resultElement.siblings('font');
-	var desc = $descElement.text();
-		
-	var sizeMatches = desc.match(/([0-9]+[.]?[0-9]*)[^0-9]+(KiB|MiB|GiB)/); // todo rewise
+var convertSize = function(sizeStr) {
+	var sizeMatches = sizeStr.match(/([0-9]+[.]?[0-9]*)[^0-9]+(KiB|MiB|GiB)/); // todo rewise
 	
 	if (sizeMatches == null || sizeMatches.length < 3) {		
-	 	console.log('Unable to determine size.'); // TODO better handling
-		return 1000000; // TODO bulgarian constant
+	 	throw 'Unable to determine size from "' + sizeStr + '".';
 	}		 		
 	
 	var size = parseFloat(sizeMatches[1]);
@@ -59,50 +51,47 @@ TpbSearcher.prototype.getSize = function() {
 	return size;
 };
 
-TpbSearcher.prototype.getName = function() {
-	return this.$resultElement.children('.detLink').text();
-};
-
-TpbSearcher.prototype.getPeers = function() {
-	var $td = this.$resultElement.parent();
-	var $seedersTd = $td.next();
-	var $leechersTd = $seedersTd.next();
-	
-	return {
-		seeds : $seedersTd.text() << 0,
-		leechs : $leechersTd.text() << 0
+var convertDataItemToResult = function(dataItem) {
+	var result = {};	
+	result.title = dataItem.name;
+	result.magnetLink = dataItem.magnetLink;
+	result.torrentInfoUrl = dataItem.link;
+	result.size = convertSize(dataItem.size);
+	result.seeds = dataItem.seeders;
+	result.leechs = dataItem.leechers;
+	result.releaseName = dataItem.name; //TODO not right, but how do i get it?
+	result.getDescription = function() {
+		return getDescription(dataItem.link);
 	};
+	return result;
 };
 
-TpbSearcher.prototype.noNextResult = function() {
-	return this.index >= this.$resultElements.length;
-};
-
-TpbSearcher.prototype.setNextResult = function() {
-	if (this.noNextResult()) {
-		var lastCheckDateTime = new Date();
-		var lastCheckDateTimeString = lastCheckDateTime.toLocaleDateString() + ' ' + lastCheckDateTime.toLocaleTimeString();
+var getDescription = function(link) {
+	var deferred = Q.defer();
 	
-		if (this.index === 0)
-			this.setFail("No result. Last checked at " + lastCheckDateTimeString + ".");
-		else
-			this.setFail("No result matched filters. Last checked at " + lastCheckDateTimeString + ".");
-			
-		this.$resultElement = null;
-	} else {	
-		this.$resultElement = this.$(this.$resultElements[this.index]);
-		this.index++;
+	request({
+		method: 'GET',
+    	uri: link,
+    	gzip: true
+    }, function(error, response, body) {
+		if (error) {
+			return deferred.reject(error);
+		}
+
+		$ = cheerio.load(body);
+		var description = $('.nfo').text();
+		deferred.resolve(description);
+	});
+	
+	return deferred.promise;
+}
+
+var getCategory = function(item) {
+	if (item.type === ItemTypes.movie) {
+		return "207";
+	} else if (item.type === ItemTypes.show) {
+		return "205";
+	} else if (item.type === ItemTypes.music) {
+		return "100";
 	}
-	
-	return this.$resultElement;
 };
-
-TpbSearcher.prototype.getMagnetLink = function() {
-	return this.$resultElement.next().attr('href');
-};
-
-TpbSearcher.prototype.getTorrentPageUrl = function() {
-	return 'https://thepiratebay.se' + this.$resultElement.children('.detLink').attr('href'); //TODO
-};
-
-module.exports.TpbSearcher = TpbSearcher;

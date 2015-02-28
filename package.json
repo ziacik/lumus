@@ -31,7 +31,8 @@
     "node-isohunt": "^0.1.2",
     "node-kickass": "^0.2.0",
     "q": "~1.1.2",
-    "opensubtitles-client": "git+https://github.com/ziacik/node-opensubtitles-client.git"
+    "opensubtitles-client": "git+https://github.com/ziacik/node-opensubtitles-client.git",
+    "thepiratebay": "~0.2.0"
   },
   "repository": {
     "type": "git",

@@ -1,7 +1,6 @@
 var config = require('../config');
 var torrenter = require('./torrenter');
 var searcher = require('./searcher');
-var kickassSearcher = require('../searchers/kickassSearcher');
 var renamer = require('./renamer');
 var subtitler = require('./subtitler');
 var notifier = require('./notifier');
@@ -14,7 +13,8 @@ var ItemTypes = require('../models/item').ItemTypes;
 
 notifier.use(xbmc);
 subtitler.use(opensubtitler);
-searcher.use(kickassSearcher);
+searcher.use(require('../searchers/tpbSearcher'));
+searcher.use(require('../searchers/kickassSearcher'));
 
 function isMusic(item) {
 	return item.type === ItemTypes.music;
