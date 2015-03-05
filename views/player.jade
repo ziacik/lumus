@@ -1,0 +1,25 @@
+extends layout
+
+block content
+	.row
+		.col-sm-6.col-sm-offset-3
+			h1
+				+fa('play', title)
+		
+			if mediaPlayerSuccess
+				| The stream was sent to media player successfully.
+				| Please note it can take some time to load enough data to play.
+			else
+				| The stream could not be sent to the media player.
+				
+			if contents
+				ul
+					each content in contents
+						if content.found
+							li= content.title
+						else
+							li= content.title
+								| (Stream not found)
+		
+			hr
+			+buttonPrimary('/', 'Back')

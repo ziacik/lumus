@@ -58,12 +58,16 @@ function listAlbums(artistId, artistName, results) {
 }
 
 function getAlbumItem(artistId, artistName, albumInfo) {
+	console.log(albumInfo);
 	var item = 
 		"<p><span class='fa fa-music'></span> " +
 		albumInfo.title + " (" + albumInfo["primary-type"] + ", " + albumInfo.Year + ")" +
 		//" <a class='btn btn-default btn-xs' href='/music/add?artistId=" + artistId + "&album=" + encodeURIComponent(albumInfo.title) + "'</a>" +
 		" <a class='btn btn-default btn-xs' href='/add?type=music&name=" + encodeURIComponent(artistName) + "%20" + encodeURIComponent(albumInfo.title) + "'</a>" +
 			"<span class='glyphicon glyphicon-plus'></span>" +			
+		"</a>" +
+		" <a class='btn btn-default btn-xs' href='/play?type=music&artistId=" + artistId + "&albumId=" + albumInfo.id + "'</a>" +
+			"<span class='glyphicon glyphicon-play'></span>" +			
 		"</a></p>";
 	return item;
 }

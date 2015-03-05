@@ -32,7 +32,8 @@
     "node-kickass": "^0.2.0",
     "q": "~1.1.2",
     "opensubtitles-client": "git+https://github.com/ziacik/node-opensubtitles-client.git",
-    "thepiratebay": "~0.2.0"
+    "thepiratebay": "~0.2.0",
+    "grooveshark-streaming": "0.0.8"
   },
   "repository": {
     "type": "git",

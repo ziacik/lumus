@@ -9,6 +9,7 @@ var search = require('./routes/search');
 var music = require('./routes/music');
 var show = require('./routes/show');
 var list = require('./routes/list');
+var player = require('./routes/player');
 var item = require('./routes/item');
 var torrent = require('./routes/torrent');
 var config = require('./routes/config');
@@ -42,6 +43,7 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/search', search.runSearch);
 app.get('/add', list.add);
+app.get('/play', player.play);
 app.get('/list', list.list);
 app.get('/changeState', item.changeState);
 app.get('/remove', item.remove);
