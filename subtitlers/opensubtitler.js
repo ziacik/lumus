@@ -1,11 +1,15 @@
 var Q = require('q');
 var util = require('util');
 var config = require('../config');
+var labels = require('../labels');
 
 var openSubtitles = require('opensubtitles-client');
 var Item = require('../models/item').Item;
 var ItemStates = require('../models/item').ItemStates;
 var ItemTypes = require('../models/item').ItemTypes;
+
+config.add('opensubtitler', { type : 'literal', store : {'subtitler:opensubtitler:use' : true}});
+labels.add({ opensubtitler : 'OpenSubtitles.org' });
 
 module.exports.name = 'OpenSubtitles.org';
 
@@ -34,7 +38,7 @@ function findSubtitlesOne(token, item, filePath) {
 		searchFunction = openSubtitles.api.searchForFile.bind(openSubtitles.api);
 	}	
 	
-	searchFunction(token, config.subtitleLanguages, filePath)
+	searchFunction(token, config.get().subtitler.languages, filePath)
 	.then(function(results) {
 		if (results && results.length) {
 			openSubtitles.downloader.download(results, 1, filePath, function() {
@@ -56,7 +60,7 @@ module.exports.hasSubtitlesForName = function(name) {
 	return openSubtitles.api.login()
 	.then(function(tok) {
 		token = tok;
-		return openSubtitles.api.searchAny(token, config.subtitleLanguages, { tag : name });
+		return openSubtitles.api.searchAny(token, config.get().subtitler.languages, { tag : name });
 	}).then(function(results) {
 		openSubtitles.api.logout(token).done();
 		return results && results.length;

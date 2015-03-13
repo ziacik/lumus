@@ -1,8 +1,16 @@
+var config = require('../config');
+var labels = require('../labels');
 var util = require('util');
 var Q = require('q');
 var fs = require('fs');
 var path = require('path');
 var ItemStates = require('../models/item').ItemStates;
+
+config.add('subtitler', { type : 'literal', store : {'subtitler:languages' : 'eng'}});
+labels.add({
+	subtitler : '<span class="fa fa-file-text" /> Subtitling',
+	languages : 'Subtitle Languages <small><em>Use comma to separate multiple languages</em></small>'
+});
 
 module.exports = new (require('./serviceDispatcher').ServiceDispatcher)();
 

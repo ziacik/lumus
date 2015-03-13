@@ -7,7 +7,7 @@ var ItemTypeIcons = require('../models/item').ItemTypeIcons;
  */
 
 exports.index = function(req, res){
-	if (config.version === 0) {
+	if (config.get().version === 0) {
 		res.redirect('/config');
 	} else {
 		Item.getAll(function(err, items) {

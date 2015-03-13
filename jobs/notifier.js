@@ -1,4 +1,7 @@
 var ItemStates = require('../models/item').ItemStates;
+var labels = require('../labels');
+
+labels.add({ notifier : '<span class="fa fa-bell" /> Notification & Library' });
 
 var services = [];
 

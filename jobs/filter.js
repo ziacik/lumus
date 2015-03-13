@@ -79,16 +79,26 @@ var movieFilter = function(item, result) {
 		util.debug(result.info);
 	}
 	
-	if (result.size > config.movieSizeLimit) {
+	if (result.size > config.get().movieSettings.maxSize) {
 		result.info = 'Size exceeded the limit.';
 		util.debug(result.info);
 		return false;
 	}
 	
+	var digitalSoundRequirement = config.get().movieSettings.requireDigitalSound;
+	
+	if (digitalSoundRequirement !== config.Requirement.required) {
+		return true;
+	}
+	
+	return digitalAudioFilter(result);
+};
+
+var digitalAudioFilter = function(result) {
 	return Q.when(result.getDescription()).then(function(description) {
-		var isGoodKeywords = true;
-		for (var i = 0; i < config.movieRequiredKeywords.length; i++) {
-			isGoodKeywords = description.indexOf(config.movieRequiredKeywords[i]) >= 0;
+		var digitalAudioKeywords = ['DTS', 'AC3', 'AC-3'];
+		for (var i = 0; i < digitalAudioKeywords.length; i++) {
+			isGoodKeywords = description.indexOf(digitalAudioKeywords[i]) >= 0;
 			if (isGoodKeywords)
 				break;
 		}
@@ -111,13 +121,19 @@ var showFilter = function(item, result) {
 		return false;
 	}
 	
-	if (result.size > config.showSizeLimit) {
+	if (result.size > config.get().showSettings.maxSize) {
 		result.info = 'Size exceeded the limit.';
 		util.debug(result.info);
 		return false;
 	}
 	
-	return true;
+	var digitalSoundRequirement = config.get().showSettings.requireDigitalSound;
+	
+	if (digitalSoundRequirement !== config.Requirement.required) {
+		return true;
+	}
+	
+	return digitalAudioFilter(result);
 };
 
 var musicFilter = function(item, result) {
@@ -128,7 +144,7 @@ var musicFilter = function(item, result) {
 		util.debug(result.info);
 	}
 	
-	if (result.size > config.musicSizeLimit) {
+	if (result.size > config.get().musicSettings.maxSize) {
 		result.info = 'Size exceeded the limit.';
 		util.debug(result.info);
 		return false;

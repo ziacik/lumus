@@ -1,42 +1,66 @@
 extends layout
 include includes/item
 
+mixin renderObject(property, value, path)
+	- var pathJoined = path ? path.join(':') : property
+	div(id=pathJoined + 'Div')
+		each innerValue, innerProperty in value
+			if typeof innerValue != 'object'
+				+render(innerProperty, innerValue, path ? path.concat([ innerProperty ]) : [ innerProperty ])
+	
+		each innerValue, innerProperty in value
+			if typeof innerValue == 'object'
+				+render(innerProperty, innerValue, path ? path.concat([ innerProperty ]) : [ innerProperty ])
+	
+
+mixin render(property, value, path)
+	- var pathJoined = path ? path.join(':') : property
+	- var jqueryPathJoined = path ? path.join('\\\\:') : property
+	- var label = labels.get(pathJoined, property)
+	if property == 'type' || property == 'version' || property == 'use'
+	else if property.indexOf('require') == 0
+		.form-group
+			label!= label
+			select.form-control(id=pathJoined, name=pathJoined)
+				option(value = 'required', selected = value === 'required')= 'Required'
+				option(value = 'preferred', selected = value === 'preferred')= 'Preferred'
+				option(value = 'unwanted', selected = value === 'unwanted')= 'Unwanted'
+				option(value = 'optional', selected = value === 'optional')= 'Optional'
+		
+	else if typeof value == 'object'
+		if path.length == 1
+			hr
+			h2(id=pathJoined + 'Head')!= label
+		else if path.length == 2
+			h3(id=pathJoined + 'Head')!= label
+		else if path.length == 3
+			h4(id=pathJoined + 'Head')!= label
+			
+		+renderObject(property, value, path)
+		
+		if value.use != undefined
+			script(type='text/javascript').
+				$('##{jqueryPathJoined}Head').html('<div class="checkbox"><label><input type="checkbox" id="#{pathJoined}:use" name="#{pathJoined}:use" #{value.use ? "checked" : ""}></input>!{label}</label></div>');
+				$('##{jqueryPathJoined}\\:use').change(function() {
+					$('##{jqueryPathJoined}Div').toggle(this.checked);
+				}).change();
+				
+				
+	else if typeof value == 'boolean'
+		+check(pathJoined, label, value)
+	else if typeof value == 'number'
+		+input('number', pathJoined, label, value)
+	else
+		+input('text', pathJoined, label, value)
+
 block content
 	.col-sm-6.col-sm-offset-3
 		h1
 			+fa('wrench', 'Settings')
 
-		//-if message.length > 0
-		//-	.alert.alert-danger= message
-
 		form(action='/config', method='POST')
-			+input("text", "xbmcHost", "XBMC Host", config.xbmcHost)
+			+renderObject('config', config)
 			
-			+input("url", "transmissionUrl", "Transmission Url", config.transmissionUrl)
-			
-			+input("url", "movieSearchUrl", "Movie Search Url", config.movieSearchUrl)
-			+input("url", "showSearchUrl", "Show Search Url", config.showSearchUrl)
-			+input("url", "musicSearchUrl", "Music Search Url", config.musicSearchUrl)
-			
-			+input("text", "movieTargetDir", "Movie Target Dir", config.movieTargetDir)
-			+input("text", "showTargetDir", "Show Target Dir", config.showTargetDir)
-			+input("text", "musicTargetDir", "Music Target Dir", config.musicTargetDir)
-			
-			+input("number", "movieSizeLimit", "Movie Size Limit (MB)", config.movieSizeLimit)
-			+input("number", "showSizeLimit", "Show Size Limit (MB)", config.showSizeLimit)
-			+input("number", "musicSizeLimit", "Music Size Limit (MB)", config.musicSizeLimit)
-			
-			+input("number", "defaultInterval", "Default Interval (s)", config.defaultInterval)
-			
-			+input("text", "movieRequiredKeywords", "Movie Required Keywords (comma delimited, at least one to be found)", config.movieRequiredKeywords)
-
-			+input("text", "subtitleLanguages", "Subtitle Languages", config.subtitleLanguages)
-
-			+check("removeTorrent", "Remove Torrent When Finished", config.removeTorrent)
-
-			+input("number", "removeFinishedDays", "Remove Finished Item After ? Days", config.removeFinishedDays)
-			+input("number", "subtitleRetryDays", "Retry Finding Subtitles Max ? Days", config.subtitleRetryDays)
-						
 			+faButtonSubmit('save', 'Save')
 			if config.version != 0
 				|  

@@ -1,11 +1,17 @@
 var Q = require('q');
 var request = require('request');
 var cheerio = require('cheerio');
+var config = require('../config');
+var labels = require('../labels');
 
 var tpb = require('thepiratebay');
 var ItemTypes = require('../models/item').ItemTypes;
 
-module.exports.name = 'The PirateBay Searcher';
+module.exports.name = 'The Pirate Bay';
+
+config.add('tpbSearcher', { type : 'literal', store : {'searcher:tpbSearcher:use' : true }});
+//TODO url
+labels.add({ tpbSearcher : module.exports.name });
 
 module.exports.searchFor = function(item) {
 	var searchTerm = getSearchTerm(item);

@@ -40,12 +40,12 @@ mixin inputHidden(id, value)
 
 mixin inputRequired(type, id, text, value)
 	.form-group
-		label= text
+		label!= text
 		input.form-control(type=type, name=id, id=id, required, value=value)
 
 mixin input(type, id, text, value)
 	.form-group
-		label= text
+		label!= text
 		input.form-control(type=type, name=id, id=id, value=value)
 
 mixin inputWithPlaceholder(type, id, text, value)
@@ -59,7 +59,7 @@ mixin check(id, text, value)
 				input(type='checkbox', name=id, id=id, checked='checked')
 			else
 				input(type='checkbox', name=id, id=id)
-			= text
+			!= text
 
 
 html

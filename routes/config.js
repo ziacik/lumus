@@ -1,47 +1,54 @@
 var config = require('../config');
+var labels = require('../labels');
 
 exports.form = function(req, res) {
 	res.render('config', {
-		config: config
-	});		
+		config : config.get(),
+		labels : labels
+	});
 };
 
-exports.save = function(req, res) {
-	config.xbmcHost = req.body.xbmcHost;
-	
-	config.transmissionUrl = req.body.transmissionUrl;
+var recursiveUpdate = function(req, configObject, propertyPrefix) {
+	if (propertyPrefix === undefined) {
+		propertyPrefix = '';
+	}
 
-	config.movieSearchUrl = req.body.movieSearchUrl;
-	config.showSearchUrl = req.body.showSearchUrl;
-	config.musicSearchUrl = req.body.musicSearchUrl;
-	
-	config.movieTargetDir = req.body.movieTargetDir;
-	config.showTargetDir = req.body.showTargetDir;
-	config.musicTargetDir = req.body.musicTargetDir;
-	
-	config.movieSizeLimit = parseInt(req.body.movieSizeLimit);
-	config.showSizeLimit = parseInt(req.body.showSizeLimit);
-	config.musicSizeLimit = parseInt(req.body.musicSizeLimit);
-	
-	config.defaultInterval = parseInt(req.body.defaultInterval);
-	
-	config.movieRequiredKeywords = req.body.movieRequiredKeywords.split(',');
-	
-	config.subtitleLanguages = req.body.subtitleLanguages;
-	
-	config.removeTorrent = req.body.removeTorrent;
-	
-	config.subtitleRetryDays = req.body.subtitleRetryDays;
-	config.removeFinishedDays = req.body.removeFinishedDays;
-	
-	var isFirstSave = config.version === 0;
-	
-	config.save(function(err) {
-		if (err)
-			res.redirect('/error'); //TODO
-		else if (isFirstSave)
+	for (var propertyName in configObject) {
+		if (configObject.hasOwnProperty(propertyName)) {
+			var type = typeof configObject[propertyName];
+			var fullPropertyName = propertyPrefix + propertyName;
+			var postedValue = req.body[fullPropertyName];
+			
+			if (type === 'boolean') {
+				config.set(fullPropertyName, postedValue === 'on');
+			} else if (type === 'number') {
+				if (postedValue) {
+					config.set(fullPropertyName, parseInt(postedValue));
+				} else {
+					config.clear(fullPropertyName);
+				}
+			} else if (type === 'object') {
+				recursiveUpdate(req, configObject[propertyName], fullPropertyName + ':');
+			} else {
+				config.set(fullPropertyName, postedValue);
+			}
+		}
+	}
+}
+
+exports.save = function(req, res) {
+	recursiveUpdate(req, config.get());
+
+	var isFirstSave = config.get().version === 0;
+
+	config.save().then(function() {
+		if (isFirstSave)
 			res.redirect('/');
 		else
 			res.redirect('/config?success');
+	}).catch(function(error) {
+		res.render('error', {
+			error: error
+		});
 	});
 };

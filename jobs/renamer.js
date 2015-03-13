@@ -55,7 +55,7 @@ function rename(item) {
 }
 
 function renameTo(item, itemName) {
-	var destinationDir = path.join(config[item.type + 'TargetDir'], itemName);
+	var destinationDir = path.join(config.get()[item.type + 'Settings'].destinationDir, itemName);
 
 	if (item.type === ItemTypes.show)
 		destinationDir = path.join(destinationDir, 'Season ' + item.no);

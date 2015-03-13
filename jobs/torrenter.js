@@ -5,10 +5,19 @@ var url = require('url');
 
 var path = require('path');
 var config = require('../config');
+var labels = require('../labels');
 var notifier = require('./notifier');
 
 var Item = require('../models/item').Item;
 var ItemStates = require('../models/item').ItemStates;
+
+config.add('transmission', { type : 'literal', store : { 'downloader:transmission:url' : 'http://localhost:9091', 'downloader:removeTorrent' : true }});
+labels.add({
+	downloader : '<span class="fa fa-download" /> Downloaders',
+	transmission : 'Transmission',
+	removeTorrent : 'Remove Torrent <em><small>from downloader when finished</small></em>',
+	'downloader:transmission:url' : 'Transmission Url'
+});
 
 function checkFinished(item) {
 	var transmission = getTransmission();
@@ -42,7 +51,7 @@ function checkFinished(item) {
 		if (torrent.isFinished) {
 			finishItem(item, torrent);
 			
-			if (config.removeTorrent)
+			if (config.get().downloader.removeTorrent)
 				removeTorrent(item);
 		}
 										
@@ -100,10 +109,10 @@ var _transmissionUrl;
 
 
 var getTransmission = function() {
-	if (_transmission && config.transmissionUrl === _transmissionUrl)
+	if (_transmission && config.get().downloader.transmission.url === _transmissionUrl)
 		return _transmission;
 		
-	var transmissionUrl = config.transmissionUrl;
+	var transmissionUrl = config.get().downloader.transmission.url;
 
 	var parsedUrl = url.parse(transmissionUrl, false, true);	
 	var transmission = new Transmission({

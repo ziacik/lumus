@@ -1,11 +1,18 @@
 var Q = require('q');
 var request = require('request');
 var cheerio = require('cheerio');
+var config = require('../config');
+var labels = require('../labels');
 
 var Kickass = require('node-kickass');
 var ItemTypes = require('../models/item').ItemTypes;
 
-module.exports.name = 'KickAss Searcher';
+module.exports.name = 'Kickass Torrents';
+
+config.add('kickassSearcher', { type : 'literal', store : {'searcher:kickassSearcher:use' : true }});
+//TODO url
+labels.add({ kickassSearcher : module.exports.name });
+
 
 module.exports.searchFor = function(item) {
 	var deferred = Q.defer();

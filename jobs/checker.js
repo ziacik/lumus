@@ -6,15 +6,30 @@ var subtitler = require('./subtitler');
 var notifier = require('./notifier');
 var xbmc = require('../notifiers/xbmc');
 var opensubtitler = require('../subtitlers/opensubtitler');
+var tpbSearcher = require('../searchers/tpbSearcher');
+var kickassSearcher = require('../searchers/kickassSearcher');
 
 var Item = require('../models/item').Item;
 var ItemStates = require('../models/item').ItemStates;
 var ItemTypes = require('../models/item').ItemTypes;
 
-notifier.use(xbmc);
-subtitler.use(opensubtitler);
-searcher.use(require('../searchers/tpbSearcher'));
-searcher.use(require('../searchers/kickassSearcher'));
+var configuration = config.get();
+
+if (configuration.notifier.kodi.use) {
+	notifier.use(xbmc);
+}
+
+if (configuration.subtitler.opensubtitler.use) {
+	subtitler.use(opensubtitler);
+}
+
+if (configuration.searcher.tpbSearcher.use) {
+	searcher.use(tpbSearcher);
+}
+
+if (configuration.searcher.kickassSearcher.use) {
+	searcher.use(kickassSearcher);
+}
 
 function isMusic(item) {
 	return item.type === ItemTypes.music;
@@ -41,13 +56,7 @@ function finish(item) {
 }
 
 function isAfterSubtitlerRetryLimit(item) {
-	console.log('check if is after limit ' + config.subtitleRetryDays);
-	if (config.subtitleRetryDays !== undefined) {
-		var failCount = item.subtitlerFailCount || 0; 
-		console.log('failcount ' + failCount);
-		console.log('is ' + failCount >= config.subtitleRetryDays);
-		return failCount >= config.subtitleRetryDays;
-	}
+	return false; //TODO Or?
 }
 
 function check() {
@@ -92,17 +101,17 @@ function checkActive() {
 			}
 		}
 		
-		setTimeout(check, config.defaultInterval * 1000);
+		setTimeout(check, config.get().checkInterval * 1000);
 	});
 }
 
 function checkFinished() {
-	if (config.removeFinishedDays === undefined)
+	if (!config.get().removeFinishedDays)
 		return;
 		
 	var now = new Date();
 	var deleteDate = new Date(now);
-    deleteDate.setDate(now.getDate() - config.removeFinishedDays);
+    deleteDate.setDate(now.getDate() - config.get().removeFinishedDays);
 
 	Item.find({state : ItemStates.finished, createdAt : {$lt : deleteDate.toJSON()}}, function(err, items) {
 		if (err) {

@@ -5,8 +5,14 @@ var torrenter = require('./torrenter');
 var serviceDispatcher = require('./serviceDispatcher');
 var filter = require('./filter');
 var decorator = require('./decorator');
+var labels = require('../labels');
 
 module.exports = new serviceDispatcher.ServiceDispatcher();
+
+labels.add({
+	searcher : '<span class="fa fa-search" /> Searchers'
+});
+
 
 module.exports.findAndAdd = function(item) {
 	this.untilSuccess(function(service) {

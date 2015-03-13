@@ -1,83 +1,60 @@
 var nconf = require('nconf');
 var fs = require('fs');
+var labels = require('./labels');
+var Q = require('q');
 
-nconf.argv().env().file({ file : "config.json"});
-
-nconf.defaults({
-	'version': 0,
-	'xbmc-host': 'localhost',
-	'transmission-url': 'http://localhost:9091',
-	'search-url-movies': 'https://thepiratebay.se/search/${query}/0/7/207',
-	'search-url-shows': 'https://thepiratebay.se/search/${query}/0/7/205',
-	'search-url-music': 'https://thepiratebay.se/search/${query}/0/7/100',
-	'size-limit-movies': 5200,
-	'size-limit-shows': 5200,
-	'size-limit-music': 300,
-	'default-interval': 60,
-	'required-keywords-movies': ['DTS', 'AC3', 'AC-3'],
-	'subtitle-languages': 'eng',
-	'remove-torrent' : true
+module.exports = nconf;
+module.exports.Requirement = Object.freeze({
+	required : 'required',
+	preferred : 'preferred',
+	unwanted : 'unwanted',
+	optional : 'optional'
 });
 
-var config = {
-	save : function(callback) {
-		config.version = 1;
-			
-		nconf.set('version', config.version);
-		nconf.set('xbmc-host', config.xbmcHost);
-		
-		nconf.set('transmission-url', config.transmissionUrl);
-		
-		nconf.set('search-url-movies', config.movieSearchUrl);
-		nconf.set('search-url-shows', config.showSearchUrl);
-		nconf.set('search-url-music', config.musicSearchUrl);
-		
-		nconf.set('target-dir-movies', config.movieTargetDir);
-		nconf.set('target-dir-shows', config.showTargetDir);
-		nconf.set('target-dir-music', config.musicTargetDir);
-		
-		nconf.set('size-limit-movies', config.movieSizeLimit);
-		nconf.set('size-limit-shows', config.showSizeLimit);
-		nconf.set('size-limit-music', config.musicSizeLimit);
-		
-		nconf.set('default-interval', config.defaultInterval);
-		
-		nconf.set('required-keywords-movies', config.movieRequiredKeywords);
-		
-		nconf.set('subtitle-languages', config.subtitleLanguages);
-		
-		nconf.set('subtitle-retry-days', config.subtitleRetryDays);
-		nconf.set('remove-finished-days', config.removeFinishedDays);
-		
-		nconf.set('remove-torrent', config.removeTorrent);
-		
-		nconf.save(callback);
-	}	
-};
+var Requirement = module.exports.Requirement;
 
-config.version = nconf.get('version');
-config.xbmcHost = nconf.get('xbmc-host');
+nconf.use('file', { file : "config.v2.json"});
+nconf.load();
 
-config.transmissionUrl = nconf.get('transmission-url');
+nconf.defaults({
+	version: 0,	
+	checkInterval : 60,
+	removeFinishedDays : 0,
+	movieSettings : {
+		maxSize : 5200,
+		destinationDir : 'Movies',
+		requireDigitalSound : Requirement.preferred,
+		requireHD : Requirement.preferred
+	},
+	showSettings : {
+		maxSize : 5200,
+		destinationDir : 'Shows',
+		requireDigitalSound : Requirement.preferred,
+		requireHD : Requirement.preferred
+	},
+	musicSettings : {
+		maxSize : 300,
+		destinationDir : 'Music',
+		requireLossless : Requirement.optional
+	},
+});
 
-config.movieSearchUrl = nconf.get('search-url-movies');
-config.showSearchUrl = nconf.get('search-url-shows');
-config.musicSearchUrl = nconf.get('search-url-music');
+labels.add({
+	checkInterval : 'Check Interval [sec]',
+	movieSettings : '<span class="fa fa-film" /> Movies',
+	maxSize : 'Max Size [MB]',
+	requireDigitalSound : 'Digital Sound',
+	requireHD : 'HD Video',
+	showSettings : '<span class="fa fa-leaf" /> Shows',
+	musicSettings : '<span class="fa fa-music" /> Music',
+	requireLossless : 'Lossless Format',
+	removeFinishedDays : 'Remove Finished Items After ? Days <small><em>0 is never</em></small>',
+	destinationDir : 'Directory'
+});
 
-config.movieTargetDir = nconf.get('target-dir-movies');
-config.showTargetDir = nconf.get('target-dir-shows');
-config.musicTargetDir = nconf.get('target-dir-music');
+var nconfSave = Q.nbind(nconf.save, nconf);
 
-config.movieSizeLimit = nconf.get('size-limit-movies');
-config.showSizeLimit = nconf.get('size-limit-shows');
-config.musicSizeLimit = nconf.get('size-limit-music');
-
-config.defaultInterval = nconf.get('default-interval');
-
-config.movieRequiredKeywords = nconf.get('required-keywords-movies');
-
-config.subtitleLanguages = nconf.get('subtitle-languages');
-
-config.removeTorrent = nconf.get('remove-torrent');
-
-module.exports = config;
+module.exports.save = function() {
+	nconf.set('version', 2);
+	return nconfSave();
+}
