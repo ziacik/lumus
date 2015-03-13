@@ -40,6 +40,7 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
+app.get('/update', routes.update);
 app.get('/search', search.runSearch);
 app.get('/add', list.add);
 app.get('/list', list.list);
@@ -58,7 +59,7 @@ app.get('/newReleases', function(req, res) {
 app.post('/config', config.save);
 
 http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+  console.log('Lumus server listening on port ' + app.get('port'));
 });
 
 process.nextTick(checker);

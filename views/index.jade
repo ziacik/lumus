@@ -5,6 +5,13 @@ block content
 	.col-sm-6.col-sm-offset-3
 		h1
 			+fa('search', 'Lumus')
+			
+		small
+			| Version #{myVersion}
+			if newVersion
+				em
+					| &nbsp;| new version available #{newVersion}&nbsp;
+					//a(href='/update') Update
 
 		form(action='/search', method='GET')
 			+inputWithPlaceholder('text', 'what', 'Enter Movie, Show, Artist or Group Name')
