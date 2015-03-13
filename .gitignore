@@ -18,6 +18,7 @@ results
 npm-debug.log
 node_modules
 /config.json
+/config.v2.json
 /items.db
 /music.db
 /show.db
