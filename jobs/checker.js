@@ -4,7 +4,7 @@ var searcher = require('./searcher');
 var renamer = require('./renamer');
 var subtitler = require('./subtitler');
 var notifier = require('./notifier');
-var xbmc = require('../notifiers/xbmc');
+var kodi = require('../notifiers/kodi');
 var opensubtitler = require('../subtitlers/opensubtitler');
 var tpbSearcher = require('../searchers/tpbSearcher');
 var kickassSearcher = require('../searchers/kickassSearcher');
@@ -16,7 +16,7 @@ var ItemTypes = require('../models/item').ItemTypes;
 var configuration = config.get();
 
 if (configuration.notifier.kodi.use) {
-	notifier.use(xbmc);
+	notifier.use(kodi);
 }
 
 if (configuration.subtitler.opensubtitler.use) {
