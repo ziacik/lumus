@@ -1,4 +1,5 @@
 var templates = [];
+var noResultCount = 0;
 
 function getParameter(name) {
 	return decodeURIComponent(
@@ -6,50 +7,108 @@ function getParameter(name) {
 	);
 }
 
+function showError(which, err) {
+	stopSpinner(which);
+	$('#' + which + 'ErrorText').text(' Failed ' + which + ' search: ' + err);
+	$('#' + which + 'Error').show();
+}
+
+function stopSpinner(which) {
+	$('#' + which + 'Spinner').hide();
+}
+
+function noResult(which) {
+	if (which) {
+		$('#' + which).hide();
+		noResultCount++;
+	}
+	
+	if (noResultCount === 3) {
+		$('#noResult').show();
+	}
+}
+
 function findShowsAndMovies(what) {
 	$.getJSON("http://www.omdbapi.com/?i=&s=" + what, function(data) {
+		stopSpinner('movie');
+		stopSpinner('show');
 		sortByYear(data.Search);
 		listMovies(data.Search);
 		listShows(data.Search);
-	});	
+	}).fail(function(jqxhr, textStatus, error) {
+		showError('movie', textStatus + (error ? ', ' + error : ''));
+		showError('show', textStatus + (error ? ', ' + error : ''));
+	});
 }
 
 function findMusic(what) {
 	$.getJSON("http://musicbrainz.org/ws/2/artist?query=%22" + what + "%22&fmt=json", function(data) {
+		stopSpinner('music');
 		listArtists(data.artists);
-	});	
+	}).fail(function(jqxhr, textStatus, error) {
+		showError('music', textStatus + (error ? ', ' + error : ''));
+	});
 }
 
 function sortByYear(results) {
-	results.sort(function (result1, result2) {
-		return (result1.Year < result2.Year) ? 1 : -1;
-	});
+	if (results) {
+		results.sort(function (result1, result2) {
+			return (result1.Year < result2.Year) ? 1 : -1;
+		});
+	}
 }
 
 function listMovies(results) {
-	var movieResults = $.grep(results, function(result) {
-		return result.Type === "movie";
-	});
+	var hadResult = false;
+
+	if (results) {	
+		var movieResults = $.grep(results, function(result) {
+			return result.Type === "movie";
+		});
+		
+		$.each(movieResults, function(key, val) {
+			hadResult = true;
+			$(getItem("movie", val)).appendTo("#movies");
+		});
+	}
 	
-	$.each(movieResults, function(key, val) {
-		$(getItem("movie", val)).appendTo("#results");
-	});
+	if (!hadResult) {
+		noResult('movies');
+	}
 }
 
 function listShows(results) {
-	var showResults = $.grep(results, function(result) {
-		return result.Type === "series";
-	});
+	var hadResult = false;
+		
+	if (results) {
+		var showResults = $.grep(results, function(result) {
+			return result.Type === "series";
+		});
+		
+		$.each(showResults, function(key, val) {
+			hadResult = true;
+			$(getItem("show", val)).appendTo("#shows");
+		});
+	}
 	
-	$.each(showResults, function(key, val) {
-		$(getItem("show", val)).appendTo("#results");
-	});
+	if (!hadResult) {
+		noResult('shows');
+	}
 }
 
 function listArtists(results) {
-	$.each(results, function(key, val) {
-		$(getItem("music", val)).appendTo("#results");
-	});
+	var hadResult = false;
+
+	if (results) {
+		$.each(results, function(key, val) {
+			hadResult = true;
+			$(getItem("music", val)).appendTo("#music");
+		});
+	}
+	
+	if (!hadResult) {
+		noResult('music');
+	}
 }
 
 function getItem(type, info) {
@@ -61,7 +120,7 @@ $(document).ready(function(){
 	templates['show'] = Handlebars.compile($("#show-template").html());
 	templates['music'] = Handlebars.compile($("#music-template").html());
 	
-	var what = getParameter("what");	
+	var what = getParameter("what");
 	findShowsAndMovies(what);
 	findMusic(what);
 });

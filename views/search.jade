@@ -35,10 +35,38 @@ block headScript
 				span.glyphicon.glyphicon-plus
 
 block content
-	h1
-		+fa('search', 'Search Results')
-
-	#results
-
-	hr
-	+buttonHome()
+	.row
+		.col-sm-3
+	
+		.col-sm-6		
+			h1
+				+fa('search', 'Search Results')
+		
+			#movies
+				hr
+				#movieSpinner
+					+faSpinner('Searching for movies...')					
+				#movieError(style='display:none')
+					+fa('ban')
+					span#movieErrorText
+			#shows
+				hr
+				#showSpinner
+					+faSpinner('Searching for shows...')
+				#showError(style='display:none')
+					+fa('ban')
+					span#showErrorText
+			#music
+				hr
+				#musicSpinner
+					+faSpinner('Searching for music...')
+				#musicError(style='display:none')
+					+fa('ban')
+					span#musicErrorText
+		
+			#noResult(style='display:none')
+				hr
+				+fa('info-circle', 'Nothing found.')
+		
+			hr
+			+buttonHome()
