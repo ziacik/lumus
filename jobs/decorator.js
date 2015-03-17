@@ -1,5 +1,4 @@
 var Q = require('q');
-var util = require('util');
 var config = require('../config');
 var subtitler = require('./subtitler');
 var Item = require('../models/item').Item;
@@ -27,13 +26,11 @@ module.exports.all = function(item, results) {
 };
 
 var movieDecorator = showDecorator = function(item, result) {
-	util.debug('Decoratoring ' + result.releaseName);
 	return subtitler.hasSubtitlesForName(result.releaseName).then(function(hasSubtitles) {
 		result.hasSubtitles = hasSubtitles;
 	});
 };
 
 var musicDecorator = function(item, result) {
-	console.log('Decorating ' + result.releaseName);	
 	return result;
 }; 

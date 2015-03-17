@@ -1,5 +1,4 @@
 var Q = require('q');
-var util = require('util');
 var config = require('../config');
 var Item = require('../models/item').Item;
 var ItemStates = require('../models/item').ItemStates;
@@ -72,16 +71,13 @@ var isUsedAlready = function(item, magnetLink) {
 };
 
 var movieFilter = function(item, result) {
-	console.log('Filtering ' + result.title);
-	
 	if (isUsedAlready(item, result.magnetLink)) {
 		result.info = 'Already used.';
-		util.debug(result.info);
+		return false;
 	}
 	
 	if (result.size > config.get().movieSettings.maxSize) {
 		result.info = 'Size exceeded the limit.';
-		util.debug(result.info);
 		return false;
 	}
 	
@@ -105,7 +101,6 @@ var digitalAudioFilter = function(result) {
 		
 		if (!isGoodKeywords) {
 			result.info = 'Missing required keywords in description.';
-			util.debug(result.info);
 		}
 		
 		return isGoodKeywords;
@@ -113,17 +108,21 @@ var digitalAudioFilter = function(result) {
 };
 
 var showFilter = function(item, result) {
-	console.log('Filtering ' + result.title);
+	var correctSeasonRegex = /season\W*0*2(?![0-9])/i;
+	var isCorrectSeason = correctSeasonRegex.test(result.title);
+	
+	if (!isCorrectSeason) {
+		result.info = 'Wrong season.';
+		return false;
+	}
 	
 	if (isUsedAlready(item, result.magnetLink)) {
 		result.info = 'Already used.';
-		util.debug(result.info);
 		return false;
 	}
 	
 	if (result.size > config.get().showSettings.maxSize) {
 		result.info = 'Size exceeded the limit.';
-		util.debug(result.info);
 		return false;
 	}
 	
@@ -137,16 +136,13 @@ var showFilter = function(item, result) {
 };
 
 var musicFilter = function(item, result) {
-	console.log('Filtering ' + result.title);
-	
 	if (isUsedAlready(item, result.magnetLink)) {
 		result.info = 'Already used.';
-		util.debug(result.info);
+		return false;
 	}
 	
 	if (result.size > config.get().musicSettings.maxSize) {
 		result.info = 'Size exceeded the limit.';
-		util.debug(result.info);
 		return false;
 	}
 	
