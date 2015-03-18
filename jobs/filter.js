@@ -70,12 +70,25 @@ var isUsedAlready = function(item, magnetLink) {
 	return false;
 };
 
-var movieFilter = function(item, result) {
+var genericFilter = function(item, result) {
 	if (isUsedAlready(item, result.magnetLink)) {
 		result.info = 'Already used.';
 		return false;
 	}
 	
+	if (result.seeds == 0) {
+		result.info = 'No seeders.';
+		return false;
+	}
+	
+	return true;
+}
+
+var movieFilter = function(item, result) {
+	if (!genericFilter(item, result)) {
+		return false;
+	}
+
 	if (result.size > config.get().movieSettings.maxSize) {
 		result.info = 'Size exceeded the limit.';
 		return false;
@@ -108,16 +121,15 @@ var digitalAudioFilter = function(result) {
 };
 
 var showFilter = function(item, result) {
+	if (!genericFilter(item, result)) {
+		return false;
+	}
+
 	var correctSeasonRegex = new RegExp('season\\W*0*' + item.no + '(?![0-9])', 'i');
 	var isCorrectSeason = correctSeasonRegex.test(result.title);
 	
 	if (!isCorrectSeason) {
 		result.info = 'Wrong season.';
-		return false;
-	}
-	
-	if (isUsedAlready(item, result.magnetLink)) {
-		result.info = 'Already used.';
 		return false;
 	}
 	
@@ -136,8 +148,7 @@ var showFilter = function(item, result) {
 };
 
 var musicFilter = function(item, result) {
-	if (isUsedAlready(item, result.magnetLink)) {
-		result.info = 'Already used.';
+	if (!genericFilter(item, result)) {
 		return false;
 	}
 	
