@@ -108,7 +108,7 @@ var digitalAudioFilter = function(result) {
 };
 
 var showFilter = function(item, result) {
-	var correctSeasonRegex = /season\W*0*2(?![0-9])/i;
+	var correctSeasonRegex = new RegExp('season\\W*0*' + item.no + '(?![0-9])', 'i');
 	var isCorrectSeason = correctSeasonRegex.test(result.title);
 	
 	if (!isCorrectSeason) {
