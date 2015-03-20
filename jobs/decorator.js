@@ -61,11 +61,11 @@ var isHD = function(result, description) {
 var getScore = function(result, setting, points) {
 	var preference = config.get()[result.type + 'Settings']['require' + setting];
 	
-	if (preference === config.Requirement.optional) {
+	if (preference === config.Preference.optional) {
 		return 0;
 	}
 	
-	var shouldHaveIt = preference === config.Requirement.required || preference === config.Requirement.preferred;
+	var shouldHaveIt = preference === config.Preference.required || preference === config.Preference.preferred;
 	var haveIt = result['has' + setting] || result['is' + setting];
 
 	return (haveIt === shouldHaveIt) ? points : 0;

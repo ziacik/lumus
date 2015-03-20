@@ -85,12 +85,12 @@ var genericFilter = function(item, result) {
 }
 
 var digitalSoundFilter = function(result) {
-	if (!result.hasDigitalSound && config.get()[result.type + 'Settings'].requireDigitalSound === config.Requirement.required) {
+	if (!result.hasDigitalSound && config.get()[result.type + 'Settings'].requireDigitalSound === config.Preference.required) {
 		result.info = 'Doesn\'t have digital sound.';
 		return false;
 	}
 	
-	if (result.hasDigitalSound && config.get()[result.type + 'Settings'].requireDigitalSound === config.Requirement.unwanted) {
+	if (result.hasDigitalSound && config.get()[result.type + 'Settings'].requireDigitalSound === config.Preference.unwanted) {
 		result.info = 'Has digital sound.';
 		return false;
 	}
@@ -99,12 +99,12 @@ var digitalSoundFilter = function(result) {
 };
 
 var hdVideoFilter = function(result) {
-	if (!result.isHD && config.get()[result.type + 'Settings'].requireHD === config.Requirement.required) {
+	if (!result.isHD && config.get()[result.type + 'Settings'].requireHD === config.Preference.required) {
 		result.info = 'Is not HD.';
 		return false;
 	}
 	
-	if (result.isHD && config.get()[result.type + 'Settings'].requireHD === config.Requirement.unwanted) {
+	if (result.isHD && config.get()[result.type + 'Settings'].requireHD === config.Preference.unwanted) {
 		result.info = 'Is HD.';
 		return false;
 	}
@@ -113,12 +113,12 @@ var hdVideoFilter = function(result) {
 };
 
 var losslessFilter = function(result) {
-	if (!result.isLossless && config.get().musicSettings.requireLossless === config.Requirement.required) {
+	if (!result.isLossless && config.get().musicSettings.requireLossless === config.Preference.required) {
 		result.info = 'Is not lossless.';
 		return false;
 	}
 	
-	if (result.isLossless && config.get().musicSettings.requireLossless === config.Requirement.unwanted) {
+	if (result.isLossless && config.get().musicSettings.requireLossless === config.Preference.unwanted) {
 		result.info = 'Is lossless.';
 		return false;
 	}

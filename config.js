@@ -4,7 +4,7 @@ var labels = require('./labels');
 var Q = require('q');
 
 module.exports = nconf;
-module.exports.Requirement = Object.freeze({
+module.exports.Preference = Object.freeze({
 	required : 'required',
 	preferred : 'preferred',
 	optional : 'optional',
@@ -12,7 +12,7 @@ module.exports.Requirement = Object.freeze({
 	unwanted : 'unwanted',
 });
 
-var Requirement = module.exports.Requirement;
+var Preference = module.exports.Preference;
 
 nconf.use('file', { file : "config.v2.json"});
 nconf.load();
@@ -24,19 +24,19 @@ nconf.defaults({
 	movieSettings : {
 		maxSize : 5200,
 		destinationDir : 'Movies',
-		requireDigitalSound : Requirement.preferred,
-		requireHD : Requirement.preferred
+		requireDigitalSound : Preference.preferred,
+		requireHD : Preference.preferred
 	},
 	showSettings : {
 		maxSize : 5200,
 		destinationDir : 'Shows',
-		requireDigitalSound : Requirement.preferred,
-		requireHD : Requirement.preferred
+		requireDigitalSound : Preference.preferred,
+		requireHD : Preference.preferred
 	},
 	musicSettings : {
 		maxSize : 300,
 		destinationDir : 'Music',
-		requireLossless : Requirement.optional
+		requireLossless : Preference.optional
 	},
 });
 
