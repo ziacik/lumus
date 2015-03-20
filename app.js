@@ -58,6 +58,18 @@ app.get('/newReleases', function(req, res) {
 });
 app.post('/config', config.save);
 
+if (typeof String.prototype.startsWith != 'function') {
+	String.prototype.startsWith = function(str) {
+		return this.substring(0, str.length) === str;
+	}
+};
+
+if (typeof String.prototype.endsWith != 'function') {
+	String.prototype.endsWith = function(str) {
+		return this.substring(this.length - str.length, this.length) === str;
+	}
+};
+
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Lumus server listening on port ' + app.get('port'));
 });

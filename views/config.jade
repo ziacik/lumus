@@ -18,7 +18,7 @@ mixin render(property, value, path)
 	- var jqueryPathJoined = path ? path.join('\\\\:') : property
 	- var label = labels.get(pathJoined, property)
 	if property == 'type' || property == 'version' || property == 'use'
-	else if property.indexOf('require') == 0
+	else if property.endsWith('Preference')
 		.form-group
 			label!= label
 			select.form-control(id=pathJoined, name=pathJoined)

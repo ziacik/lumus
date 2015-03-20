@@ -84,14 +84,14 @@ var genericFilter = function(item, result) {
 	return true;
 }
 
-var digitalSoundFilter = function(result) {
-	if (!result.hasDigitalSound && config.get()[result.type + 'Settings'].requireDigitalSound === config.Preference.required) {
-		result.info = 'Doesn\'t have digital sound.';
+var digitalAudioFilter = function(result) {
+	if (!result.hasDigitalAudio && config.get()[result.type + 'Settings'].digitalAudioPreference === config.Preference.required) {
+		result.info = 'Doesn\'t have digital audio.';
 		return false;
 	}
 	
-	if (result.hasDigitalSound && config.get()[result.type + 'Settings'].requireDigitalSound === config.Preference.unwanted) {
-		result.info = 'Has digital sound.';
+	if (result.hasDigitalAudio && config.get()[result.type + 'Settings'].digitalAudioPreference === config.Preference.unwanted) {
+		result.info = 'Has digital audio.';
 		return false;
 	}
 	
@@ -99,12 +99,12 @@ var digitalSoundFilter = function(result) {
 };
 
 var hdVideoFilter = function(result) {
-	if (!result.isHD && config.get()[result.type + 'Settings'].requireHD === config.Preference.required) {
+	if (!result.isHD && config.get()[result.type + 'Settings'].hdVideoPreference === config.Preference.required) {
 		result.info = 'Is not HD.';
 		return false;
 	}
 	
-	if (result.isHD && config.get()[result.type + 'Settings'].requireHD === config.Preference.unwanted) {
+	if (result.isHD && config.get()[result.type + 'Settings'].hdVideoPreference === config.Preference.unwanted) {
 		result.info = 'Is HD.';
 		return false;
 	}
@@ -113,12 +113,12 @@ var hdVideoFilter = function(result) {
 };
 
 var losslessFilter = function(result) {
-	if (!result.isLossless && config.get().musicSettings.requireLossless === config.Preference.required) {
+	if (!result.isLossless && config.get().musicSettings.losslessFormatPreference === config.Preference.required) {
 		result.info = 'Is not lossless.';
 		return false;
 	}
 	
-	if (result.isLossless && config.get().musicSettings.requireLossless === config.Preference.unwanted) {
+	if (result.isLossless && config.get().musicSettings.losslessFormatPreference === config.Preference.unwanted) {
 		result.info = 'Is lossless.';
 		return false;
 	}
@@ -136,7 +136,7 @@ var movieFilter = function(item, result) {
 		return false;
 	}
 	
-	if (!digitalSoundFilter(result)) {
+	if (!digitalAudioFilter(result)) {
 		return false;
 	}
 	
@@ -165,7 +165,7 @@ var showFilter = function(item, result) {
 		return false;
 	}
 		
-	if (!digitalSoundFilter(result)) {
+	if (!digitalAudioFilter(result)) {
 		return false;
 	}
 	

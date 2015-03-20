@@ -59,7 +59,7 @@ var isHD = function(result, description) {
 };
 
 var getScore = function(result, setting, points) {
-	var preference = config.get()[result.type + 'Settings']['require' + setting];
+	var preference = config.get()[result.type + 'Settings'][setting + 'Preference'];
 	
 	if (preference === config.Preference.optional) {
 		return 0;
@@ -77,18 +77,18 @@ var movieDecorator = showDecorator = function(item, result) {
 		return descriptionChecker(result);
 	}).then(function(description)  {
 		result.type = item.type;
-		result.hasDigitalSound = hasDigitalAudio(description); //TODO sound vs audio
+		result.hasDigitalAudio = hasDigitalAudio(description);
 		result.isHD = isHD(result, description);
-		result.score = result.hasSubtitles ? 1 : 0; 
+		result.score = result.hasSubtitles ? 1 : 0;
 		result.score += result.verified ? 1 : 0;
-		result.score += getScore(result, 'DigitalSound', 3);
-		result.score += getScore(result, 'HD', 3);
+		result.score += getScore(result, 'digitalAudio', 3);
+		result.score += getScore(result, 'hdVideo', 3);
 	});
 };
 
 var musicDecorator = function(item, result) {
 	result.type = item.type;
 	result.isLossless = (/FLAC/i).test(result.title);
-	result.score = getScore(result, 'Lossless', 1);
+	result.score = getScore(result, 'losslessFormat', 1);
 	return result;
-}; 
+};
