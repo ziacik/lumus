@@ -13,15 +13,12 @@ labels.add({
 	searcher : '<span class="fa fa-search" /> Searchers'
 });
 
-
 module.exports.findAndAdd = function(item) {
-	this.untilSuccess(function(service) {
-		return service.searchFor(item).then(function(results) {
-			if (results.length === 0) {
-				item.stateInfo = "No results.";
-			}
-			return filter.first(item, results);
-		});
+	module.exports.findAll(item).then(function(results) {
+		if (results.length === 0) {
+			item.stateInfo = "No results.";
+		}
+		return filter.first(item, results);
 	}).then(function(result) {
 		if (result) {
 			return torrenter.add(item, result.magnetLink, result.torrentInfoUrl);
@@ -46,7 +43,32 @@ module.exports.findAll = function(item) {
 		}).then(function(results) {
 			return decorator.all(item, results);
 		}).then(function(results) {
-			return { serviceName : service.name, results : results };
+			results.forEach(function(result) {
+				result.serviceName = service.name;
+			});
+			return results;
 		});
+	}).then(function(serviceResults) {
+		var results = serviceResults.reduce(function(previous, current, index, array) {
+			return previous.concat(current);
+		}, []);
+		
+		results.sort(function(result1, result2) {
+			if (result1.score != result2.score) {
+				return result2.score - result1.score;
+			}
+			
+			if (result1.seeds != result2.seeds) {
+				return result2.seeds - result1.seeds;
+			}
+
+			if (result1.leechs != result2.leechs) {
+				return result2.leechs - result1.leechs;
+			}
+
+			return 0;
+		});
+		
+		return results;
 	});
 }

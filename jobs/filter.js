@@ -84,6 +84,48 @@ var genericFilter = function(item, result) {
 	return true;
 }
 
+var digitalSoundFilter = function(result) {
+	if (!result.hasDigitalSound && config.get()[result.type + 'Settings'].requireDigitalSound === config.Requirement.required) {
+		result.info = 'Doesn\'t have digital sound.';
+		return false;
+	}
+	
+	if (result.hasDigitalSound && config.get()[result.type + 'Settings'].requireDigitalSound === config.Requirement.unwanted) {
+		result.info = 'Has digital sound.';
+		return false;
+	}
+	
+	return true;
+};
+
+var hdVideoFilter = function(result) {
+	if (!result.isHD && config.get()[result.type + 'Settings'].requireHD === config.Requirement.required) {
+		result.info = 'Is not HD.';
+		return false;
+	}
+	
+	if (result.isHD && config.get()[result.type + 'Settings'].requireHD === config.Requirement.unwanted) {
+		result.info = 'Is HD.';
+		return false;
+	}
+	
+	return true;
+};
+
+var losslessFilter = function(result) {
+	if (!result.isLossless && config.get().musicSettings.requireLossless === config.Requirement.required) {
+		result.info = 'Is not lossless.';
+		return false;
+	}
+	
+	if (result.isLossless && config.get().musicSettings.requireLossless === config.Requirement.unwanted) {
+		result.info = 'Is lossless.';
+		return false;
+	}
+	
+	return true;
+};
+
 var movieFilter = function(item, result) {
 	if (!genericFilter(item, result)) {
 		return false;
@@ -94,30 +136,15 @@ var movieFilter = function(item, result) {
 		return false;
 	}
 	
-	var digitalSoundRequirement = config.get().movieSettings.requireDigitalSound;
-	
-	if (digitalSoundRequirement !== config.Requirement.required) {
-		return true;
+	if (!digitalSoundFilter(result)) {
+		return false;
 	}
 	
-	return digitalAudioFilter(result);
-};
+	if (!hdVideoFilter(result)) {
+		return false;
+	}
 
-var digitalAudioFilter = function(result) {
-	return Q.when(result.getDescription()).then(function(description) {
-		var digitalAudioKeywords = ['DTS', 'AC3', 'AC-3'];
-		for (var i = 0; i < digitalAudioKeywords.length; i++) {
-			isGoodKeywords = description.indexOf(digitalAudioKeywords[i]) >= 0;
-			if (isGoodKeywords)
-				break;
-		}
-		
-		if (!isGoodKeywords) {
-			result.info = 'Missing required keywords in description.';
-		}
-		
-		return isGoodKeywords;
-	});
+	return true;
 };
 
 var showFilter = function(item, result) {
@@ -137,14 +164,14 @@ var showFilter = function(item, result) {
 		result.info = 'Size exceeded the limit.';
 		return false;
 	}
-	
-	var digitalSoundRequirement = config.get().showSettings.requireDigitalSound;
-	
-	if (digitalSoundRequirement !== config.Requirement.required) {
-		return true;
+		
+	if (!digitalSoundFilter(result)) {
+		return false;
 	}
 	
-	return digitalAudioFilter(result);
+	if (!hdVideoFilter(result)) {
+		return false;
+	}
 };
 
 var musicFilter = function(item, result) {
@@ -154,6 +181,11 @@ var musicFilter = function(item, result) {
 	
 	if (result.size > config.get().musicSettings.maxSize) {
 		result.info = 'Size exceeded the limit.';
+		return false;
+	}
+	
+	
+	if (!losslessFilter(result)) {
 		return false;
 	}
 	

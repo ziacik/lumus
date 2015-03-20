@@ -7,8 +7,9 @@ module.exports = nconf;
 module.exports.Requirement = Object.freeze({
 	required : 'required',
 	preferred : 'preferred',
+	optional : 'optional',
+	disfavoured : 'disfavoured',
 	unwanted : 'unwanted',
-	optional : 'optional'
 });
 
 var Requirement = module.exports.Requirement;

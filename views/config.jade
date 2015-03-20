@@ -24,8 +24,9 @@ mixin render(property, value, path)
 			select.form-control(id=pathJoined, name=pathJoined)
 				option(value = 'required', selected = value === 'required')= 'Required'
 				option(value = 'preferred', selected = value === 'preferred')= 'Preferred'
-				option(value = 'unwanted', selected = value === 'unwanted')= 'Unwanted'
 				option(value = 'optional', selected = value === 'optional')= 'Optional'
+				option(value = 'disfavoured', selected = value === 'disfavoured')= 'Disfavoured'
+				option(value = 'unwanted', selected = value === 'unwanted')= 'Unwanted'
 		
 	else if typeof value == 'object'
 		if path.length == 1

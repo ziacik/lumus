@@ -18,37 +18,52 @@ block content
 		
 			hr
 			
-			each decoratedResult in results
-				h2= decoratedResult.serviceName
-				each result in decoratedResult.results
-					div
-						strong
-							a(href=result.torrentInfoUrl, target='_blank')= result.title
+			each result in results
+				div
+					strong
+						a(href=result.torrentInfoUrl, target='_blank')= result.title
+					
+					span.state(style='float:right')
+						+faButtonDefault('download', '/torrent/add?id=' + item._id + '&magnet=' + encodeURIComponent(result.magnetLink) + '&page=' + encodeURIComponent(result.torrentInfoUrl), '', 'Download')
+
+				div
+					small
+						em
+							= result.serviceName
 						
-						span.state(style='float:right')
-							+faButtonDefault('download', '/torrent/add?id=' + item._id + '&magnet=' + encodeURIComponent(result.magnetLink) + '&page=' + encodeURIComponent(result.torrentInfoUrl), '', 'Download')
-							
-					div
-						span.state
-							+fa('cube', result.size + ' MB', 'Size')
+				div
+					span.state
+						+fa('cube', result.size + ' MB', 'Size')
+					span.state
+						| &nbsp;
+						+fa('arrow-up', result.seeds + '', 'Seeders')
+					span.state
+						| &nbsp;
+						+fa('arrow-down', result.leechs + '', 'Leechers')
+					if result.verified
 						span.state
 							| &nbsp;
-							+fa('arrow-up', result.seeds + '', 'Seeders')
+							+fa('check', 'Verified', 'Verified')
+					if result.hasSubtitles
 						span.state
 							| &nbsp;
-							+fa('arrow-down', result.leechs + '', 'Leechers')
-						if result.verified
-							span.state
-								| &nbsp;
-								+fa('check', 'Verified', 'Verified')
-						if result.hasSubtitles
-							span.state
-								| &nbsp;
-								+fa('check', 'Subtitles', 'Subtitles')
-					
-					div
-						= result.info
-					
-					hr
+							+fa('check', 'Subtitles', 'Subtitles')
+					if result.isHD
+						span.state
+							| &nbsp;
+							+fa('check', 'HD Video', 'HD Video')
+					if result.hasDigitalSound
+						span.state
+							| &nbsp;
+							+fa('check', 'Digital Audio', 'Digital Audio')
+					if result.isLossless
+						span.state
+							| &nbsp;
+							+fa('check', 'Lossless', 'Lossless')
+				
+				div
+					= result.info
+				
+				hr
 			hr
 			+buttonHome()
