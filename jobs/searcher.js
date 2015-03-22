@@ -39,9 +39,9 @@ module.exports.findAndAdd = function(item) {
 module.exports.findAll = function(item) {
 	return this.forAll(function(service) {
 		return service.searchFor(item).then(function(results) {
-			return filter.all(item, results);
-		}).then(function(results) {
 			return decorator.all(item, results);
+		}).then(function(results) {
+			return filter.all(item, results);
 		}).then(function(results) {
 			results.forEach(function(result) {
 				result.serviceName = service.name;
