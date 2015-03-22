@@ -36,7 +36,7 @@ function findSubtitlesOne(token, item, filePath) {
 	.then(function(results) {
 		if (results && results.length) {
 			return results;
-		} else {
+		} else if (config.get().subtitler.shouldSearchByName) {
 			var fileName = path.basename(filePath);
 			return openSubtitles.api.searchForTag(token, config.get().subtitler.languages, fileName);
 		}

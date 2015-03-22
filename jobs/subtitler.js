@@ -6,10 +6,11 @@ var fs = require('fs');
 var path = require('path');
 var ItemStates = require('../models/item').ItemStates;
 
-config.add('subtitler', { type : 'literal', store : {'subtitler:languages' : 'eng'}});
+config.add('subtitler', { type : 'literal', store : {'subtitler:languages' : 'eng', 'subtitler:shouldSearchByName' : true}});
 labels.add({
 	subtitler : '<span class="fa fa-file-text" /> Subtitling',
-	languages : 'Subtitle Languages <small><em>Use comma to separate multiple languages</em></small>'
+	languages : 'Subtitle Languages <small><em>Use comma to separate multiple languages</em></small>',
+	shouldSearchByName : 'Search By File Name <small><em>if nothing found with exact match</em></small>'
 });
 
 module.exports = new (require('./serviceDispatcher').ServiceDispatcher)();
