@@ -172,6 +172,8 @@ var showFilter = function(item, result) {
 	if (!hdVideoFilter(result)) {
 		return false;
 	}
+	
+	return true;
 };
 
 var musicFilter = function(item, result) {
