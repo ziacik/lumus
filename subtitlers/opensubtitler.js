@@ -1,5 +1,6 @@
 var Q = require('q');
 var util = require('util');
+var path = require('path');
 var config = require('../config');
 var labels = require('../labels');
 
@@ -30,16 +31,16 @@ module.exports.findSubtitles = function(item, filePaths) {
 
 function findSubtitlesOne(token, item, filePath) {
 	var deferred = Q.defer();
-	var searchFunction;
 	
-	if (item.type === ItemTypes.movie) {
-		searchFunction = openSubtitles.api.searchForFileAndTag.bind(openSubtitles.api);
-	} else {
-		searchFunction = openSubtitles.api.searchForFile.bind(openSubtitles.api);
-	}	
-	
-	searchFunction(token, config.get().subtitler.languages, filePath)
+	openSubtitles.api.searchForFile(token, config.get().subtitler.languages, filePath)
 	.then(function(results) {
+		if (results && results.length) {
+			return results;
+		} else {
+			var fileName = path.basename(filePath);
+			return openSubtitles.api.searchForTag(token, config.get().subtitler.languages, fileName);
+		}
+	}).then(function(results) {
 		if (results && results.length) {
 			openSubtitles.downloader.download(results, 1, filePath, function() {
 				deferred.resolve(true);

@@ -86,7 +86,7 @@ module.exports.findSubtitles =  function(item) {
 			setSubtitlerFail(item, completeness + " of " + pathCount + ' subtitles found');
 		}
 	}).catch(function(error) {
-		util.error(error);
+		util.error(error.stack || error);
 		item.stateInfo = error.message || error;
 		item.rescheduleNextHour();
 	});
