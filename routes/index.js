@@ -26,7 +26,7 @@ exports.index = function(req, res){
 						icons : ItemTypeIcons
 					});
 				}).catch(function(error) {
-					util.error(error);
+					util.error(error.stack || error);
 					res.render('index', {
 						title : 'lumus',
 						myVersion : '?',
@@ -44,7 +44,7 @@ exports.update = function(req, res) {
 	version.update().then(function() {
 		res.redirect('/');
 	}).catch(function(error) {
-		util.error(error);
+		util.error(error.stack || error);
 		res.render('error', {
 			error: err
 		});

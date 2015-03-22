@@ -24,7 +24,7 @@ exports.list = function(req, res){
 				res.render('torrents', { item : item, results : decoratedResults, searchTerm : item.searchTerm || item.name });
 			})
 			.catch(function(errors) {
-				util.error(errors);
+				util.error(errors.stack || errors);
 				res.render('error', { error: errors });
 			});
 		}
@@ -42,7 +42,7 @@ exports.add = function(req, res) {
 				res.redirect('/');
 			})
 			.catch(function(error) {
-				util.error(error);
+				util.error(error.stack || error);
 				res.render('error', { error : error });
 			});
 		}

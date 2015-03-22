@@ -30,7 +30,7 @@ module.exports.findAndAdd = function(item) {
 			item.rescheduleNextDay();
 		}
 	}).catch(function(error) {
-		util.error(error);
+		util.error(error.stack || error);
 		item.stateInfo = error.message || error;
 		item.rescheduleNextHour();
 	});

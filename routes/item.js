@@ -69,7 +69,7 @@ exports.add = function(req, res) {
 		res.redirect('/');	
 	})
 	.catch(function(error) {
-		util.error(error);
+		util.error(error.stack || error);
 		res.render('error', { error: error });
 	});
 };

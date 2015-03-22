@@ -69,7 +69,7 @@ Item.setupMethods = function(item) {
 		if (item._id) {
 			db.items.update({_id : item._id}, item, {}, function(err) {
 				if (err) {
-					util.error(err);
+					util.error(err.stack || err);
 					deferred.reject(err);
 				} else {
 					deferred.resolve(item);
@@ -79,7 +79,7 @@ Item.setupMethods = function(item) {
 			db.items.insert(item, function(err, newDoc) {
 				item._id = newDoc._id;
 				if (err) {
-					util.error(err);
+					util.error(err.stack || err);
 					deferred.reject(err);
 				} else {
 					deferred.resolve(item);

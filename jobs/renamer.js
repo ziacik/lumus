@@ -47,7 +47,7 @@ function rename(item) {
 	}
 	
 	promise.catch(function(error) {
-		util.error(error);
+		util.error(error.stack || error);
 		item.stateInfo = error.message || error;
 		item.state = ItemStates.renameFailed;
 		item.save();		
