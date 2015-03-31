@@ -130,11 +130,13 @@ Item.findOne = function(what, done) {
 	});
 };
 
-Item.find = function(byWhat, done) {
+Item.find = function(byWhat) {
+	var deferred = Q.defer();
+
 	db.items.find(byWhat, function(err, items) {
 		if (err) {
-			console.log(err);
-			done(err, null);
+			deferred.reject(err);
+			return;
 		}
 		
 		for (index in items) {
@@ -142,8 +144,10 @@ Item.find = function(byWhat, done) {
 			Item.setupMethods(item);
 		}
 
-		done(null, items);
+		deferred.resolve(items);
 	});
+	
+	return deferred.promise;
 };
 
 Item.findById = function(id, done) {

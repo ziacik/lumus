@@ -14,11 +14,13 @@ labels.add({
 });
 
 module.exports.findAndAdd = function(item) {
-	module.exports.findAll(item).then(function(results) {
+	return module.exports.findAll(item)
+	.then(function(results) {
 		if (results.length === 0) {
 			item.stateInfo = "No results.";
+		} else {
+			return filter.first(item, results);
 		}
-		return filter.first(item, results);
 	}).then(function(result) {
 		if (result) {
 			return torrenter.add(item, result.magnetLink, result.torrentInfoUrl);
@@ -29,7 +31,8 @@ module.exports.findAndAdd = function(item) {
 			}
 			item.rescheduleNextDay();
 		}
-	}).catch(function(error) {
+	})
+	.catch(function(error) {
 		util.error(error.stack || error);
 		item.stateInfo = error.message || error;
 		item.rescheduleNextHour();
@@ -71,4 +74,4 @@ module.exports.findAll = function(item) {
 		
 		return results;
 	});
-}
+};

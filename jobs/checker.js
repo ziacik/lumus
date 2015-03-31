@@ -1,3 +1,4 @@
+var Q = require('q');
 var config = require('../config');
 var torrenter = require('./torrenter');
 var searcher = require('./searcher');
@@ -43,16 +44,9 @@ function isShow(item) {
 	return item.type === ItemTypes.show;
 }
 
-function search(item) {
-	searcher.findAndAdd(item);
-}
-
-function finish(item) {	
+var finish = function(item) {	
 	item.state = ItemStates.finished;
-	item.save(function(err) {
-		if (err) 
-			console.log(err);
-	});
+	return item.save();
 }
 
 function isAfterSubtitlerRetryLimit(item) {
@@ -64,70 +58,71 @@ function check() {
 	checkFinished();
 }
 
-function checkActive() {
-	Item.find({state : {$nin : [ItemStates.finished, ItemStates.renameFailed]}, $not: {nextCheck : {$gt : new Date().toJSON()}}}, function(err, items) {
-		if (err) {
-			console.log(err);
-		} else {		
-			for (var index in items) {
-				var item = items[index];
-				
-				console.log('Checking ' + item.name);
-				
-				if (item.state === ItemStates.wanted) {
-					search(item);
-				} else if (item.state === ItemStates.snatched) {
-					torrenter.checkFinished(item);
-				} else if (item.state === ItemStates.downloaded) {
-					renamer.rename(item);
-				} else if (item.state === ItemStates.renamed) {
-					notifier.updateLibrary(item);
-				} else if (item.state === ItemStates.libraryUpdated) {
-					if (isMusic(item))
-						finish(item);
-					else
-						subtitler.findSubtitles(item);
-				} else if (item.state === ItemStates.subtitlerFailed) {
-					if (isAfterSubtitlerRetryLimit(item)) {
-						finish(item);
-					} else {
-						subtitler.findSubtitles(item);
-					}
-				} else if (item.state === ItemStates.subtitled) {
-					finish(item);
-				} else {
-					console.log('Invalid state ' + item.state);
-				}
-			}
+function checkOne(item) {
+	if (item.state === ItemStates.wanted) {
+		return searcher.findAndAdd(item);
+	} else if (item.state === ItemStates.snatched) {
+		return torrenter.checkFinished(item);
+	} else if (item.state === ItemStates.downloaded) {
+		return renamer.rename(item);
+	} else if (item.state === ItemStates.renamed) {
+		return notifier.updateLibrary(item);
+	} else if (item.state === ItemStates.libraryUpdated) {
+		if (isMusic(item))
+			return finish(item);
+		else
+			return subtitler.findSubtitles(item);
+	} else if (item.state === ItemStates.subtitlerFailed) {
+		if (isAfterSubtitlerRetryLimit(item)) {
+			return finish(item);
+		} else {
+			return subtitler.findSubtitles(item);
 		}
+	} else if (item.state === ItemStates.subtitled) {
+		return finish(item);
+	} else {
+		throw new Error('Invalid state ' + item.state);
+	}
+};
+
+function checkActive() {
+	Item.find({state : {$nin : [ItemStates.finished, ItemStates.renameFailed]}, $not: {nextCheck : {$gt : new Date().toJSON()}}}).then(function(items) {
+		var itemCheckers = items.map(function(item) {
+			return Q.fcall(checkOne, item);
+		});
 		
+		return Q.allSettled(itemCheckers); /// Or should I run it sequentially? Probably yes.
+	}).then(function() {	
+		setTimeout(check, config.get().checkInterval * 1000);
+	}).catch(function(error) {
+		require('util').error(error);
 		setTimeout(check, config.get().checkInterval * 1000);
 	});
 }
 
 function checkFinished() {
-	if (!config.get().removeFinishedDays)
+	if (!config.get().removeFinishedDays) {
 		return;
+	}
 		
 	var now = new Date();
 	var deleteDate = new Date(now);
     deleteDate.setDate(now.getDate() - config.get().removeFinishedDays);
 
-	Item.find({state : ItemStates.finished, createdAt : {$lt : deleteDate.toJSON()}}, function(err, items) {
-		if (err) {
-			console.log(err);
-		} else {		
-			for (var index in items) {
-				var item = items[index];
-				
-				console.log('Removing finished ' + item.name);
-				
-				item.remove(function(err) {
-					if (err)
-						console.log(err);
-				});
-			}
+	Item.find({state : ItemStates.finished, createdAt : {$lt : deleteDate.toJSON()}})
+	.then(function(items) {
+		for (var index in items) {
+			var item = items[index];
+			
+			console.log('Removing finished ' + item.name);
+			
+			item.remove(function(err) {
+				if (err)
+					console.log(err);
+			});
 		}
+	}).catch(function(error) {
+		util.error(error.stack || error);
 	});
 }
 

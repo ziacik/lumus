@@ -56,7 +56,7 @@ module.exports.findSubtitles =  function(item) {
 	var completeness = 0;
 	var pathCount = 0;
 
-	getPathsForSubtitling(item)
+	return getPathsForSubtitling(item)
 	.then(function(paths) {
 		pathCount = paths.length;
 	

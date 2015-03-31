@@ -8,6 +8,26 @@ var tvdb = new (require("node-tvdb"))("6E61D6699D0B1CB0");
 var ItemTypes = require('../models/item').ItemTypes;
 var ItemStates = require('../models/item').ItemStates;
 
+module.exports.rename = function(item) {
+	util.log("Renaming " + item.name);		
+	
+	var itemName = item.name;
+	var promise;
+	
+	if (item.type === ItemTypes.show && item.externalId) {
+		promise = getShowNameAndRename(item);
+	} else {
+		promise = renameTo(item, item.name);
+	}
+	
+	return promise.catch(function(error) {
+		util.error(error.stack || error);
+		item.stateInfo = error.message || error;
+		item.state = ItemStates.renameFailed;
+		item.save();		
+	});
+}
+
 function doRename(item, destinationDir) {
 	var rmdir = Q.denodeify(require('rimraf'));
 	var mkdir = Q.denodeify(require('mkdirp'));
@@ -34,26 +54,6 @@ function doRename(item, destinationDir) {
 	return promise;
 }
 
-function rename(item) {
-	util.log("Renaming " + item.name);		
-	
-	var itemName = item.name;
-	var promise;
-	
-	if (item.type === ItemTypes.show && item.externalId) {
-		promise = getShowNameAndRename(item);
-	} else {
-		promise = renameTo(item, item.name);
-	}
-	
-	promise.catch(function(error) {
-		util.error(error.stack || error);
-		item.stateInfo = error.message || error;
-		item.state = ItemStates.renameFailed;
-		item.save();		
-	});
-}
-
 function renameTo(item, itemName) {
 	var destinationDir = path.join(config.get()[item.type + 'Settings'].destinationDir, itemName);
 
@@ -76,5 +76,3 @@ function getShowNameAndRename(item) {
 	    return renameTo(item, itemName);
 	});
 }
-
-module.exports.rename = rename;

@@ -19,57 +19,47 @@ labels.add({
 	'downloader:transmission:url' : 'Transmission Url'
 });
 
-function checkFinished(item) {
+var checkFinished = function(item) {
+	var deferred = Q.defer();
 	var transmission = getTransmission();
 	
 	transmission.get(item.torrentHash, function(err, result) {
 		if (err) {
-			//TODO probably should postpone the item a bit.
-			console.log(err);
+			deferred.reject(err);
 			return;
 		}
 		
 		if (result.torrents.length == 0) {
-			console.log('Torrent removed.');
 			item.state = ItemStates.wanted;
-			
-			item.save(function(err) {
-				if (err)
-					console.log(err);
-			});
-			
-			return;
-		}
-		
-		if (result.torrents.length > 1) {
-			console.log("Unexpected count of torrents returned from transmission.");			
+			item.save().then(deferred.resolve, deferred.reject);
 			return;
 		}
 		
 		var torrent = result.torrents[0];
 				
 		if (torrent.isFinished) {
-			finishItem(item, torrent);
-			
-			if (config.get().downloader.removeTorrent)
-				removeTorrent(item);
-		}
-										
-		console.log('Check finished for item ' + item.name + ', state: ' + item.state); 		
+			finishItem(item, torrent).then(function() {
+				if (config.get().downloader.removeTorrent) {
+					return removeTorrent(item);
+				}
+			}).then(deferred.resolve, deferred.reject);
+		} else {
+			deferred.resolve();
+		};
 	});
+	
+	return deferred.promise;
 }
 
 var removeTorrent = function(item, removeData) {
-	if (!item.torrentHash)
+	if (!item.torrentHash) {
 		return;
+	}
 
 	var transmission = getTransmission();
+	var remove = Q.nbind(transmission.remove, transmission);
 
-	transmission.remove([item.torrentHash], removeData, function(err, arg) {
-		if (err) {
-			console.log('Unable to remove torrent: ' + err);
-		}
-	});
+	return remove([item.torrentHash], removeData)
 }
 
 var finishItem = function(item, torrent) {
@@ -94,14 +84,10 @@ var finishItem = function(item, torrent) {
 	
 	item.state = ItemStates.downloaded;
 	
-	//TODO should call renamer right away or what.
-	item.save(function(err) {
-		if (err)
-			console.log(err);
-	});	
-
-	if (notifier)
-		notifier.notifyDownloaded(item);
+	return item.save().then(function() {
+		if (notifier)
+			return notifier.notifyDownloaded(item);
+	});
 }
 
 var _transmission;
@@ -167,7 +153,7 @@ var add = function(item, magnetLink, torrentPageUrl) {
 
 		item.planNextCheck(1); /// To cancel possible postpone.
 
-		item.save().then(deferred.resolve, deferred.reject);			
+		item.save().then(deferred.resolve, deferred.reject);
 	});
 	
 	return deferred.promise;
