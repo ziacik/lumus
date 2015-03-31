@@ -28,10 +28,9 @@
     "mkdirp": "*",
     "transmission": "~0.4.0",
     "node-tvdb": "~0.4.2",
-    "node-isohunt": "^0.1.2",
     "node-kickass": "^0.2.0",
     "q": "~1.1.2",
-    "opensubtitles-client": "git+https://github.com/ziacik/node-opensubtitles-client.git",
+    "opensubtitles-client": "https://github.com/ziacik/node-opensubtitles-client/tarball/master",
     "thepiratebay": "~0.2.0",
     "npm": "~2.7.1"
   },
