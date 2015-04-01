@@ -46,5 +46,12 @@
   ],
   "bugs": {
     "url": "http://github.com/ziacik/lumus/issues"
+  },
+  "devDependencies": {
+    "chai": "^2.2.0",
+    "chai-as-promised": "^4.3.0",
+    "mocha": "^2.2.1",
+    "sinon": "^1.14.1",
+    "sinon-chai": "^2.7.0"
   }
 }

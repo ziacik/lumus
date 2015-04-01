@@ -65,9 +65,11 @@ var getScore = function(result, setting, points) {
 		return 0;
 	}
 	
+	var capitalizedSetting = setting.charAt(0).toUpperCase() + setting.substring(1);
+	
 	var shouldHaveIt = preference === config.Preference.required || preference === config.Preference.preferred;
-	var haveIt = result['has' + setting] || result['is' + setting];
-
+	var haveIt = result['has' + capitalizedSetting] || result['is' + capitalizedSetting] || false;
+	
 	return (haveIt === shouldHaveIt) ? points : 0;
 };
 
@@ -78,7 +80,7 @@ var movieDecorator = showDecorator = function(item, result) {
 	}).then(function(description)  {
 		result.type = item.type;
 		result.hasDigitalAudio = hasDigitalAudio(description);
-		result.isHD = isHD(result, description);
+		result.hasHdVideo = isHD(result, description);
 		result.score = result.hasSubtitles ? 1 : 0;
 		result.score += result.verified ? 1 : 0;
 		result.score += getScore(result, 'digitalAudio', 3);
@@ -88,7 +90,7 @@ var movieDecorator = showDecorator = function(item, result) {
 
 var musicDecorator = function(item, result) {
 	result.type = item.type;
-	result.isLossless = (/FLAC/i).test(result.title);
+	result.isLosslessFormat = (/FLAC/i).test(result.title);
 	result.score = getScore(result, 'losslessFormat', 1);
 	return result;
 };
