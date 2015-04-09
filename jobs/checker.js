@@ -1,4 +1,5 @@
 var Q = require('q');
+var util = require('util');
 var config = require('../config');
 var torrenter = require('./torrenter');
 var searcher = require('./searcher');
@@ -44,7 +45,7 @@ function isShow(item) {
 	return item.type === ItemTypes.show;
 }
 
-var finish = function(item) {	
+var finish = function(item) {
 	item.state = ItemStates.finished;
 	return item.save();
 }
@@ -54,8 +55,7 @@ function isAfterSubtitlerRetryLimit(item) {
 }
 
 function check() {
-	checkActive();
-	checkFinished();
+	return checkActive().then(checkFinished());
 }
 
 function checkOne(item) {
@@ -86,7 +86,7 @@ function checkOne(item) {
 };
 
 function checkActive() {
-	Item.find({state : {$nin : [ItemStates.finished, ItemStates.renameFailed]}, $not: {nextCheck : {$gt : new Date().toJSON()}}}).then(function(items) {
+	return Item.find({state : {$nin : [ItemStates.finished, ItemStates.renameFailed]}, $not: {nextCheck : {$gt : new Date().toJSON()}}}).then(function(items) {
 		var itemCheckers = items.map(function(item) {
 			return Q.fcall(checkOne, item);
 		});
@@ -95,7 +95,7 @@ function checkActive() {
 	}).then(function() {	
 		setTimeout(check, config.get().checkInterval * 1000);
 	}).catch(function(error) {
-		require('util').error(error);
+		util.error(error);
 		setTimeout(check, config.get().checkInterval * 1000);
 	});
 }
@@ -109,12 +109,12 @@ function checkFinished() {
 	var deleteDate = new Date(now);
     deleteDate.setDate(now.getDate() - config.get().removeFinishedDays);
 
-	Item.find({state : ItemStates.finished, createdAt : {$lt : deleteDate.toJSON()}})
+	return Item.find({state : ItemStates.finished, createdAt : {$lt : deleteDate.toJSON()}})
 	.then(function(items) {
 		for (var index in items) {
 			var item = items[index];
 			
-			console.log('Removing finished ' + item.name);
+			util.debug('Removing finished ' + item.name);
 			
 			item.remove(function(err) {
 				if (err)
