@@ -56,11 +56,17 @@ Item.setupMethods = function(item) {
 		return item.name;		
 	};
 	
-	item.remove = function(done) {
-		if (!done)
-			throw "Sorry, done callback is required.";
-		
-		db.items.remove({_id : item._id}, {}, done);
+	item.remove = function() {
+		var deferred = Q.defer();		
+		db.items.remove({_id : item._id}, {}, function(err) {
+			if (err) {
+				util.error(err.stack || err);
+				deferred.reject(err);
+			} else {
+				deferred.resolve();
+			}
+		});
+		return deferred.promise;
 	}
 
 	item.save = function() {
@@ -105,44 +111,44 @@ Item.setupMethods = function(item) {
 	};
 };
 
-Item.getAll = function(done) {
-	db.items.find({}).sort({ createdAt: -1 }).exec(function(err, items) {
-		if (err) {
-			console.log(err);
-			done(err, null);
-		}
-		
-		for (index in items) {
-			var item = items[index];
-			Item.setupMethods(item);
-		}
-
-		done(null, items);
-	});
+Item.getAll = function() {
+	return Item.find({}, { createdAt: -1 });
 };
 
-Item.findOne = function(what, done) {
-	db.items.findOne(what, function(err, item) {
-		if (item)
-			Item.setupMethods(item);
-		
-		done(err, item);
-	});
-};
-
-Item.find = function(byWhat) {
+Item.findOne = function(what) {
 	var deferred = Q.defer();
-
-	db.items.find(byWhat, function(err, items) {
+	db.items.findOne(what, function(err, item) {
 		if (err) {
+			util.error(err.stack || err);
 			deferred.reject(err);
 			return;
 		}
 		
-		for (index in items) {
-			var item = items[index];
-			Item.setupMethods(item);
+		Item.setupMethods(item);
+		deferred.resolve(item);
+	});
+	return deferred.promise;
+};
+
+Item.find = function(byWhat, sortBy) {
+	var deferred = Q.defer();
+	
+	var query = db.items.find(byWhat);
+	
+	if (sortBy) {
+		query = query.sort(sortBy);
+	} 
+
+	query.exec(function(err, items) {
+		if (err) {
+			util.error(err.stack || err);
+			deferred.reject(err);
+			return;
 		}
+		
+		items.forEach(function(item) {
+			Item.setupMethods(item);
+		});
 
 		deferred.resolve(items);
 	});
@@ -150,12 +156,20 @@ Item.find = function(byWhat) {
 	return deferred.promise;
 };
 
-Item.findById = function(id, done) {
-	Item.findOne({_id : id}, done);
+Item.findById = function(id) {
+	return Item.findOne({_id : id});
 };
 
-Item.removeById = function(id, done) {
-	db.items.remove({_id : id}, done);
+Item.removeById = function(id) {
+	var deferred = Q.defer();
+	db.items.remove({_id : id}, function(err) {
+		if (err) {
+			deferred.reject(err);
+			return;
+		}
+		deferred.resolve();
+	});
+	return deferred.promise;
 };
 
 module.exports.Item = Item;

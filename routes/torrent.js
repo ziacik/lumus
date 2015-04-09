@@ -4,10 +4,8 @@ var searcher = require('../jobs/searcher');
 var torrenter = require('../jobs/torrenter');
 
 exports.list = function(req, res){
-	Item.findById(req.query.id, function(err, item) {
-		if (err) {
-			res.redirect('/error', { error: err });
-		} else if (!item) {
+	return Item.findById(req.query.id).then(function(item) {
+		if (!item) {
 			res.send(404);
 		} else {
 			if (req.query.reset) {
@@ -18,33 +16,29 @@ exports.list = function(req, res){
 				item.save();
 			}
 
-			searcher
+			return searcher
 			.findAll(item)
 			.then(function(decoratedResults) {
 				res.render('torrents', { item : item, results : decoratedResults, searchTerm : item.searchTerm || item.name });
-			})
-			.catch(function(errors) {
-				util.error(errors.stack || errors);
-				res.render('error', { error: errors });
 			});
 		}
+	})
+	.catch(function(error) {
+		util.error(error.stack || error);
+		res.render('error', { error : error });
 	});
 };
 
 exports.add = function(req, res) {
-	Item.findById(req.query.id, function(err, item) {
-		if (err) {
-			res.redirect('/error', { error: err });
-		} else {
-			torrenter
-			.add(item, req.query.magnet, req.query.page)
-			.then(function() {
-				res.redirect('/');
-			})
-			.catch(function(error) {
-				util.error(error.stack || error);
-				res.render('error', { error : error });
-			});
-		}
+	return Item.findById(req.query.id).then(function(item) {
+		return torrenter
+		.add(item, req.query.magnet, req.query.page)
+		.then(function() {
+			res.redirect('/');
+		});
+	})
+	.catch(function(error) {
+		util.error(error.stack || error);
+		res.render('error', { error : error });
 	});
 }

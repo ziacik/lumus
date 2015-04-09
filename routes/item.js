@@ -8,50 +8,36 @@ var ItemStates = require('../models/item').ItemStates;
 var ItemTypeIcons = require('../models/item').ItemTypeIcons;
 
 exports.changeState = function(req, res) {
-	Item.findById(req.query.id, function(err, item) {
-		if (err) {
-			res.redirect('/error', { error: err });
-		} else {
-			item.stateInfo = undefined;
-			item.state = req.query.state; //TODO vulnerability (validate)
-			
-			if (item.state !== ItemStates.finished) {
-				item.planNextCheck(1); /// To cancel possible postpone.
-			}
-			
-			console.log('saving item ' + item.name + ' to sched ' + item.nextCheck);
-			
-			item
-			.save()
-			.then(function() {
-				res.redirect('/');
-			})
-			.catch(function(error) {
-				res.render('error', { error: error });
-			});
+	return Item.findById(req.query.id).then(function(item) {
+		item.stateInfo = undefined;
+		item.state = req.query.state; //TODO vulnerability (validate)
+		
+		if (item.state !== ItemStates.finished) {
+			item.planNextCheck(1); /// To cancel possible postpone.
 		}
+		
+		return item.save()
+		.then(function() {
+			res.redirect('/');
+		});
+	})
+	.catch(function(error) {
+		util.error(error.stack || error);
+		res.render('error', { error : error });
 	});
 };
 
 
 exports.remove = function(req, res) {
-	Item.findById(req.query.id, function(err, item) {
-		if (err) {
-			res.redirect('/error', { error: err });
-			console.log(err);
-			return;
-		}
-		
-		Item.removeById(req.query.id, function(err, removedId) {
-			if (err) {
-				res.redirect('/error', { error: err });
-				console.log(err);
-				return;
-			}
-			
-			torrenter.removeTorrent(item, true);
-			res.redirect('/');
-		});
+	return Item.findById(req.query.id).then(function(item) {
+		return Item.removeById(req.query.id);
+	}).then(function() {
+		return torrenter.removeTorrent(item, true)
+	}).then(function() {
+		res.redirect('/');
+	}).catch(function(error) {
+		util.error(error.stack || error);
+		res.render('error', { error : error });
 	});
 }
 
@@ -63,7 +49,7 @@ exports.add = function(req, res) {
 	item.no = req.query.no;
 	item.externalId = req.query.externalId;
 	
-	item
+	return item
 	.save()
 	.then(function() {
 		res.redirect('/');	

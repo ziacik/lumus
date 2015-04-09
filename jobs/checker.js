@@ -111,16 +111,9 @@ function checkFinished() {
 
 	return Item.find({state : ItemStates.finished, createdAt : {$lt : deleteDate.toJSON()}})
 	.then(function(items) {
-		for (var index in items) {
-			var item = items[index];
-			
-			util.debug('Removing finished ' + item.name);
-			
-			item.remove(function(err) {
-				if (err)
-					console.log(err);
-			});
-		}
+		return Q.allSettled(items.map(function(item) {
+			return item.remove();
+		}));
 	}).catch(function(error) {
 		util.error(error.stack || error);
 	});
