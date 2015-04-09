@@ -16,23 +16,23 @@
     "lumus": "./bin/lumus"
   },
   "dependencies": {
+    "cheerio": "*",
     "express": "3.4.x",
     "jade": "*",
     "less-middleware": "*",
-    "cheerio": "*",
-    "request": "^2.51.0",
-    "nedb": "*",
-    "nconf": "*",
-    "rimraf": "*",
-    "moment": "2.6.x",
     "mkdirp": "*",
-    "transmission": "~0.4.0",
-    "node-tvdb": "~0.4.2",
+    "moment": "2.6.x",
+    "nconf": "*",
+    "nedb": "*",
     "node-kickass": "^0.2.0",
+    "node-tvdb": "~0.4.2",
+    "npm": "~2.7.1",
+    "opensubtitles-client": "^2.2.0",
     "q": "~1.1.2",
-    "opensubtitles-client": "https://github.com/ziacik/node-opensubtitles-client/tarball/master",
+    "request": "^2.51.0",
+    "rimraf": "*",
     "thepiratebay": "~0.2.0",
-    "npm": "~2.7.1"
+    "transmission": "~0.4.0"
   },
   "repository": {
     "type": "git",

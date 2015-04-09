@@ -61,7 +61,7 @@ module.exports.hasSubtitlesForName = function(name) {
 	return openSubtitles.api.login()
 	.then(function(tok) {
 		token = tok;
-		return openSubtitles.api.searchAny(token, config.get().subtitler.languages, { tag : name });
+		return openSubtitles.api.search(token, config.get().subtitler.languages, { tag : name });
 	}).then(function(results) {
 		openSubtitles.api.logout(token).done();
 		return results && results.length;
