@@ -6,6 +6,7 @@ var util = require('util');
 
 var Q = require('q');
 var Item = require('../models/item').Item;
+var ItemStates = require('../models/item').ItemStates;
 var ItemTypeIcons = require('../models/item').ItemTypeIcons;
 
 var config = require('../config');
@@ -23,14 +24,15 @@ config.get = function() {
 }
 
 describe('routes.item', function() {
-	var item = { type : 'movie' };
+	var item;
 	var res;
 	
 	beforeEach(function () {
+		item =  { type : 'movie' };
+		Item.setupMethods(item);
+		item.save = sinon.spy(item.save);
+		item.planNextCheck = sinon.spy(item.planNextCheck);
 		Item.findById = function(id) {
-			if (id !== 123) {
-				
-			}
 			return id === 123 ? Q(item) : Q(undefined);
 		};
 		Item.save = sinon.stub().returns(Q(this));
@@ -46,6 +48,22 @@ describe('routes.item', function() {
 	it('should add item', function() {
 		return itemRoutes.add({query : { name : 'Test', type : 'movie', year : 2015, externalId : 'tt000000' } }, res).should.be.fulfilled.then(function() {
 			return Item.save.should.have.been.called;
+		}).then(function() {
+			var newItem = Item.save.getCall(0).args[0];
+			newItem.name.should.equal('Test');
+			return newItem.state.should.equal(ItemStates.wanted);
+		}).then(function() {
+			return res.redirect.should.have.been.calledWith('/');
+		});
+	});
+		
+	it('should change item', function() {
+		return itemRoutes.changeState({query : { id : 123, state : ItemStates.downloaded } }, res).should.be.fulfilled.then(function() {
+			return item.planNextCheck.should.have.been.called;
+		}).then(function() {
+			return item.save.should.have.been.called;
+		}).then(function() {
+			return item.state.should.equal(ItemStates.downloaded);
 		}).then(function() {
 			return res.redirect.should.have.been.calledWith('/');
 		});
