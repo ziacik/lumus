@@ -1,4 +1,5 @@
 var util = require('util');
+var Q = require('q');
 var notifier = require('../jobs/notifier');
 var torrenter = require('../jobs/torrenter');
 
@@ -30,9 +31,15 @@ exports.changeState = function(req, res) {
 
 exports.remove = function(req, res) {
 	return Item.findById(req.query.id).then(function(item) {
-		return Item.removeById(req.query.id);
-	}).then(function() {
-		return torrenter.removeTorrent(item, true)
+		if (item) {
+			return Item.removeById(req.query.id).then(function() {
+				return torrenter.removeTorrent(item, true).then(function() {
+					return Q(undefined);
+				}).catch(function(error) {
+					util.error(error.stack || error);
+				});
+			});
+		}
 	}).then(function() {
 		res.redirect('/');
 	}).catch(function(error) {

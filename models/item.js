@@ -124,7 +124,10 @@ Item.findOne = function(what) {
 			return;
 		}
 		
-		Item.setupMethods(item);
+		if (item) {
+			Item.setupMethods(item);
+		}
+		
 		deferred.resolve(item);
 	});
 	return deferred.promise;

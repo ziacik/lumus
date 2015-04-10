@@ -21,7 +21,7 @@ config.get = function() {
 	return staticConfig;
 }
 
-describe('checker', function() {
+describe('routes.index', function() {
 	var items = [{ type : 'movie' }];
 	var res = {
 		render : sinon.spy()
