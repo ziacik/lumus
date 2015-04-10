@@ -47,11 +47,7 @@ describe('routes.item', function() {
 		
 	it('should add item', function() {
 		return itemRoutes.add({query : { name : 'Test', type : 'movie', year : 2015, externalId : 'tt000000' } }, res).should.be.fulfilled.then(function() {
-			return Item.save.should.have.been.called;
-		}).then(function() {
-			var newItem = Item.save.getCall(0).args[0];
-			newItem.name.should.equal('Test');
-			return newItem.state.should.equal(ItemStates.wanted);
+			return Item.save.should.have.been.calledWithMatch({ name : 'Test', state : ItemStates.wanted });
 		}).then(function() {
 			return res.redirect.should.have.been.calledWith('/');
 		});
@@ -61,9 +57,7 @@ describe('routes.item', function() {
 		return itemRoutes.changeState({query : { id : 123, state : ItemStates.downloaded } }, res).should.be.fulfilled.then(function() {
 			return item.planNextCheck.should.have.been.called;
 		}).then(function() {
-			return item.save.should.have.been.called;
-		}).then(function() {
-			return item.state.should.equal(ItemStates.downloaded);
+			return Item.save.should.have.been.calledWithMatch({ state : ItemStates.downloaded });
 		}).then(function() {
 			return res.redirect.should.have.been.calledWith('/');
 		});
