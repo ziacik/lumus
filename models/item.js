@@ -49,15 +49,16 @@ function Item() {
 }
 
 Item.setupMethods = function(item) {
-	item.getDisplayName = function() {			
+	item.getDisplayName = function() {
 		if (item.type === ItemTypes.show)
 			return item.name + " Season " + item.no;
 		
-		return item.name;		
+		return item.name;
 	};
 	
 	item.remove = function() {
-		var deferred = Q.defer();		
+		var deferred = Q.defer();
+		
 		db.items.remove({_id : item._id}, {}, function(err) {
 			if (err) {
 				util.error(err.stack || err);
@@ -66,34 +67,12 @@ Item.setupMethods = function(item) {
 				deferred.resolve();
 			}
 		});
+		
 		return deferred.promise;
 	}
 
 	item.save = function() {
-		var deferred = Q.defer();
-		
-		if (item._id) {
-			db.items.update({_id : item._id}, item, {}, function(err) {
-				if (err) {
-					util.error(err.stack || err);
-					deferred.reject(err);
-				} else {
-					deferred.resolve(item);
-				}
-			});
-		} else {
-			db.items.insert(item, function(err, newDoc) {
-				item._id = newDoc._id;
-				if (err) {
-					util.error(err.stack || err);
-					deferred.reject(err);
-				} else {
-					deferred.resolve(item);
-				}
-			});
-		}
-		
-		return deferred.promise;
+		return Item.save(item);
 	};
 	
 	item.planNextCheck = function(seconds) {
@@ -111,12 +90,40 @@ Item.setupMethods = function(item) {
 	};
 };
 
+Item.save = function(item) {
+	var deferred = Q.defer();
+	
+	if (item._id) {
+		db.items.update({_id : item._id}, item, {}, function(err) {
+			if (err) {
+				util.error(err.stack || err);
+				deferred.reject(err);
+			} else {
+				deferred.resolve(item);
+			}
+		});
+	} else {
+		db.items.insert(item, function(err, newDoc) {
+			item._id = newDoc._id;
+			if (err) {
+				util.error(err.stack || err);
+				deferred.reject(err);
+			} else {
+				deferred.resolve(item);
+			}
+		});
+	}
+	
+	return deferred.promise;
+};
+
 Item.getAll = function() {
 	return Item.find({}, { createdAt: -1 });
 };
 
 Item.findOne = function(what) {
 	var deferred = Q.defer();
+	
 	db.items.findOne(what, function(err, item) {
 		if (err) {
 			util.error(err.stack || err);
@@ -130,6 +137,7 @@ Item.findOne = function(what) {
 		
 		deferred.resolve(item);
 	});
+	
 	return deferred.promise;
 };
 

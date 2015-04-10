@@ -33,6 +33,7 @@ describe('routes.item', function() {
 			}
 			return id === 123 ? Q(item) : Q(undefined);
 		};
+		Item.save = sinon.stub().returns(Q(this));
 		Item.removeById = sinon.stub().returns(Q(undefined));
 		torrenter.removeTorrent = sinon.stub().returns(Q(undefined));
 		res = {
@@ -40,6 +41,14 @@ describe('routes.item', function() {
 			redirect : sinon.spy()
 		};
 		util.error = sinon.spy();
+	});
+		
+	it('should add item', function() {
+		return itemRoutes.add({query : { name : 'Test', type : 'movie', year : 2015, externalId : 'tt000000' } }, res).should.be.fulfilled.then(function() {
+			return Item.save.should.have.been.called;
+		}).then(function() {
+			return res.redirect.should.have.been.calledWith('/');
+		});
 	});
 		
 	it('should remove item', function() {

@@ -54,5 +54,8 @@
     "proxyquire": "^1.4.0",
     "sinon": "^1.14.1",
     "sinon-chai": "^2.7.0"
+  },
+  "scripts": {
+    "test": "mocha"
   }
 }

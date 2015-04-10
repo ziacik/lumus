@@ -53,7 +53,7 @@ var checkFinished = function(item) {
 
 var removeTorrent = function(item, removeData) {
 	if (!item.torrentHash) {
-		return;
+		return Q(undefined);
 	}
 
 	var transmission = getTransmission();
