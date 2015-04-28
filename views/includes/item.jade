@@ -2,6 +2,12 @@ mixin item(item)
 	div
 		strong
 			+fa(icons[item.type], item.getDisplayName())
+			if item.externalId
+				| &nbsp;
+				if item.type === 'show' || item.type === 'movie'
+					+faLinkBlank('external-link', 'http://www.imdb.com/title/' + item.externalId + '/')
+				else
+					+faLinkBlank('external-link', 'http://musicbrainz.org/release-group/' + item.externalId)
 	div
 		span.state(style='float:right')
 			if item.stateInfo

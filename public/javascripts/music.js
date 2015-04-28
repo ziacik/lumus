@@ -61,9 +61,11 @@ function getAlbumItem(artistId, artistName, albumInfo) {
 	var item = 
 		"<p><span class='fa fa-music'></span> " +
 		albumInfo.title + " (" + albumInfo["primary-type"] + ", " + albumInfo.Year + ")" +
-		//" <a class='btn btn-default btn-xs' href='/music/add?artistId=" + artistId + "&album=" + encodeURIComponent(albumInfo.title) + "'</a>" +
-		" <a class='btn btn-default btn-xs' href='/add?type=music&name=" + encodeURIComponent(artistName) + "%20" + encodeURIComponent(albumInfo.title) + "'</a>" +
-			"<span class='glyphicon glyphicon-plus'></span>" +			
+		"&nbsp;<a href='http://musicbrainz.org/release-group/" + albumInfo.id + "' target='_blank'>" +
+			"<span class='fa fa-external-link'></span>" +
+		"</a>" +
+		"&nbsp;<a class='btn btn-default btn-xs' href='/add?type=music&externalId=" + albumInfo.id + "&name=" + encodeURIComponent(artistName) + "%20" + encodeURIComponent(albumInfo.title) + "'</a>" +
+			"<span class='glyphicon glyphicon-plus'></span>" +
 		"</a></p>";
 	return item;
 }

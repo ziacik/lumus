@@ -16,6 +16,10 @@ mixin faLink(faType, href, text, title)
 	a(href=href)
 		+fa(faType, text, title)
 		
+mixin faLinkBlank(faType, href, text, title)
+	a(href=href, target='_blank')
+		+fa(faType, text, title)
+		
 mixin faButtonSmall(faType, href, text, title)
 	a.btn.btn-default.btn-xs(href=href, title=title)
 		+fa(faType, text)

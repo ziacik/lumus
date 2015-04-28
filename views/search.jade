@@ -2,34 +2,40 @@ extends layout
 
 block headScript
 	script(src="/javascripts/search.js")
-	
+
 	script.
 		Handlebars.registerHelper('uri', function(value, value2OrOptions, optionsOrNothing) {
 			if (value2OrOptions && optionsOrNothing) {
 				value = value + ' (' + value2OrOptions + ')';
 			}
-		
+
 			return new Handlebars.SafeString(encodeURIComponent(value));
 		});
-	
+
 	script#show-template(type="text/x-handlebars-template")
 		p
 			+fa('leaf', '{{ Title }} ({{ Year }})')
 			| &nbsp;
+			+faLinkBlank('external-link', 'http://www.imdb.com/title/{{ imdbID }}/')
+			| &nbsp;
 			a.btn.btn-default.btn-xs(href='/show/add?type=show&name={{uri Title}}&showId={{ imdbID }}')
 				span.glyphicon.glyphicon-plus
-		
+
 
 	script#movie-template(type="text/x-handlebars-template")
 		p
 			+fa('film', '{{ Title }} ({{ Year }})')
 			| &nbsp;
-			a.btn.btn-default.btn-xs(href='/add?type=movie&name={{uri Title}}&year={{ Year }}')
+			+faLinkBlank('external-link', 'http://www.imdb.com/title/{{ imdbID }}/')
+			| &nbsp;
+			a.btn.btn-default.btn-xs(href='/add?type=movie&name={{uri Title}}&year={{ Year }}&externalId={{ imdbID }}')
 				span.glyphicon.glyphicon-plus
 
 	script#music-template(type="text/x-handlebars-template")
 		p
 			+fa('music', '{{ name }}{{#if disambiguation}} ({{ disambiguation }}){{/if}}')
+			| &nbsp;
+			+faLinkBlank('external-link', 'http://musicbrainz.org/artist/{{ id }}')
 			| &nbsp;
 			a.btn.btn-default.btn-xs(href='/artist/add?type=music&name={{uri name disambiguation}}&artistId={{ id }}')
 				span.glyphicon.glyphicon-plus
@@ -37,15 +43,15 @@ block headScript
 block content
 	.row
 		.col-sm-3
-	
-		.col-sm-6		
+
+		.col-sm-6
 			h1
 				+fa('search', 'Search Results')
-		
+
 			#movies
 				hr
 				#movieSpinner
-					+faSpinner('Searching for movies...')					
+					+faSpinner('Searching for movies...')
 				#movieError(style='display:none')
 					+fa('ban')
 					span#movieErrorText
@@ -63,10 +69,10 @@ block content
 				#musicError(style='display:none')
 					+fa('ban')
 					span#musicErrorText
-		
+
 			#noResult(style='display:none')
 				hr
 				+fa('info-circle', 'Nothing found.')
-		
+
 			hr
 			+buttonHome()
