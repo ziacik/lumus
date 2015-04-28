@@ -5,7 +5,7 @@ var ItemTypes = require('../models/item').ItemTypes;
 var ItemTypeIcons = require('../models/item').ItemTypeIcons;
 
 exports.list = function(req, res) {
-	Item.getAll().then(function(items) {
+	return Item.getAll().then(function(items) {
 		res.render('list', {
 			items: items,
 			icons: ItemTypeIcons
@@ -20,5 +20,5 @@ exports.list = function(req, res) {
 };
 
 exports.add = function(req, res) {
-	itemRoute.add(req, res);
+	return itemRoute.add(req, res);
 };
