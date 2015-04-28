@@ -25,6 +25,8 @@ describe('decorator', function() {
 	before(function() {
 		config.get().movieSettings.digitalAudioPreference = config.Preference.required;
 		config.get().movieSettings.hdVideoPreference = config.Preference.preferred;
+		config.get().showSettings.digitalAudioPreference = config.Preference.optional;
+		config.get().showSettings.hdVideoPreference = config.Preference.preferred;
 	}),
 	it('should correctly decorate hd ac3 movie', function() {
 		var item = { type : 'movie' };
