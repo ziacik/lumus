@@ -5,7 +5,7 @@ block content
 	.col-sm-6.col-sm-offset-3
 		h1
 			+fa('search', 'Lumus')
-			
+
 		small
 			| Version #{myVersion}
 			if newVersion
@@ -28,17 +28,32 @@ block content
 						+faLink('wrench', '/config', 'Settings')
 
 	.col-sm-6.col-sm-offset-3
-		h2 Today
-		each item in items
-			if moment().startOf('day').isBefore(item.createdAt)
-				+item(item)
-				
-		h2 Last 7 days
-		each item in items
-			if moment().startOf('day').isAfter(item.createdAt) && moment().startOf('day').subtract('days', 7).isBefore(item.createdAt)
-				+item(item)
-		
-		h2 Older
-		each item in items
-			if moment().startOf('day').subtract('days', 7).isAfter(item.createdAt)
-				+item(item)
+		if items.hasWaiting()
+				h2 Waiting
+				each item in items
+					if item.isWaiting()
+						+item(item)
+	
+		if items.hasDownloading()
+			h2 Downloading
+			each item in items
+				if item.isDownloading()
+					+item(item)
+	
+		if items.hasWaitingForSubtitles()
+			h2 Waiting For Subtitles
+			each item in items
+				if item.isWaitingForSubtitles()
+					+item(item)
+	
+		if items.hasFailed()
+			h2 Failed
+			each item in items
+				if item.isFailed()
+					+item(item)
+	
+		if items.hasFinished()
+			h2 Finished
+			each item in items
+				if item.isFinished()
+					+item(item)

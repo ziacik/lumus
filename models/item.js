@@ -48,6 +48,38 @@ function Item() {
 	Item.setupMethods(this);
 }
 
+Item.setupAggregateMethods = function(items) {
+	items.hasWaiting = function() {
+		return items.some(function(item) {
+			return item.isWaiting();
+		});
+	};
+
+	items.hasDownloading = function() {
+		return items.some(function(item) {
+			return item.isDownloading();
+		});
+	};
+	
+	items.hasWaitingForSubtitles = function() {
+		return items.some(function(item) {
+			return item.isWaitingForSubtitles();
+		});
+	};
+	
+	items.hasFinished = function() {
+		return items.some(function(item) {
+			return item.isFinished();
+		});
+	};
+
+	items.hasFailed = function() {
+		return items.some(function(item) {
+			return item.isFailed();
+		});
+	};	
+}
+
 Item.setupMethods = function(item) {
 	item.getDisplayName = function() {
 		if (item.type === ItemTypes.show)
@@ -87,6 +119,26 @@ Item.setupMethods = function(item) {
 	item.rescheduleNextHour = function() {
 		item.planNextCheck(60 * 60);
 		return item.save();
+	};
+	
+	item.isWaiting = function() {
+		return item.state === ItemStates.wanted;
+	};
+	
+	item.isDownloading = function() {
+		return item.state === ItemStates.snatched;
+	};
+	
+	item.isWaitingForSubtitles = function() {
+		return item.state === ItemStates.renamed || item.state === ItemStates.libraryUpdated || item.state === ItemStates.subtitlerFailed || item.state === ItemStates.subtitled;
+	};
+	
+	item.isFinished = function() {
+		return item.state === ItemStates.finished;
+	};
+	
+	item.isFailed = function() {
+		return item.state === ItemStates.renameFailed;
 	};
 };
 
@@ -156,6 +208,8 @@ Item.find = function(byWhat, sortBy) {
 			deferred.reject(err);
 			return;
 		}
+		
+		Item.setupAggregateMethods(items);
 		
 		items.forEach(function(item) {
 			Item.setupMethods(item);
