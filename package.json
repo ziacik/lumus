@@ -1,7 +1,7 @@
 {
   "name": "lumus",
   "author": "František Žiačik <ziacik@gmail.com>",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "description": "Lightweight web application for convenient automatic torrent searching and managing of movies, shows and music.",
   "keywords": [
     "lumus",
