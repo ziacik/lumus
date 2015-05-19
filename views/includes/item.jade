@@ -30,6 +30,10 @@ mixin item(item)
 			a(href='/changeState?id=' + item._id + '&state=wanted'): +fa('refresh', 'Try other release')
 		if item.state === 'libraryUpdated'
 			a(href='/changeState?id=' + item._id + '&state=wanted'): +fa('refresh', 'Try other release')
+		if item.state === 'libraryUpdateFailed'
+			a(href='/changeState?id=' + item._id + '&state=renamed'): +fa('refresh', 'Retry library update')
+			| &nbsp;or&nbsp;
+			a(href='/changeState?id=' + item._id + '&state=libraryUpdated'): +fa('chevron-right', 'Skip library update')
 		if item.state === 'renamed'
 			a(href='/changeState?id=' + item._id + '&state=wanted'): +fa('refresh', 'Try other release')
 			| &nbsp;or&nbsp;

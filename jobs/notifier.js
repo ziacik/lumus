@@ -1,3 +1,5 @@
+var util = require('util');
+
 var ItemStates = require('../models/item').ItemStates;
 var labels = require('../labels');
 var serviceDispatcher = require('./serviceDispatcher');
@@ -24,5 +26,10 @@ module.exports.updateLibrary = function(item) {
 			item.state = ItemStates.libraryUpdated;
 			return item.save();
 		});
+	}).catch(function(error) {
+		util.error(error.stack || error);
+		item.stateInfo = error.message || error;
+		item.state = ItemStates.libraryUpdateFailed;
+		item.rescheduleNextHour();
 	});
 }

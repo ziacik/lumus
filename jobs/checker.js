@@ -86,7 +86,7 @@ function checkOne(item) {
 };
 
 function checkActive() {
-	return Item.find({state : {$nin : [ItemStates.finished, ItemStates.renameFailed]}, $not: {nextCheck : {$gt : new Date().toJSON()}}}).then(function(items) {
+	return Item.find({state : {$nin : [ItemStates.finished, ItemStates.renameFailed, ItemStates.libraryUpdateFailed]}, $not: {nextCheck : {$gt : new Date().toJSON()}}}).then(function(items) {
 		var itemCheckers = items.map(function(item) {
 			return Q.fcall(checkOne, item);
 		});

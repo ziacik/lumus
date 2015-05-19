@@ -18,7 +18,8 @@ var ItemStates = Object.freeze({
 	downloaded:"downloaded", 
 	renamed:"renamed",
 	renameFailed:"renameFailed",
-	libraryUpdated:"libraryUpdated", 
+	libraryUpdated:"libraryUpdated",
+	libraryUpdateFailed:"libraryUpdateFailed",
 	subtitled:"subtitled", 
 	subtitlerFailed:"subtitlerFailed",
 	finished:"finished"
@@ -138,7 +139,7 @@ Item.setupMethods = function(item) {
 	};
 	
 	item.isFailed = function() {
-		return item.state === ItemStates.renameFailed;
+		return item.state === ItemStates.renameFailed || item.state === ItemStates.libraryUpdateFailed;
 	};
 };
 
