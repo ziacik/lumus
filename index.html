@@ -1,148 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-us">
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
+    <meta charset="UTF-8">
     <title>Lumus by ziacik</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
-
   <body>
-    <header>
-      <div class="inner">
-        <h1>Lumus</h1>
-        <h2>Lightweight web application for convenient automatic torrent searching and managing of movies, shows and music. Alternative to SickBeard, CouchPotato and Headphones. Integration with transmission and XBMC.</h2>
-        <a href="https://github.com/ziacik/lumus" class="button"><small>View project on</small>GitHub</a>
-      </div>
-    </header>
+    <section class="page-header">
+      <h1 class="project-name">Lumus</h1>
+      <h2 class="project-tagline">Search for movies, shows and music and add them automatically to Transmission when they appear on torrents. Lightweight all-in-one alternative to SickBeard, CouchPotato and Headphones. Integration with Kodi.</h2>
+      <a href="https://github.com/ziacik/lumus" class="btn">View on GitHub</a>
+      <a href="https://github.com/ziacik/lumus/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/ziacik/lumus/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h2>
-<a name="how-to-install" class="anchor" href="#how-to-install"><span class="octicon octicon-link"></span></a>How to install</h2>
+    <section class="main-content">
+      <h1>
+<a id="lumus" class="anchor" href="#lumus" aria-hidden="true"><span class="octicon octicon-link"></span></a>Lumus</h1>
 
-<h3>
-<a name="linux" class="anchor" href="#linux"><span class="octicon octicon-link"></span></a>Linux</h3>
+<p>Search for movies, shows and music and add them automatically to Transmission when they appear on torrents. Lightweight all-in-one alternative to SickBeard, CouchPotato and Headphones. Integration with Kodi.</p>
 
-<h4>
-<a name="transmission" class="anchor" href="#transmission"><span class="octicon octicon-link"></span></a>Transmission</h4>
+<h1>
+<a id="install-on-osmc-or-linux" class="anchor" href="#install-on-osmc-or-linux" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install on OSMC or Linux</h1>
 
-<p>Only a daemon is needed (service running at background) instead of full-featured client.</p>
+<h2>
+<a id="quick-start" class="anchor" href="#quick-start" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quick start</h2>
 
-<ol>
-<li><p>Install transmission<br><code>$ sudo apt-get install transmission-daemon</code></p></li>
-<li><p>Set it to run at startup<br><code>$ sudo update-rc.d transmission-daemon defaults</code></p></li>
-<li><p>Stop the deamon<br><code>$ sudo /etc/init.d/transmission-daemon stop</code></p></li>
-<li>
-<p>Configure<br><code>$ sudo nano /etc/transmission-daemon/settings.json</code></p>
+<p>To install Transmission, use AppStore. Make sure you have <code>rpc-enabled</code> setting set to <code>true</code> and <code>rpc-authentication-required</code> set to <code>false</code> or <code>rpc-whitelist</code> configured correctly. Also, consider setting <code>umask</code> setting to <code>2</code>.</p>
 
-<p>You may also use <code>vi</code> if you prefer, or any other editor.<br><code>$ sudo vi /etc/transmission-daemon/settings.json</code></p>
+<p>To install and run Lumus, run this in console.<br>
+<code>sudo apt-get -y --purge remove node</code><br>
+<code>sudo apt-get -y install nodejs npm git</code><br>
+<code>sudo update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10</code>  </p>
 
-<p>You should at least change these settings:</p>
+<p><code>sudo npm install -g lumus</code><br>
+<code>cd &amp;&amp; mkdir Lumus &amp;&amp; cd Lumus &amp;&amp; lumus</code>  </p>
 
-<ul>
-<li>
-<code>download-dir</code> to some generic download directory such as ~/Downloads (lumus will move the files to destination directories from here),</li>
-<li>
-<code>incomplete-dir</code> to some generic incomplete downloads directory such as ~/Downloading,</li>
-<li>
-<code>incomplete-dir-enabled</code> to <code>true</code>,</li>
-<li>
-<code>rpc-enabled</code> to <code>true</code>.</li>
-</ul>
-</li>
-</ol><h4>
-<a name="nodejs" class="anchor" href="#nodejs"><span class="octicon octicon-link"></span></a>Node.js</h4>
-
-<p>Node.js is a platform which this application runs on. Npm is a package manager for node.js.</p>
-
-<p><code>$ sudo apt-get install nodejs npm</code><br>
-Answer <code>Y</code> if asked.</p>
-
-<h4>
-<a name="lumus" class="anchor" href="#lumus"><span class="octicon octicon-link"></span></a>Lumus</h4>
-
-<ol>
-<li><p>Install lumus<br><code>$ sudo npm install -g lumus</code></p></li>
-<li><p>Run the application<br><code>$ lumus</code></p></li>
-<li><p>Browse the application url in your webbrowser.<br>
-Use correct ip address or hostname instead of <em>localhost</em> if you installed the application on a dedicated server.<br><a href="http://localhost:3001">http://localhost:3001</a></p></li>
-</ol><h4>
-<a name="xbmc-optional" class="anchor" href="#xbmc-optional"><span class="octicon octicon-link"></span></a>XBMC (optional)</h4>
-
-<p>Optionally, you may want to install <a href="http://xbmc.org/">XBMC</a> to get automatic library updates and notifications from lumus.</p>
+<p>Navigate to <a href="http://%5BYour%20Device%20IP%20or%20HostName%5D:3001">http://[Your Device IP or HostName]:3001</a></p>
 
 <h3>
-<a name="windows" class="anchor" href="#windows"><span class="octicon octicon-link"></span></a>Windows</h3>
+<a id="to-make-it-run-as-service" class="anchor" href="#to-make-it-run-as-service" aria-hidden="true"><span class="octicon octicon-link"></span></a>To make it run as service</h3>
 
-<h4>
-<a name="transmission-1" class="anchor" href="#transmission-1"><span class="octicon octicon-link"></span></a>Transmission</h4>
+<p>Install and configure <code>forever-service</code>.<br>
+<code>sudo npm install -g forever</code><br>
+<code>sudo npm install -g forever-service</code><br>
+<code>sudo update-rc.d lumus defaults</code>  </p>
 
-<ol>
-<li><p>Install transmission<br>
-Windows support is not yet official, but there is an unofficial port <a href="http://sourceforge.net/projects/trqtw/">here</a>.    </p></li>
-<li><p>Configure to allow rpc  </p></li>
-</ol><h4>
-<a name="nodejs-1" class="anchor" href="#nodejs-1"><span class="octicon octicon-link"></span></a>Node.js</h4>
+<p>To start for the first time, you can use<br>
+<code>sudo service lumus start</code>  </p>
 
-<p>Node.js is a platform which this application runs on. Npm is a package manager for node.js.</p>
+<p>Check the logfile <code>/var/log/lumus.log</code> if something doesn't work as expected.</p>
+
+<h1>
+<a id="install-on-windows" class="anchor" href="#install-on-windows" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install on Windows</h1>
+
+<h2>
+<a id="install-transmission" class="anchor" href="#install-transmission" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install Transmission</h2>
+
+<p>Windows support for Transmission is not yet official, but there is an unofficial port <a href="http://sourceforge.net/projects/trqtw/">here</a>.   </p>
+
+<h2>
+<a id="install-nodejs" class="anchor" href="#install-nodejs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install Node.js</h2>
 
 <p>Download and install with <a href="http://nodejs.org/download/">node.js installer</a>.  </p>
 
-<h4>
-<a name="lumus-1" class="anchor" href="#lumus-1"><span class="octicon octicon-link"></span></a>Lumus</h4>
+<h2>
+<a id="install-lumus" class="anchor" href="#install-lumus" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install Lumus</h2>
 
 <p>There is no windows installer yet, so you need to use command line.</p>
 
 <ol>
 <li><p>Open command line 
 <code>cmd</code></p></li>
-<li><p>Install lumus 
+<li><p>Install Lumus 
 <code>npm install -g lumus</code></p></li>
-<li><p>Run the application<br><code>lumus</code></p></li>
+<li><p>Run the application<br>
+<code>lumus</code></p></li>
 <li><p>Browse the application url in your webbrowser.<br>
-Use correct ip address or hostname instead of <em>localhost</em> if you installed the application on a dedicated server.<br><a href="http://localhost:3001">http://localhost:3001</a></p></li>
-</ol><h4>
-<a name="xbmc-optional-1" class="anchor" href="#xbmc-optional-1"><span class="octicon octicon-link"></span></a>XBMC (optional)</h4>
-
-<p>Optionally, you may want to install <a href="http://xbmc.org/">XBMC</a> to get automatic library updates and notifications from lumus.</p>
+Use correct ip address or hostname instead of <em>localhost</em> if you installed the application on a dedicated server.<br>
+<a href="http://localhost:3001">http://localhost:3001</a></p></li>
+</ol>
 
 <h2>
-<a name="notes" class="anchor" href="#notes"><span class="octicon octicon-link"></span></a>Notes</h2>
+<a id="install-kodi" class="anchor" href="#install-kodi" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install Kodi</h2>
 
-<ul>
-<li>This how-to is incomplete.</li>
-<li>This project is a work in progress.</li>
-<li>This tool does not download any content. It only provides a convenient search interface. You should only download content that is legal in your country.</li>
-</ul>
-        </section>
+<p>Optionally, you may want to install <a href="http://kodi.tv/">Kodi</a> to get automatic library updates and notifications from Lumus.</p>
 
-        <aside id="sidebar">
-          <a href="https://github.com/ziacik/lumus/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/ziacik/lumus/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/ziacik/lumus">Lumus</a> is maintained by <a href="https://github.com/ziacik">ziacik</a>.</span>
 
-          <p class="repo-owner"><a href="https://github.com/ziacik/lumus"></a> is maintained by <a href="https://github.com/ziacik">ziacik</a>.</p>
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
 
-          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
-    </div>
+    </section>
 
             <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
@@ -157,3 +111,4 @@ Use correct ip address or hostname instead of <em>localhost</em> if you installe
 
   </body>
 </html>
+
