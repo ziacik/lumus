@@ -12,25 +12,25 @@ Search for movies, shows and music and add them automatically to Transmission wh
 
 To install Transmission, use AppStore. Make sure you have `rpc-enabled` setting set to `true` and `rpc-authentication-required` set to `false` or `rpc-whitelist` configured correctly. Also, consider setting `umask` setting to `2`.
 
-To install and run lumus, run this in console.
-`sudo apt-get -y --purge remove node`
-`sudo apt-get -y install nodejs npm git`
-`sudo update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10`
+To install and run lumus, run this in console.  
+`sudo apt-get -y --purge remove node`  
+`sudo apt-get -y install nodejs npm git`  
+`sudo update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10`  
 
-`sudo npm install -g lumus`
-`cd && mkdir Lumus && cd Lumus && lumus`
+`sudo npm install -g lumus`  
+`cd && mkdir Lumus && cd Lumus && lumus`  
 
 Navigate to [http://[Your Device IP or HostName]:3001](http://[Your Device IP or HostName]:3001)
 
 ## To make it run as service
 
 Install and configure `forever-service`.
-`sudo npm install -g forever`
-`sudo npm install -g forever-service`
-`sudo update-rc.d lumus defaults`
+`sudo npm install -g forever`  
+`sudo npm install -g forever-service`  
+`sudo update-rc.d lumus defaults`  
 
 To start for the first time, you can use
-`sudo service lumus start`
+`sudo service lumus start`  
 
 Check the logfile `/var/log/lumus.log` if something doesn't work as expected.
 
