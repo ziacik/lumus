@@ -22,14 +22,14 @@ To install and run lumus, run this in console.
 
 Navigate to [http://[Your Device IP or HostName]:3001](http://[Your Device IP or HostName]:3001)
 
-## To make it run as service
+### To make it run as service
 
-Install and configure `forever-service`.
+Install and configure `forever-service`.  
 `sudo npm install -g forever`  
 `sudo npm install -g forever-service`  
 `sudo update-rc.d lumus defaults`  
 
-To start for the first time, you can use
+To start for the first time, you can use  
 `sudo service lumus start`  
 
 Check the logfile `/var/log/lumus.log` if something doesn't work as expected.
