@@ -94,10 +94,22 @@ var getDescription = function(link) {
 
 var getCategory = function(item) {
 	if (item.type === ItemTypes.movie) {
-		return "207";
+		if (config.get().movieSettings.hdVideoPreference === config.Preference.required) {
+			return "207";
+		} else {
+			return "200";
+		}
 	} else if (item.type === ItemTypes.show) {
-		return "205";
+		if (config.get().showSettings.hdVideoPreference === config.Preference.required) {
+			return "208";
+		} else {
+			return "205";
+		}
 	} else if (item.type === ItemTypes.music) {
-		return "100";
+		if (config.get().musicSettings.losslessFormatPreference === config.Preference.required) {
+			return "104";
+		} else {
+			return "100";
+		}
 	}
 };
