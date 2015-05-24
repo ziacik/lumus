@@ -2,7 +2,7 @@
   "name": "lumus",
   "author": "František Žiačik <ziacik@gmail.com>",
   "version": "0.4.12",
-  "description": "Lightweight web application for convenient automatic torrent searching and managing of movies, shows and music.",
+  "description": "Search for movies, shows and music and add them automatically to Transmission when they appear on torrents. Lightweight all-in-one alternative to SickBeard, CouchPotato and Headphones.",
   "keywords": [
     "lumus",
     "torrent",
@@ -11,6 +11,7 @@
     "shows",
     "music"
   ],
+  "homepage": "http://getlumus.com",
   "preferGlobal": true,
   "bin": {
     "lumus": "./bin/lumus"
@@ -38,12 +39,7 @@
     "type": "git",
     "url": "git://github.com/ziacik/lumus.git"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://links.sailsjs.org/license/mit"
-    }
-  ],
+  "license": "MIT",
   "bugs": {
     "url": "http://github.com/ziacik/lumus/issues"
   },
