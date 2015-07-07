@@ -29,8 +29,6 @@ module.exports.ServiceDispatcher.prototype.untilSuccess = function(command, isSu
 		var service = services[serviceIndex];
 		serviceIndex++;
 
-		util.log('Trying service ' + service.name);		
-		
 		Q.when(command(service), function(result) {
 			if (result && (!isSuccess || isSuccess(result))) {
 				deferred.resolve(result);
