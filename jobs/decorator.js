@@ -16,14 +16,26 @@ var getDecoratorFunction = function(item) {
 };
 
 module.exports.all = function(item, results) {
+	if (item.type === ItemTypes.music) {
+		return doDecoration(item, results);
+	} else {
+		return subtitler.listSubtitles(item).then(function(subtitles) {
+			return doDecoration(item, results, subtitles);
+		});
+	}
+};
+
+var doDecoration = function(item, results, subtitles) {
 	var decoratorFunction = getDecoratorFunction(item);
+	
 	var promises = results.map(function(result) {
-		return Q.fcall(decoratorFunction, item, result);
+		return Q.fcall(decoratorFunction, item, result, subtitles);
 	});
+	
 	return Q.all(promises).then(function(dummy) {
 		return Q(results);
 	});
-};
+}
 
 var descriptionChecker = function(result) {
 	return Q.when(result.getDescription());
@@ -73,11 +85,31 @@ var getScore = function(result, setting, points) {
 	return (haveIt === shouldHaveIt) ? points : 0;
 };
 
-var movieDecorator = showDecorator = function(item, result) {
-	return subtitler.hasSubtitlesForName(result.releaseName).then(function(hasSubtitles) {
-		result.hasSubtitles = hasSubtitles;
-		return descriptionChecker(result);
-	}).then(function(description)  {
+var releaseNameMatcher = function(releaseName) {
+	return function(subtitleRecord) {
+		var lowerCaseReleaseName = releaseName.toLowerCase();
+		var subtitleReleaseName = subtitleRecord.MovieReleaseName.toLowerCase();
+		
+		if (subtitleReleaseName === lowerCaseReleaseName) {
+			return true;
+		}
+		
+		if (stripSceneTags(subtitleReleaseName) === stripSceneTags(lowerCaseReleaseName)) {
+			return true;
+		}
+		
+		return false;
+	};
+};
+
+var stripSceneTags = function(releaseName) {
+	return releaseName.replace(/[.](limited|proper|internal|festival)([^a-zA-Z]|$)/, '\$2');
+};
+
+var movieDecorator = showDecorator = function(item, result, subtitles) {
+	result.hasSubtitles = subtitles.some(releaseNameMatcher(result.releaseName));
+
+	return descriptionChecker(result).then(function(description)  {
 		result.type = item.type;
 		result.hasDigitalAudio = hasDigitalAudio(description);
 		result.hasHdVideo = isHD(result, description);

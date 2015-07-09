@@ -65,11 +65,15 @@ var convertDataItemToResult = function(dataItem) {
 	result.size = convertSize(dataItem.size);
 	result.seeds = dataItem.seeders;
 	result.leechs = dataItem.leechers;
-	result.releaseName = dataItem.name; //TODO not right, but how do i get it?
+	result.releaseName = guessReleaseName(dataItem);
 	result.getDescription = function() {
 		return getDescription(dataItem.link);
 	};
 	return result;
+};
+
+var guessReleaseName = function(dataItem) {
+	return dataItem.name.replace(/\s*[.]?\[[a-zA-Z]+\]\s*$/, '');
 };
 
 var getDescription = function(link) {

@@ -45,9 +45,9 @@ function getPathsForSubtitling(item) {
 	});
 }
 
-module.exports.hasSubtitlesForName = function(name) {
+module.exports.listSubtitles = function(item) {
 	return this.untilSuccess(function(service) {
-		return service.hasSubtitlesForName(name);
+		return service.listSubtitles(item);
 	});
 };
 

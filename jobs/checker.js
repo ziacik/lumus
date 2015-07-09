@@ -68,10 +68,11 @@ function checkOne(item) {
 	} else if (item.state === ItemStates.renamed) {
 		return notifier.updateLibrary(item);
 	} else if (item.state === ItemStates.libraryUpdated) {
-		if (isMusic(item))
+		if (isMusic(item)) {
 			return finish(item);
-		else
+		} else {
 			return subtitler.findSubtitles(item);
+		}
 	} else if (item.state === ItemStates.subtitlerFailed) {
 		if (isAfterSubtitlerRetryLimit(item)) {
 			return finish(item);

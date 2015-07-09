@@ -32,9 +32,22 @@ module.exports.findAndAdd = function(item) {
 			item.rescheduleNextDay();
 		}
 	})
-	.catch(function(error) {
-		util.error(error.stack || error);
-		item.stateInfo = error.message || error;
+	.catch(function(errors) {
+		if (!errors.length) {
+			errors = [ errors ];
+		}
+
+		var stack = errors.map(function(error) {
+			return error.stack || error.message;
+		}).join(require('os').EOL);
+
+		var messages = errors.map(function(error) {
+			return error.message || error;
+		}).join(', ');
+
+		util.error('Error in searcher. Caused by: ' + stack);
+		
+		item.stateInfo = messages;
 		item.rescheduleNextHour();
 	});
 }
