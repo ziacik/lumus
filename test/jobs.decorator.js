@@ -11,8 +11,8 @@ var subtitler = require('../jobs/subtitler');
 chai.use(chaiAsPromised);
 chai.should();
 
-subtitler.hasSubtitlesForName = function() {
-	return Q(true);
+subtitler.listSubtitles = function() {
+	return Q([{  MovieReleaseName: 'Sintel.2010.HDRip.XviD.AC3-ViSiON_MaCo' }]);
 }
 
 var staticConfig = config.get();
@@ -29,10 +29,11 @@ describe('decorator', function() {
 		config.get().showSettings.hdVideoPreference = config.Preference.preferred;
 	}),
 	it('should correctly decorate hd ac3 movie', function() {
-		var item = { type : 'movie' };
+		var item = { type : 'movie', externalId : 'tt1727587' };
 		
 		var results = [{
-			title : 'Something.720p',
+			title : '.720p',
+			releaseName : 'Sintel.2010.HDRip.XviD.AC3-ViSiON_MaCo',
 			verified : true,
 			getDescription : function() {
 				return 'Test AC-3 something';
@@ -51,10 +52,11 @@ describe('decorator', function() {
 	});
 
 	it('should correctly decorate fake hd movie', function() {
-		var item = { type : 'movie' };
+		var item = { type : 'movie', externalId : 'tt1727587' };
 		
 		var results = [{
-			title : 'Something.720p',
+			title : 'Sintel.720p',
+			releaseName : 'Sintel.2010.HDRip.XviD.AC3-ViSiON_MaCo',
 			verified : false,
 			getDescription : function() {
 				return 'Test 720 x 400 something';
@@ -73,10 +75,11 @@ describe('decorator', function() {
 	});
 
 	it('should correctly decorate fake hd movie 2', function() {
-		var item = { type : 'movie' };
+		var item = { type : 'movie', externalId : 'tt1727587' };
 		
 		var results = [{
-			title : 'Something.720p',
+			title : 'Sintel.720p',
+			releaseName : 'Sintel.2010.HDRip.XviD.AC3-ViSiON_MaCo',
 			verified : false,
 			getDescription : function() {
 				return 'Test width 720px ' +
@@ -96,10 +99,11 @@ describe('decorator', function() {
 	});
 	
 	it('should correctly decorate hd dts show', function() {
-		var item = { type : 'show' };
+		var item = { type : 'show', externalId : 'tt1727587' };
 		
 		var results = [{
-			title : 'Something.720p',
+			title : 'Sintel.720p',
+			releaseName : 'Sintel.2010.HDRip.XviD.AC3-ViSiON_MaCo',
 			verified : true,
 			getDescription : function() {
 				return 'Test DTS something';
@@ -118,10 +122,11 @@ describe('decorator', function() {
 	});
 
 	it('should correctly decorate fake hd show', function() {
-		var item = { type : 'show' };
+		var item = { type : 'show', externalId : 'tt1727587' };
 		
 		var results = [{
-			title : 'Something.1080p',
+			title : 'Sintel.1080p',
+			releaseName : 'Sintel.2010.HDRip.XviD.AC3-ViSiON_MaCo',
 			verified : false,
 			getDescription : function() {
 				return 'Test 720 x 600 something';
@@ -140,10 +145,11 @@ describe('decorator', function() {
 	});
 
 	it('should correctly decorate fake hd show 2', function() {
-		var item = { type : 'show' };
+		var item = { type : 'show', externalId : 'tt1727587' };
 		
 		var results = [{
-			title : 'Something.1080p',
+			title : 'Sintel.1080p',
+			releaseName : 'Sintel.2010.HDRip.XviD.AC3-ViSiON_MaCo',
 			verified : false,
 			getDescription : function() {
 				return 'Test width 720 ' +
@@ -166,7 +172,7 @@ describe('decorator', function() {
 		var item = { type : 'music' };
 		
 		var results = [{
-			title : 'Something',
+			title : 'Sintel',
 			verified : true,
 			getDescription : function() {
 				return 'Test FLAC something';
@@ -187,7 +193,7 @@ describe('decorator', function() {
 		config.get().musicSettings.losslessFormatPreference = config.Preference.disfavoured;
 		
 		var results = [{
-			title : 'Something',
+			title : 'Sintel',
 			verified : true,
 			getDescription : function() {
 				return 'Test FLAC something';
@@ -208,7 +214,7 @@ describe('decorator', function() {
 		config.get().musicSettings.losslessFormatPreference = config.Preference.preferred;
 		
 		var results = [{
-			title : 'Something.FLAC',
+			title : 'Sintel.FLAC',
 			verified : true,
 			getDescription : function() {
 				return 'Test FLAC something';
@@ -229,7 +235,7 @@ describe('decorator', function() {
 		config.get().musicSettings.losslessFormatPreference = config.Preference.unwanted;
 		
 		var results = [{
-			title : 'Something.FLAC',
+			title : 'Sintel.FLAC',
 			verified : true,
 			getDescription : function() {
 				return 'Test FLAC something';
