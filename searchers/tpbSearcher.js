@@ -9,12 +9,23 @@ var ItemTypes = require('../models/item').ItemTypes;
 
 module.exports.name = 'The Pirate Bay';
 
-config.add('tpbSearcher', { type : 'literal', store : {'searcher:tpbSearcher:use' : true }});
-//TODO url
-labels.add({ tpbSearcher : module.exports.name });
+config.add('tpbSearcher', { 
+	type : 'literal', 
+	store : {
+		'searcher:tpbSearcher:use' : true,
+		'searcher:tpbSearcher:url' : 'https://thepiratebay.gd'
+	}
+});
+
+labels.add({ 
+	tpbSearcher : module.exports.name,
+	'searcher:tpbSearcher:url' : 'Base URL'
+});
 
 module.exports.searchFor = function(item) {
 	var searchTerm = getSearchTerm(item);
+	
+	tpb.setUrl(config.get().searcher.tpbSearcher.url);
 	
 	return tpb.search(searchTerm, {
 		category : getCategory(item),

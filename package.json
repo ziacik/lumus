@@ -32,7 +32,7 @@
     "q": "~1.1.2",
     "request": "^2.51.0",
     "rimraf": "*",
-    "thepiratebay": "~0.2.0",
+    "thepiratebay": "^0.2.2",
     "transmission": "~0.4.0"
   },
   "repository": {
