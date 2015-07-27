@@ -87,6 +87,10 @@ var getScore = function(result, setting, points) {
 
 var releaseNameMatcher = function(releaseName) {
 	return function(subtitleRecord) {
+		if (!releaseName || !subtitleRecord.MovieReleaseName) {
+			return false;
+		}
+	
 		var lowerCaseReleaseName = releaseName.toLowerCase();
 		var subtitleReleaseName = subtitleRecord.MovieReleaseName.toLowerCase();
 		
