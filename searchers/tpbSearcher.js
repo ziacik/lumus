@@ -13,7 +13,7 @@ config.add('tpbSearcher', {
 	type : 'literal', 
 	store : {
 		'searcher:tpbSearcher:use' : true,
-		'searcher:tpbSearcher:url' : 'https://thepiratebay.gd'
+		'searcher:tpbSearcher:url' : 'https://thepiratebay.la'
 	}
 });
 
@@ -117,8 +117,10 @@ var getCategory = function(item) {
 	} else if (item.type === ItemTypes.show) {
 		if (config.get().showSettings.hdVideoPreference === config.Preference.required) {
 			return "208";
-		} else {
+		} else if (config.get().showSettings.hdVideoPreference === config.Preference.unwanted) {
 			return "205";
+		} else {
+			return "200";
 		}
 	} else if (item.type === ItemTypes.music) {
 		if (config.get().musicSettings.losslessFormatPreference === config.Preference.required) {
