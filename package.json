@@ -1,7 +1,7 @@
 {
   "name": "lumus",
   "author": "František Žiačik <ziacik@gmail.com>",
-  "version": "0.4.16",
+  "version": "0.4.17",
   "description": "Search for movies, shows and music and add them automatically to Transmission when they appear on torrents. Lightweight all-in-one alternative to SickBeard, CouchPotato and Headphones.",
   "keywords": [
     "lumus",
