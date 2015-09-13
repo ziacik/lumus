@@ -9,6 +9,14 @@ module.exports.ServiceDispatcher.prototype.use = function(service) {
 	this.services.push(service);
 };
 
+module.exports.ServiceDispatcher.prototype.unuse = function(service) {
+	var serviceIndex = this.services.indexOf(service);
+	
+	if (serviceIndex >= 0) {
+		this.services.splice(serviceIndex, 1);
+	}
+};
+
 module.exports.ServiceDispatcher.prototype.forAll = function(command) {
 	var promises = this.services.map(function(service) {
 		return Q.fcall(command, service);

@@ -15,23 +15,33 @@ var Item = require('../models/item').Item;
 var ItemStates = require('../models/item').ItemStates;
 var ItemTypes = require('../models/item').ItemTypes;
 
-var configuration = config.get();
-
-if (configuration.notifier.kodi.use) {
-	notifier.use(kodi);
-}
-
-if (configuration.subtitler.opensubtitler.use) {
-	subtitler.use(opensubtitler);
-}
-
-if (configuration.searcher.tpbSearcher.use) {
-	searcher.use(tpbSearcher);
-}
-
-if (configuration.searcher.kickassSearcher.use) {
-	searcher.use(kickassSearcher);
-}
+var configure = function() {
+	var configuration = config.get();
+	
+	if (configuration.notifier.kodi.use) {
+		notifier.use(kodi);
+	} else {
+		notifier.unuse(kodi);
+	}
+	
+	if (configuration.subtitler.opensubtitler.use) {
+		subtitler.use(opensubtitler);
+	} else {
+		subtitler.unuse(opensubtitler);
+	}
+	
+	if (configuration.searcher.tpbSearcher.use) {
+		searcher.use(tpbSearcher);
+	} else {
+		searcher.unuse(tpbSearcher);
+	}
+	
+	if (configuration.searcher.kickassSearcher.use) {
+		searcher.use(kickassSearcher);
+	} else {
+		searcher.unuse(kickassSearcher);
+	}
+};
 
 function isMusic(item) {
 	return item.type === ItemTypes.music;
@@ -120,4 +130,7 @@ function checkFinished() {
 	});
 }
 
+configure();
+
 module.exports = check;
+module.exports.configure = configure;

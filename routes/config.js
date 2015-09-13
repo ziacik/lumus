@@ -1,5 +1,6 @@
 var config = require('../config');
 var labels = require('../labels');
+var checker = require('../jobs/checker');
 
 exports.form = function(req, res) {
 	res.render('config', {
@@ -42,10 +43,13 @@ exports.save = function(req, res) {
 	var isFirstSave = config.get().version === 0;
 
 	config.save().then(function() {
-		if (isFirstSave)
+		checker.configure();
+		
+		if (isFirstSave) {
 			res.redirect('/');
-		else
+		} else {
 			res.redirect('/config?success');
+		}
 	}).catch(function(error) {
 		res.render('error', {
 			error: error
