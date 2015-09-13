@@ -4,7 +4,7 @@ var cheerio = require('cheerio');
 var config = require('../config');
 var labels = require('../labels');
 
-var Kickass = require('node-kickass');
+var kat = require('kat-api');
 var ItemTypes = require('../models/item').ItemTypes;
 
 module.exports.name = 'Kickass Torrents';
@@ -15,29 +15,20 @@ labels.add({ kickassSearcher : module.exports.name });
 
 
 module.exports.searchFor = function(item) {
-	var deferred = Q.defer();
-	
-	/// node-kickass doesn't encode the query for uri
-	var searchTerm = encodeURIComponent(getSearchTerm(item));
-	var query = searchTerm + ' category:' + getCategory(item);
-	
-	new Kickass().setQuery(query).setSort({
-		field : "seeders",
-		sorder : "desc"
-	}).run(function(errors, searchResults) {
-		if (errors && errors.length) {
-			if (errors[0].message === 'Not a feed') {
-				deferred.resolve([]);
-			} else {
-				deferred.reject(errors);
-			}
-			return;
+	return kat.search({
+		query : getSearchTerm(item),
+		category : getCategory(item),
+		sort_by : 'seeders',
+		order : 'desc'
+	}).then(function(data) {
+		return data.results.map(convertDataItemToResult);
+	}).catch(function(err) {
+		if (err.message === 'No results') {
+			return [];
+		} else {
+			throw err;
 		}
-
-		deferred.resolve(searchResults.map(convertDataItemToResult));	
 	});
-	
-	return deferred.promise;
 };
 
 var getSearchTerm = function(item) {
@@ -59,17 +50,21 @@ var getSearchTerm = function(item) {
 var convertDataItemToResult = function(dataItem) {
 	var result = {};	
 	result.title = dataItem.title;
-	result.magnetLink = dataItem['torrent:magneturi']['#'];
-	result.torrentInfoUrl = dataItem['link'];
-	result.size = parseInt(dataItem['torrent:contentlength']['#']) / 1048576 | 0;
-	result.seeds = parseInt(dataItem['torrent:seeds']['#']);
-	result.leechs = parseInt(dataItem['torrent:peers']['#']) - result.seeds;
-	result.verified = '1' === dataItem['torrent:verified']['#'];
-	result.releaseName = dataItem['torrent:filename']['#'].slice(0, -8);
+	result.magnetLink = dataItem.magnet;
+	result.torrentInfoUrl = dataItem.link;
+	result.size = dataItem.size / 1048576 | 0;
+	result.seeds = dataItem.seeds;
+	result.leechs = dataItem.leechs;
+	result.verified = 1 === dataItem.verified;
+	result.releaseName = guessReleaseName(dataItem);
 	result.getDescription = function() {
 		return getDescription(dataItem.link);
 	};
 	return result;
+};
+
+var guessReleaseName = function(dataItem) {
+	return dataItem.title.replace(/\s*[.]?\[[a-zA-Z]+\]\s*$/, '');
 };
 
 var getDescription = function(link) {
