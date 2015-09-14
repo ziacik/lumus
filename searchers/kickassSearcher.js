@@ -23,7 +23,7 @@ module.exports.searchFor = function(item) {
 	}).then(function(data) {
 		return data.results.map(convertDataItemToResult);
 	}).catch(function(err) {
-		if (err.message === 'No results') {
+		if (err.message === 'No results' || err.message === 'No data') {
 			return [];
 		} else {
 			throw err;
