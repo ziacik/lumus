@@ -22,13 +22,13 @@ nconf.defaults({
 	checkInterval : 60,
 	removeFinishedDays : 0,
 	movieSettings : {
-		maxSize : 5200,
+		maxSize : 6000,
 		destinationDir : 'Movies',
 		digitalAudioPreference : Preference.preferred,
 		hdVideoPreference : Preference.preferred
 	},
 	showSettings : {
-		maxSize : 5200,
+		maxSize : 10000,
 		destinationDir : 'Shows',
 		digitalAudioPreference : Preference.preferred,
 		hdVideoPreference : Preference.preferred
