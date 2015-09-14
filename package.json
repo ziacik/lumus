@@ -21,6 +21,7 @@
     "express": "3.4.x",
     "jade": "*",
     "kat-api": "0.0.3",
+    "kodi-ws": "^2.2.0",
     "less-middleware": "*",
     "mkdirp": "*",
     "moment": "2.6.x",
