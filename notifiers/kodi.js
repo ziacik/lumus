@@ -9,9 +9,9 @@ var ItemTypes = require('../models/item').ItemTypes;
 config.add('kodi', { type : 'literal', store : {'notifier:kodi:use' : true, 'notifier:kodi:host' : 'localhost', 'notifier:kodi:port' : '9090' }});
 labels.add({ 
 	kodi : 'Kodi', 
-	'notifier:kodi:url' : 'Kodi Url (Deprecated, please use Host and Port to EventServer)',
+	'notifier:kodi:url' : 'Kodi Url <em><small>Deprecated, please use Host and Port to EventServer</small></em>',
 	'notifier:kodi:host' : 'Kodi Host',
-	'notifier:kodi:port' : 'Kodi Port (EventServer)'
+	'notifier:kodi:port' : 'Kodi Port <em><small>EventServer</small></em>'
 });
 
 /// Kodi-ws library uses Promise which was introduced in node ~ v0.11 or so, so let's define it for legacy.
