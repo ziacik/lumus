@@ -42,8 +42,6 @@ var getSearchTerm = function(item) {
 		term = item.searchTerm;
 	} else  if (item.type === ItemTypes.show) {
 		term = item.name + '"season ' + item.no + '" complete';
-	} else if (item.year) {
-		term = item.name + " " + item.year;
 	} else {
 		term = item.name;
 	}

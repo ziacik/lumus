@@ -81,6 +81,11 @@ var genericFilter = function(item, result) {
 		return false;
 	}
 	
+	if (!yearFilter(item, result)) {
+		result.info = 'Wrong year.';
+		return false;
+	}
+	
 	return true;
 }
 
@@ -120,6 +125,21 @@ var losslessFilter = function(result) {
 	
 	if (result.isLosslessFormat && config.get().musicSettings.losslessFormatPreference === config.Preference.unwanted) {
 		result.info = 'Is lossless.';
+		return false;
+	}
+	
+	return true;
+};
+
+
+var yearFilter = function(item, result) {
+	if (!item.year) {
+		return true;
+	}
+	
+	var yearMatch = result.title.match(/[^0-9](((19)|(20))[0-9][0-9])[^0-9]/);
+	
+	if (yearMatch && yearMatch[1] != item.year) {
 		return false;
 	}
 	
