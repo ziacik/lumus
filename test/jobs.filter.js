@@ -421,7 +421,7 @@ describe('filter', function() {
 			title : 'Something.NotHd',
 			hasHdVideo : false,
 			hasDigitalAudio : true,
-			size : 7000,
+			size : 10000,
 			verified : true,
 			getDescription : function() {
 				return 'Test AC-3 something';
@@ -439,7 +439,7 @@ describe('filter', function() {
 			title : 'Something Season 1.NotHd',
 			hasHdVideo : false,
 			hasDigitalAudio : true,
-			size : 7000,
+			size : 100000,
 			verified : true,
 			getDescription : function() {
 				return 'Test AC-3 something';
@@ -455,7 +455,7 @@ describe('filter', function() {
 		var results = [{
 			type : 'music',
 			title : 'Something Season 1.NotHd',
-			size : 7000,
+			size : 10000,
 			verified : true,
 			getDescription : function() {
 				return 'Test AC-3 something';
