@@ -6,6 +6,35 @@ Lumus
 
 Search for movies, shows and music and add them automatically to Transmission when they appear on torrents. Lightweight all-in-one alternative to SickBeard, CouchPotato and Headphones. Integration with Kodi.
 
+# Screenshots
+
+<table>
+  <tr>
+    <td>Main Screen</td>
+    <td>Search Results</td>
+  </tr>
+  <tr>
+    <td><img src="/../gh-pages/screenshots/Main.png?raw=true" /></td>
+    <td><img src="/../gh-pages/screenshots/Results.png?raw=true" /></td>
+  </tr>
+  <tr>
+    <td>Season Selection</td>
+    <td>Album Selection</td>
+  </tr>
+  <tr>
+    <td><img src="/../gh-pages/screenshots/Seasons.png?raw=true" /></td>
+    <td><img src="/../gh-pages/screenshots/Albums.png?raw=true" /></td>
+  </tr>
+  <tr>
+    <td>Torrent Chooser</td>
+    <td>Settings</td>
+  </tr>
+  <tr>
+    <td><img src="/../gh-pages/screenshots/Chooser.png?raw=true" /></td>
+    <td><img src="/../gh-pages/screenshots/Settings.png?raw=true" /></td>
+  </tr>
+</table>
+
 # Install on OSMC or Linux
 
 ## Quick start
