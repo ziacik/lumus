@@ -8,19 +8,25 @@ exports.list = function(req, res){
 		if (!item) {
 			res.send(404);
 		} else {
+			var searchNowClicked = req.query.reset ||  req.query.what;
+		
 			if (req.query.reset) {
 				delete item.searchTerm;
-				item.save();
-			} else if (req.query.what) {
-				item.searchTerm = req.query.what;
-				item.save();
+			} else if (req.query.what && item.searchTerm !== req.query.what) {
+				item.searchTerm = req.query.what;				
 			}
-
-			return searcher
-			.findAll(item)
-			.then(function(decoratedResults) {
-				res.render('torrents', { item : item, results : decoratedResults, searchTerm : item.searchTerm || item.name });
-			});
+			
+			if (item.searchResults && !searchNowClicked) {
+				res.render('torrents', { item : item, results : item.searchResults, searchTerm : item.searchTerm || item.name });
+			} else {
+				return searcher
+				.findAll(item)
+				.then(function(decoratedResults) {
+					item.searchResults = decoratedResults;
+					item.save();
+					res.render('torrents', { item : item, results : decoratedResults, searchTerm : item.searchTerm || item.name });
+				});
+			};
 		}
 	})
 	.catch(function(error) {

@@ -17,6 +17,10 @@ exports.changeState = function(req, res) {
 			item.planNextCheck(1); /// To cancel possible postpone.
 		}
 		
+		if (item.state === ItemStates.finished) {
+			delete item.searchResults;
+		}
+		
 		return item.save()
 		.then(function() {
 			res.redirect('/');

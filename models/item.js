@@ -44,7 +44,8 @@ function Item() {
 	this.state = ItemStates.wanted;
 	this.createdAt = new Date().toJSON();
 	this.torrentLinks = [];
-	this.searchTerm = null; 
+	this.searchTerm = null;
+	this.searchResults = null;
 	
 	Item.setupMethods(this);
 }
@@ -82,6 +83,18 @@ Item.setupAggregateMethods = function(items) {
 }
 
 Item.setupMethods = function(item) {
+	item.ensureSearchTerm = function() {
+		if (item.searchTerm) {
+			return;
+		}
+	
+		if (item.type === ItemTypes.show) {
+			item.searchTerm = item.name + ' Season ' + item.no + ' Complete';
+		} else {
+			item.searchTerm = item.name;
+		}
+	};	
+
 	item.getDisplayName = function() {
 		if (item.type === ItemTypes.show)
 			return item.name + " Season " + item.no;

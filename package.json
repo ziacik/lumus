@@ -26,7 +26,7 @@
     "mkdirp": "*",
     "moment": "2.6.x",
     "nconf": "*",
-    "nedb": "*",
+    "nedb": "^1.2.0",
     "node-tvdb": "~0.4.2",
     "npm": "~2.7.1",
     "opensubtitles-client": "^2.2.0",

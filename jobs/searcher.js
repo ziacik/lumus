@@ -16,6 +16,8 @@ labels.add({
 module.exports.findAndAdd = function(item) {
 	return module.exports.findAll(item)
 	.then(function(results) {
+		item.searchResults = results;
+		
 		if (results.length === 0) {
 			item.stateInfo = "No results.";
 		} else {
@@ -25,7 +27,6 @@ module.exports.findAndAdd = function(item) {
 		if (result) {
 			return torrenter.add(item, result.magnetLink, result.torrentInfoUrl);
 		} else {
-			//TODO Review. This check is due to possibility that it's already set to No results. But we should assure it gets cleared before next search.
 			if (!item.stateInfo) {
 				item.stateInfo = "No result matched filters.";
 			}

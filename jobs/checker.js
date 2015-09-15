@@ -57,6 +57,7 @@ function isShow(item) {
 
 var finish = function(item) {
 	item.state = ItemStates.finished;
+	delete item.searchResults;
 	return item.save();
 }
 

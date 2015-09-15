@@ -32,17 +32,8 @@ module.exports.searchFor = function(item) {
 };
 
 var getSearchTerm = function(item) {
-	var term;
-
-	if (item.searchTerm) {
-		term = item.searchTerm;
-	} else  if (item.type === ItemTypes.show) {
-		term = item.name + '"season ' + item.no + '" complete';
-	} else {
-		term = item.name;
-	}
-	
-	return term.replace(/-/g, '"-"');
+	item.ensureSearchTerm();
+	return item.searchTerm.replace(/-/g, '"-"');
 };
 
 var convertDataItemToResult = function(dataItem) {
