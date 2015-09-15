@@ -19,13 +19,21 @@ labels.add({
 	'downloader:transmission:url' : 'Transmission Url'
 });
 
+var convertErr = function(err) {
+	if (err.code === 'ECONNREFUSED') {
+		return new Error('Unable to add item to torrent client. Is it running?');
+	} else {
+		return err;
+	}
+}
+
 var checkFinished = function(item) {
 	var deferred = Q.defer();
 	var transmission = getTransmission();
 	
 	transmission.get(item.torrentHash, function(err, result) {
 		if (err) {
-			deferred.reject(err);
+			deferred.reject(convertErr(err));
 			return;
 		}
 		
@@ -121,18 +129,12 @@ var add = function(item, magnetLink, torrentPageUrl) {
 
 	transmission.addUrl(magnetLink, function(err, result) {
 		if (err) {
-			console.log(err);
+			err = convertErr(err);
 			
-			var reason = err.syscall + ' ' + err.code;
-			
-			if (reason !== item.stateInfo) {
-				item.stateInfo = reason;
-				item.save();
-			}
-			
+			item.rescheduleNextHour();
 			deferred.reject(err);
 			
-			return; //TODO reschedule?
+			return;
 		}
 
 		item.state = ItemStates.snatched;
