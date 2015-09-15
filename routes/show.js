@@ -61,6 +61,10 @@ var reduceShowInfo = function(fullInfo) {
 		fullInfo = fullInfo[0];
 	}
 	
+	if (!Array.isArray(fullInfo.Episodes)) {
+		fullInfo.Episodes = [ fullInfo.Episodes ];
+	}
+	
 	var seasonInfo = fullInfo.Episodes.reduce(function(info, episode, index, array) {
 		if (episode.SeasonNumber !== '0') {
 			var seasonItem = findByNo(info, episode.SeasonNumber);
