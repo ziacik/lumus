@@ -34,11 +34,6 @@ Search for movies, shows and music and add them automatically to Transmission wh
     <td><img src="/../gh-pages/screenshots/Settings.png?raw=true" /></td>
   </tr>
 </table>
-## Torrent Chooser
-
-
-dasda
-
 
 # Install on OSMC or Linux
 
