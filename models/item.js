@@ -8,7 +8,7 @@ var ItemTypes = Object.freeze({
 
 var ItemTypeIcons = Object.freeze({
 	movie:"film", 
-	show:"leaf", 
+	show:"tv", 
 	music:"music"
 });
 

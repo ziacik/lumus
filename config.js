@@ -85,7 +85,7 @@ labels.add({
 	maxSize : 'Max Size [MB]',
 	digitalAudioPreference : 'Digital Audio',
 	hdVideoPreference : 'HD Video',
-	showSettings : '<span class="fa fa-leaf" /> Shows',
+	showSettings : '<span class="fa fa-tv" /> Shows',
 	musicSettings : '<span class="fa fa-music" /> Music',
 	losslessFormatPreference : 'Lossless Format',
 	removeFinishedDays : 'Remove Finished Items After ? Days <small><em>0 is never</em></small>',

@@ -10,7 +10,7 @@ block content
 	
 		.col-sm-6
 			h1
-				+fa('leaf', item.name)
+				+fa('tv', item.name)
 			
 			img#poster.img-responsive(src="http://thetvdb.com/banners/" + info.banner)
 	
@@ -25,7 +25,7 @@ block content
 			#seasons
 				for season in info.seasons
 					p
-						+fa('leaf', 'Season ' + season.No + ' (' + season.Year + ')')
+						+fa('tv', 'Season ' + season.No + ' (' + season.Year + ')')
 						span &nbsp;
 						a.btn.btn-default.btn-xs(href="/add?type=show&name=" + encodeURIComponent(item.name) + "&no=" + season.No + "&externalId=" + item.showId, title="Add")
 							span.glyphicon.glyphicon-plus
