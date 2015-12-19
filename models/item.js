@@ -30,9 +30,7 @@ var Datastore = require('nedb');
 if (typeof db == 'undefined') 
 	db = {};
 	
-db.items = new Datastore("items.db");
-db.items.loadDatabase();
-
+db.items = new Datastore({ filename : "items.db", autoload : true });
 db.items.persistence.setAutocompactionInterval(3600000); /// Compact every hour.
 
 function Item() {
