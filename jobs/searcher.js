@@ -13,6 +13,33 @@ labels.add({
 	searcher : '<span class="fa fa-search" /> Searchers'
 });
 
+module.exports.findIfExists = function(item) {
+	return module.exports.findAll(item)
+	.then(function(results) {
+		item.searchResults = results;
+		
+		if (results.length === 0) {
+			return Q(false);
+		} else {
+			return filter.first(item, results);
+		}
+	}).catch(function(errors) {
+		if (!errors.length) {
+			errors = [ errors ];
+		}
+
+		var stack = errors.map(function(error) {
+			return error.stack || error.message;
+		}).join(require('os').EOL);
+
+		var messages = errors.map(function(error) {
+			return error.message || error;
+		}).join(', ');
+
+		util.error('Error in searcher. Caused by: ' + stack);
+	});	
+};
+
 module.exports.findAndAdd = function(item) {
 	return module.exports.findAll(item)
 	.then(function(results) {

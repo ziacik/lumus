@@ -27,7 +27,7 @@ exports.add = function(req, res) {
 exports.show = function(req, res) {
 	var i;
 	
-	Show.findById(req.query.id)
+	Show.findOne({ showId : req.query.showId })
 	.then(function(item) {		
 		i = item;
 		return getShowInfo(item);

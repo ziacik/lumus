@@ -46,6 +46,12 @@ mixin item(item)
 			a(href='/changeState?id=' + item._id + '&state=finished'): +fa('check', 'Set finished')
 		if item.state === 'finished'
 			a(href='/changeState?id=' + item._id + '&state=wanted'): +fa('refresh', 'Try other release')
+		if item.next
+			| &nbsp;or&nbsp;
+			if item.type === 'show'
+				a(href='/add?type=show&no=' + item.next + '&externalId=' + item.externalId + '&name=' + encodeURIComponent(item.name)): +fa('plus', 'Add next season')
+			else if item.type === 'music'
+				a(href='/add?type=music&externalId=' + item.next + '&name=' + encodeURIComponent(item.nextName)): +fa('plus', 'Add next album')
 		| &nbsp;or&nbsp;
 		a(href='/remove?id=' + item._id): +fa('times', 'Remove')
 		| &nbsp;or&nbsp;

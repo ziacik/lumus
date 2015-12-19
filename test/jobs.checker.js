@@ -246,7 +246,7 @@ describe('checker', function() {
 		};
 		return checker().should.be.fulfilled.then(function() {
 			clock.tick(config.get().checkInterval * 1000);
-			return count.should.equal(2);
+			return count.should.equal(3);
 		});
 	});
 		
@@ -261,7 +261,7 @@ describe('checker', function() {
 		return checker().should.be.fulfilled.then(function() {
 			clock.tick(config.get().checkInterval * 1000);
 			errThrown.should.equal(true);
-			return count.should.equal(2);
+			return count.should.equal(3);
 		});
 	});
 
@@ -273,7 +273,7 @@ describe('checker', function() {
 		};
 		return checker().should.be.fulfilled.then(function() {
 			clock.tick(config.get().checkInterval * 1000);
-			return count.should.equal(2);
+			return count.should.equal(3);
 		});
 	});
 
@@ -286,7 +286,7 @@ describe('checker', function() {
 		};
 		return checker().should.be.fulfilled.then(function() {
 			clock.tick(config.get().checkInterval * 1000 - 1);
-			return count.should.equal(1);
+			return count.should.equal(2);
 		});
 	});
 		

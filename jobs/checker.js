@@ -6,10 +6,11 @@ var searcher = require('./searcher');
 var renamer = require('./renamer');
 var subtitler = require('./subtitler');
 var notifier = require('./notifier');
+var nexter = require('./nexter');
 var kodi = require('../notifiers/kodi');
 var opensubtitler = require('../subtitlers/opensubtitler');
 var tpbSearcher = require('../searchers/tpbSearcher');
-var kickassSearcher = require('../searchers/kickassSearcher');
+//var kickassSearcher = require('../searchers/kickassSearcher');
 
 var Item = require('../models/item').Item;
 var ItemStates = require('../models/item').ItemStates;
@@ -36,11 +37,11 @@ var configure = function() {
 		searcher.unuse(tpbSearcher);
 	}
 	
-	if (configuration.searcher.kickassSearcher.use) {
-		searcher.use(kickassSearcher);
-	} else {
-		searcher.unuse(kickassSearcher);
-	}
+//	if (configuration.searcher.kickassSearcher.use) {
+//		searcher.use(kickassSearcher);
+//	} else {
+//		searcher.unuse(kickassSearcher);
+//	}
 };
 
 function isMusic(item) {
@@ -66,7 +67,9 @@ function isAfterSubtitlerRetryLimit(item) {
 }
 
 function check() {
-	return checkActive().then(checkFinished());
+	return checkActive().then(checkFinished).catch(function(err) {
+		util.error(err.stack || err);
+	});
 }
 
 function checkOne(item) {
@@ -113,8 +116,23 @@ function checkActive() {
 }
 
 function checkFinished() {
+	return checkFinishedToRemove().then(checkFinishedToNext);
+}
+
+function checkFinishedToNext() {
+	return Item.find({state : ItemStates.finished, type : {$in : [ItemTypes.show]}, next : {$exists : false}})
+	.then(function(items) {
+		return Q.allSettled(items.map(function(item) {
+			return nexter.checkNext(item);
+		}));
+	}).catch(function(error) {
+		util.error(error.stack || error);
+	});
+}
+
+function checkFinishedToRemove() {
 	if (!config.get().removeFinishedDays) {
-		return;
+		return Q();
 	}
 		
 	var now = new Date();
