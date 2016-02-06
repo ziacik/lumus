@@ -30,10 +30,13 @@ var checkNextShow = function(item) {
 		if (result) {
 			item.next = itemNext.no;
 			return item.save();
-		};
+		} else {
+			item.rescheduleNextDay();
+		}
 	});
 };
 
 var checkNextMusic = function(item) {
+	item.rescheduleNextDay();
 	return Q();
 };

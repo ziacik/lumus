@@ -101,7 +101,14 @@ function checkOne(item) {
 };
 
 function checkActive() {
-	return Item.find({state : {$nin : [ItemStates.finished, ItemStates.renameFailed, ItemStates.libraryUpdateFailed]}, $not: {nextCheck : {$gt : new Date().toJSON()}}}).then(function(items) {
+	return Item.find({
+		state : {
+			$nin : [ItemStates.finished, ItemStates.renameFailed, ItemStates.libraryUpdateFailed]
+		},
+		$not : {
+			nextCheck : { $gt : new Date().toJSON() }
+		}
+	}).then(function(items) {
 		var itemCheckers = items.map(function(item) {
 			return Q.fcall(checkOne, item);
 		});
@@ -120,8 +127,12 @@ function checkFinished() {
 }
 
 function checkFinishedToNext() {
-	return Item.find({state : ItemStates.finished, type : {$in : [ItemTypes.show]}, next : {$exists : false}})
-	.then(function(items) {
+	return Item.find({
+		state : ItemStates.finished,
+		type : { $in : [ItemTypes.show] },
+		next : { $exists : false},		
+		$not : { nextCheck : { $gt : new Date().toJSON() } }
+	}).then(function(items) {
 		return Q.allSettled(items.map(function(item) {
 			return nexter.checkNext(item);
 		}));
