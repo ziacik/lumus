@@ -42,8 +42,16 @@ function findSubtitlesOne(token, item, filePath) {
 		}
 	}).then(function(results) {
 		if (results && results.length) {
-			openSubtitles.downloader.download(results, 1, filePath, function() {
-				deferred.resolve(true);
+			var downloaderDomain = require('domain').create()
+			downloaderDomain.on('error', function(err){
+				console.error('Subtlter download error.', err.stack || err.message);
+				deferred.reject(err);
+			});
+
+			downloaderDomain.run(function() {
+				openSubtitles.downloader.download(results, 1, filePath, function() {
+					deferred.resolve(true);
+				});
 			});
 		} else {
 			deferred.resolve(false);
