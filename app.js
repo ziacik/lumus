@@ -1,77 +1,59 @@
-
 /**
- * Module dependencies.
+ * app.js
+ *
+ * Use `app.js` to run your app without `sails lift`.
+ * To start the server, run: `node app.js`.
+ *
+ * This is handy in situations where the sails CLI is not relevant or useful.
+ *
+ * For example:
+ *   => `node app.js`
+ *   => `forever start app.js`
+ *   => `node debug app.js`
+ *   => `modulus deploy`
+ *   => `heroku scale`
+ *
+ *
+ * The same command-line arguments are supported, e.g.:
+ * `node app.js --silent --port=80 --prod`
  */
 
-var express = require('express');
-var routes = require('./routes');
-var search = require('./routes/search');
-var music = require('./routes/music');
-var show = require('./routes/show');
-var list = require('./routes/list');
-var item = require('./routes/item');
-var torrent = require('./routes/torrent');
-var config = require('./routes/config');
-var http = require('http');
-var path = require('path');
-var checker = require('./jobs/checker');
+// Ensure we're in the project directory, so relative paths work as expected
+// no matter where we actually lift from.
+process.chdir(__dirname);
 
-var app = express();
-app.locals.moment = require('moment');
+// Ensure a "sails" can be located:
+(function() {
+  var sails;
+  try {
+    sails = require('sails');
+  } catch (e) {
+    console.error('To run an app using `node app.js`, you usually need to have a version of `sails` installed in the same directory as your app.');
+    console.error('To do that, run `npm install sails`');
+    console.error('');
+    console.error('Alternatively, if you have sails installed globally (i.e. you did `npm install -g sails`), you can use `sails lift`.');
+    console.error('When you run `sails lift`, your app will still use a local `./node_modules/sails` dependency if it exists,');
+    console.error('but if it doesn\'t, the app will run with the global sails instead!');
+    return;
+  }
 
-// all environments
-app.set('port', process.env.PORT || 3001);
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.methodOverride());
-app.use(express.cookieParser('your secret here'));
-app.use(express.session());
-app.use(app.router);
-app.use(require('less-middleware')(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'public')));
+  // Try to get `rc` dependency
+  var rc;
+  try {
+    rc = require('rc');
+  } catch (e0) {
+    try {
+      rc = require('sails/node_modules/rc');
+    } catch (e1) {
+      console.error('Could not find dependency: `rc`.');
+      console.error('Your `.sailsrc` file(s) will be ignored.');
+      console.error('To resolve this, run:');
+      console.error('npm install rc --save');
+      rc = function () { return {}; };
+    }
+  }
 
-// development only
-if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
-}
 
-app.get('/', routes.index);
-app.get('/update', routes.update);
-app.get('/search', search.runSearch);
-app.get('/add', list.add);
-app.get('/list', list.list);
-app.get('/changeState', item.changeState);
-app.get('/remove', item.remove);
-app.get('/artist', music.artist);
-app.get('/artist/add', music.add);
-app.get('/show', show.show);
-app.get('/show/add', show.add);
-app.get('/torrent', torrent.list);
-app.get('/torrent/add', torrent.add);
-app.get('/config', config.form);
-app.get('/newReleases', function(req, res) {
-  res.render('newReleases');
-});
-app.post('/config', config.save);
-
-if (typeof String.prototype.startsWith != 'function') {
-	String.prototype.startsWith = function(str) {
-		return this.substring(0, str.length) === str;
-	}
-};
-
-if (typeof String.prototype.endsWith != 'function') {
-	String.prototype.endsWith = function(str) {
-		return this.substring(this.length - str.length, this.length) === str;
-	}
-};
-
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Lumus server listening on port ' + app.get('port'));
-});
-
-process.nextTick(checker);
+  // Start server
+  sails.lift(rc('sails'));
+})();

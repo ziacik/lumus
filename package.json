@@ -1,58 +1,37 @@
 {
   "name": "lumus",
-  "author": "František Žiačik <ziacik@gmail.com>",
-  "version": "0.6.0",
-  "description": "Search for movies, shows and music and add them automatically to Transmission when they appear on torrents. Lightweight all-in-one alternative to SickBeard, CouchPotato and Headphones.",
-  "keywords": [
-    "lumus",
-    "torrent",
-    "search",
-    "movies",
-    "shows",
-    "music"
-  ],
-  "homepage": "http://getlumus.com",
-  "preferGlobal": true,
-  "bin": {
-    "lumus": "./bin/lumus"
-  },
+  "private": true,
+  "version": "0.0.0",
+  "description": "a Sails application",
+  "keywords": [],
   "dependencies": {
-    "cheerio": "*",
-    "express": "3.4.x",
-    "jade": "*",
-    "kodi-ws": "^2.2.0",
-    "less-middleware": "*",
-    "mkdirp": "*",
-    "moment": "2.6.x",
-    "nconf": "*",
-    "nedb": "^1.2.0",
-    "node-tvdb": "~0.4.2",
-    "npm": "~2.7.1",
-    "opensubtitles-client": "^2.2.0",
-    "q": "~1.1.2",
-    "request": "^2.51.0",
-    "rimraf": "*",
-    "thepiratebay": "^0.2.2",
-    "transmission": "~0.4.0"
+    "ejs": "2.3.4",
+    "grunt": "0.4.5",
+    "grunt-contrib-clean": "0.6.0",
+    "grunt-contrib-coffee": "0.13.0",
+    "grunt-contrib-concat": "0.5.1",
+    "grunt-contrib-copy": "0.5.0",
+    "grunt-contrib-cssmin": "0.9.0",
+    "grunt-contrib-jst": "0.6.0",
+    "grunt-contrib-less": "1.1.0",
+    "grunt-contrib-uglify": "0.7.0",
+    "grunt-contrib-watch": "0.5.3",
+    "grunt-sails-linker": "~0.10.1",
+    "grunt-sync": "0.2.4",
+    "include-all": "~0.1.6",
+    "rc": "1.0.1",
+    "sails": "~0.12.0",
+    "sails-disk": "~0.10.9"
   },
+  "scripts": {
+    "debug": "node debug app.js",
+    "start": "node app.js"
+  },
+  "main": "app.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/ziacik/lumus.git"
   },
-  "license": "MIT",
-  "bugs": {
-    "url": "http://github.com/ziacik/lumus/issues"
-  },
-  "devDependencies": {
-    "chai": "^2.2.0",
-    "chai-as-promised": "^4.3.0",
-    "mocha": "^2.2.1",
-    "proxyquire": "^1.4.0",
-    "sinon": "^1.14.1",
-    "sinon-chai": "^2.7.0"
-  },
-  "scripts": {
-    "test": "mocha",
-    "start": "node app.js"
-  }
+  "author": "ziacik",
+  "license": ""
 }
