@@ -1,88 +1,122 @@
 doctype html
+
+mixin fa(type, text, title)
+	span(class='fa fa-'+type, title=title)
+	if text
+		| 	
+		= text
+
+mixin faSpinner(text)
+	i(class='fa fa-circle-o-notch fa-spin')
+	if text
+		| 	
+		= text
+
+mixin faLink(faType, href, text, title)
+	a(href=href)
+		+fa(faType, text, title)
+		
+mixin faLinkBlank(faType, href, text, title)
+	a(href=href, target='_blank')
+		+fa(faType, text, title)
+		
+mixin faButtonSmall(faType, href, text, title)
+	a.btn.btn-default.btn-xs(href=href, title=title)
+		+fa(faType, text)
+		
+mixin faButtonDefault(faType, href, text, title)
+	a.btn.btn-default(href=href, title=title)
+		+fa(faType, text)
+		
+mixin faButtonPrimary(faType, href, text, title)
+	a.btn.btn-primary(href=href, title=title)
+		+fa(faType, text)
+		
+mixin buttonPrimary(href, text, title)
+	a.btn.btn-primary(href=href, title=title)= text
+	
+mixin faButtonSubmit(faType, text, title)
+	button.btn.btn-warning(type='submit', title=title)
+		+fa(faType, text)
+
+mixin buttonSubmit(text, title)
+	button.btn.btn-warning(type='submit', title=title)= text	
+
+mixin buttonHome()
+	a.btn.btn-primary(href='/', title='Home')= 'Home'
+
+mixin inputHidden(id, value)
+	input(type='hidden', name=id, id=id, value=value)
+
+mixin inputRequired(type, id, text, value)
+	.form-group
+		label!= text
+		input.form-control(type=type, name=id, id=id, required, value=value)
+
+mixin input(type, id, text, value)
+	.form-group
+		label!= text
+		input.form-control(type=type, name=id, id=id, value=value)
+
+mixin inputWithPlaceholder(type, id, text, value)
+	.form-group
+		input.form-control(type=type, name=id, id=id, value=value, placeholder=text)
+
+mixin check(id, text, value)
+	.checkbox
+		label
+			if value
+				input(type='checkbox', name=id, id=id, checked='checked')
+			else
+				input(type='checkbox', name=id, id=id)
+			!= text
+
 html
-  head
-    if locals.title
-      title= title
-    else
-      title New Sails App
+	head
+		title= title
+		meta(name="viewport",content="width=device-width, initial-scale=1, maximum-scale=1")
 
-    // Viewport mobile tag for sensible mobile support
-    meta(name="viewport",content="width=device-width, initial-scale=1, maximum-scale=1")
+		//TODO move these to pipeline
+		link(href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css", rel="stylesheet")
+		link(href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css", rel="stylesheet")
+		script(src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js')
+		script(src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js")
+		script(src="//builds.handlebarsjs.com.s3.amazonaws.com/handlebars-v2.0.0.js")
 
-    //-
-      Stylesheets and Preprocessors
-      ==============================
+		// STYLES
+		link(rel="stylesheet", href="/styles/importer.css")
+		// STYLES END
 
-      You can always bring in CSS files manually with `<link>` tags, or asynchronously
-      using a solution like AMD (RequireJS).  Or, if you like, you can take advantage
-      of Sails' conventional asset pipeline (boilerplate Gruntfile).
+		block styles
 
-      By default, stylesheets from your `assets/styles` folder are included
-      here automatically (between STYLES and STYLES END). Both CSS (.css) and LESS (.less)
-      are supported. In production, your styles will be minified and concatenated into
-      a single file.
+	body
+		.container
+			block body
 
-      To customize any part of the built-in behavior, just edit `tasks/pipeline.js`.
-      For example, here are a few things you could do:
+		//-
+			Client-side Templates
+			========================
 
-          + Change the order of your CSS files
-          + Import stylesheets from other directories
-          + Use a different or additional preprocessor, like SASS, SCSS or Stylus
+			HTML templates are important prerequisites of modern, rich client applications.
+			To work their magic, frameworks like Backbone, Angular, Ember, and Knockout require
+			that you load these templates client-side.
 
-    // STYLES
-    link(rel="stylesheet", href="/styles/importer.css")
-    // STYLES END
+			By default, your Gruntfile is configured to automatically load and precompile
+			client-side JST templates in your `assets/templates` folder, then
+			include them here automatically (between TEMPLATES and TEMPLATES END).
 
-    block styles
+			To customize this behavior to fit your needs, just edit `tasks/pipeline.js`.
+			For example, here are a few things you could do:
 
-  body
-    block body
+					+ Import templates from other directories
+					+ Use a different template engine (handlebars, jade, dust, etc.)
+					+ Internationalize your client-side templates using a server-side
+						stringfile before they're served.
 
-    //-
-      Client-side Templates
-      ========================
-
-      HTML templates are important prerequisites of modern, rich client applications.
-      To work their magic, frameworks like Backbone, Angular, Ember, and Knockout require
-      that you load these templates client-side.
-
-      By default, your Gruntfile is configured to automatically load and precompile
-      client-side JST templates in your `assets/templates` folder, then
-      include them here automatically (between TEMPLATES and TEMPLATES END).
-
-      To customize this behavior to fit your needs, just edit `tasks/pipeline.js`.
-      For example, here are a few things you could do:
-
-          + Import templates from other directories
-          + Use a different template engine (handlebars, jade, dust, etc.)
-          + Internationalize your client-side templates using a server-side
-            stringfile before they're served.
-
-    // TEMPLATES
-
-    // TEMPLATES END
-
-    //-
-      Client-side Javascript
-      ========================
-
-      You can always bring in JS files manually with `script` tags, or asynchronously
-      on the client using a solution like AMD (RequireJS).  Or, if you like, you can
-      take advantage of Sails' conventional asset pipeline (boilerplate Gruntfile).
-
-      By default, files in your `assets/js` folder are included here
-      automatically (between SCRIPTS and SCRIPTS END).  Both JavaScript (.js) and
-      CoffeeScript (.coffee) are supported. In production, your scripts will be minified
-      and concatenated into a single file.
-
-      To customize any part of the built-in behavior, just edit `tasks/pipeline.js`.
-      For example, here are a few things you could do:
-
-          + Change the order of your scripts
-          + Import scripts from other directories
-          + Use a different preprocessor, like TypeScript
-
-    // SCRIPTS
-    script(src="/js/dependencies/sails.io.js")
-    // SCRIPTS END
-
+		// TEMPLATES
+		
+		// TEMPLATES END
+		
+		// SCRIPTS
+		script(src="/js/dependencies/sails.io.js")
+		// SCRIPTS END
