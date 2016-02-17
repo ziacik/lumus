@@ -20,7 +20,7 @@
     "grunt-sync": "0.2.4",
     "include-all": "~0.1.6",
     "rc": "1.0.1",
-    "sails": "~0.12.0",
+    "sails": "~0.12.1",
     "sails-disk": "~0.10.9"
   },
   "scripts": {
@@ -30,8 +30,8 @@
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/ziacik/lumus.git"
+    "url": "git://github.com/kolik/lumus.git"
   },
-  "author": "ziacik",
+  "author": "kolik",
   "license": ""
 }
