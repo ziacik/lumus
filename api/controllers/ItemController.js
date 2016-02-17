@@ -8,7 +8,7 @@
 module.exports = {
 	index : function(req, res) {
 		Item.find().then(function(items) {
-			res.view('homepage', {
+			res.view('main', {
 				items : items,
 				hasWaiting : function() {
 					return items.some(function(item) {
