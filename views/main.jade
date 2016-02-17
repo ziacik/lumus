@@ -27,35 +27,10 @@ block body
 						li(role='presentation')
 							+faLink('wrench', '/config', 'Settings')
 	
-			if hasWaiting()
-				h2 Waiting
-				each item in items
-					if item.isWaiting()
-						+item(item)
-		
-			if hasDownloading()
-				h2 Downloading
-				each item in items
-					if item.isDownloading()
-						+item(item)
-		
-			if hasWaitingForSubtitles()
-				h2 Waiting For Subtitles
-				each item in items
-					if item.isWaitingForSubtitles()
-						+item(item)
-		
-			if hasFailed()
-				h2 Failed
-				each item in items
-					if item.isFailed()
-						+item(item)
-		
-			if hasFinished()
-				h2 Finished
-				each item in items
-					if item.isFinished()
-						+item(item)
+			ul#items(ng-controller='ItemController as itemController')
+				li(ng-repeat='item in itemController.items')
+					{{ item.name }} Kvak
+
 		.col-sm-3
 			small Please support development by making a donation
 			br

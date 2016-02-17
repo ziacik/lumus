@@ -6,7 +6,7 @@
  */
 
 module.exports = {
-	index : function(req, res) {
+	/*index : function(req, res) {
 		Item.find().then(function(items) {
 			res.view('main', {
 				items : items,
@@ -43,6 +43,6 @@ module.exports = {
 		}).fail(function(e) {
 			res.negotiate(e);
 		}).done();
-	}	
+	}*/	
 };
 
