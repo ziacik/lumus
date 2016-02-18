@@ -20,6 +20,7 @@
   "dependencies": {
     "angular": "^1.5.0",
     "bootstrap": "^3.3.6",
-    "angular-sails": "^1.1.4"
+    "angular-sails": "^1.1.4",
+    "angular-filter": "~0.5.8"
   }
 }

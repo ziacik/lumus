@@ -27,9 +27,11 @@ block body
 						li(role='presentation')
 							+faLink('wrench', '/config', 'Settings')
 	
-			ul#items(ng-controller='ItemController as itemController')
-				li(ng-repeat='item in itemController.items')
-					{{ item.name }} Kvak
+			#items(ng-controller="ItemController as itemController")
+				div(ng-repeat="(state, groupedItems) in itemController.items | orderBy: itemController.stateWeight | groupBy: 'state'")
+					h2 {{ state }}
+					div(ng-repeat="item in groupedItems")
+						+item()
 
 		.col-sm-3
 			small Please support development by making a donation

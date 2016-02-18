@@ -11,21 +11,40 @@
 		(function () {
 			$sails.get('/api/item').then(function (resp) {
 				self.items = resp.data;
+				self.modelUpdaterDestructor = $sails.$modelUpdater('item', self.items);
 			}).catch(function (err) {
 				alert(err);
 			});
 
-			var itemsHandler = $sails.on('item', function (message) {
-				if (message.verb === 'created') {
-					self.items.push(message.data);
-				}
-			});
-	
 			// Stop watching for updates
 			$scope.$on('$destroy', function() {
-				$sails.off('item', itemsHandler);
+				if (self.modelUpdaterDestructor) {
+					self.modelUpdaterDestructor();
+				}
+				$sails.off('item', itemsHandler);				
 			});
 
 		}());
+		
+		this.iconFor = function(item) {
+			switch(item.type) {
+			case 'movie':
+				return 'film';
+			case 'show':
+				return 'tv';
+			case 'music':
+				return 'music';
+			}
+		};
+		
+		this.stateWeight = function(item) {
+			if (item.state === 'wanted') {
+				return 0;
+			} else if (item.state === 'finished') {
+				return 100;
+			} else {
+				return 50;
+			}
+		};
 	}
 })();

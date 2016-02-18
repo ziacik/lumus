@@ -2,7 +2,8 @@
 	'use strict';
 	
 	angular.module('app', [
-		'ngSails'
+		'ngSails',
+		'angular.filter'
 	])/*.config(['$routeProvider', function ($routeProvider) {
 		$routeProvider.
 		when('/user', {

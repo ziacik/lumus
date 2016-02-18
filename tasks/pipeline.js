@@ -34,6 +34,7 @@ var jsFilesToInject = [
   'bower_components/angular/angular.js',
   'hint.js',
 
+  'bower_components/angular-filter/dist/angular-filter.js',
   'bower_components/angular-sails/dist/angular-sails.js',
 
   // All of the rest of your client-side js files
@@ -55,12 +56,6 @@ var jsFilesToInject = [
 var templateFilesToInject = [
   'templates/**/*.html'
 ];
-
-
-
-
-
-
 
 // Default path for public folder (see documentation for more information)
 var tmpPath = '.tmp/public/';
