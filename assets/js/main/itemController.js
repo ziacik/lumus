@@ -20,8 +20,7 @@
 			$scope.$on('$destroy', function() {
 				if (self.modelUpdaterDestructor) {
 					self.modelUpdaterDestructor();
-				}
-				$sails.off('item', itemsHandler);				
+				}				
 			});
 
 		}());

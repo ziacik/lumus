@@ -33,7 +33,15 @@ module.exports.routes = {
   ***************************************************************************/
 
   '/': {
-  	view : 'main'  	
+  	view : 'main'	
+  },
+  
+  '/templates/main': {
+  	view : 'templates/main'
+  },
+  
+  '/templates/search': {
+  	view : 'templates/search'
   }
 
   /***************************************************************************
