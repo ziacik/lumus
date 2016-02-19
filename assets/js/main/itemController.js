@@ -45,5 +45,27 @@
 				return 50;
 			}
 		};
+		
+		this.changeState = function(item, newState) {
+			$sails.put('/api/item/' + item.id, {
+				state : newState
+			}).then(function(resp) {
+				angular.extend(item, resp.body);
+			}).catch(function(err) {
+				console.log(err);
+				alert(err); //TODO
+			});
+		};
+		
+		this.remove = function(item) {
+			$sails.delete('/api/item/' + item.id).then(function(resp) {
+				self.items = self.items.filter(function(existingItem) {
+					return existingItem.id !== item.id;
+				});
+			}).catch(function(err) {
+				console.log(err);
+				alert(err); //TODO
+			});
+		};
 	}
 })();
