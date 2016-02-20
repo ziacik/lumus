@@ -33,11 +33,10 @@ var jsFilesToInject = [
 
   'bower_components/angular/angular.js',
   'bower_components/angular-route/angular-route.js',
-  'hint.js',
 
   'bower_components/angular-filter/dist/angular-filter.js',
   'bower_components/angular-sails/dist/angular-sails.js',
-
+  
   // All of the rest of your client-side js files
   // will be injected here in no particular order.
   'js/**/*.js'

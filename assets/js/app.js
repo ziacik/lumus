@@ -4,7 +4,8 @@
 	angular.module('app', [
 		'ngRoute',
 		'ngSails',
-		'angular.filter'
+		'angular.filter',
+		'app.search'
 	]).config(['$routeProvider', function ($routeProvider) {
 		$routeProvider.when('/', {
 			templateUrl : '/templates/main'

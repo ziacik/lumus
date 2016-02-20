@@ -1,2 +1,6 @@
-#searchResults
-	| search results
+#searchResults.container-fluid
+	.col-md-12(ng-repeat="result in searchController.results")
+		#A(style="float:left")
+			| <img ng-src="http://image.tmdb.org/t/p/w92{{ result.poster_path }}", style="float:left" />
+			{{ result.title || result.name }}
+			{{ result.vote_average }}

@@ -22,6 +22,8 @@
     "bootstrap": "^3.3.6",
     "angular-sails": "^1.1.4",
     "angular-filter": "~0.5.8",
-    "angular-route": "~1.5.0"
+    "angular-route": "~1.5.0",
+    "themoviedb-javascript-library": "https://github.com/cavestri/themoviedb-javascript-library.git",
+    "angular-hint": "https://github.com/angular/angular-hint.git#^0.3.7"
   }
 }
