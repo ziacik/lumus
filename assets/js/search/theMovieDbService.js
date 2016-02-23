@@ -32,7 +32,10 @@
 				return createRequest('tv', searchTerm).then(function(tvResponse) {
 					checkStatus(tvResponse);
 				
-					return movieResponse.data.results.concat(tvResponse.data.results);
+					return {
+						movieResults : movieResponse.data.results, 
+						showResults : tvResponse.data.results
+					};
 				}); 
 			});	
 		};

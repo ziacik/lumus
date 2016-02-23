@@ -31,6 +31,8 @@ var jsFilesToInject = [
   // Dependencies like jQuery, or Angular are brought in here
   'js/dependencies/**/*.js',
 
+  'bower_components/bootstrap/dist/js/bootstrap.js',
+
   'bower_components/angular/angular.js',
   'bower_components/angular-route/angular-route.js',
 

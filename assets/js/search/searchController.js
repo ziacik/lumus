@@ -7,16 +7,20 @@
 	
 	function SearchController($location, $scope, searchService) {
 		var self = this;
-		this.results = [];
+		
+		this.movieResults = [];
+		this.showResults = [];
+		this.musicResults = [];
 			
 		this.search = function(searchTerm) {
 			$location.path('/search').search('q', searchTerm);
 		};
 		
 		var doSearch = function(searchTerm) {
-			searchService.search(searchTerm).then(function(searchResults) {
-				self.results = searchResults;
-				console.log(self.results);
+			searchService.search(searchTerm).then(function(results) {
+				self.movieResults = results.movieResults;
+				self.showResults = results.showResults;
+				self.musicResults = results.musicResults;
 			}).catch(function(err) {
 				console.log(err);
 			});		

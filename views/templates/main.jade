@@ -1,7 +1,7 @@
 include ../includes/widgets
 include ../includes/item
 
-.col-sm-6.col-sm-offset-3
+.col-sm-6
 	form(role="form", ng-controller="SearchController as searchController", ng-submit="searchController.search(searchController.searchTerm)")
 		+ngInputWithPlaceholder('text', 'q', 'Enter Movie, Show, Artist or Group Name', 'searchController.searchTerm')
 		button#search.btn.btn-warning(type='submit')

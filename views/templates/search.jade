@@ -1,6 +1,28 @@
+include ../includes/widgets
+
+mixin resultDetail(result)
+	| <img class="preview preview-inner img-responsive" ng-src="{{ result.poster_path ? 'http://image.tmdb.org/t/p/w185' + result.poster_path : 'https://assets.tmdb.org/assets/7f29bd8b3370c71dd379b0e8b570887c/images/no-poster-w185-v2.png' }}" />
+	.resultInfo
+		h4 {{ result.title || result.name }}
+		em {{ result.vote_average }}
+	.clearfix(ng-if="$index % 4 == 3")
+
 #searchResults.container-fluid
-	.col-md-12(ng-repeat="result in searchController.results")
-		#A(style="float:left")
-			| <img ng-src="http://image.tmdb.org/t/p/w92{{ result.poster_path }}", style="float:left" />
-			{{ result.title || result.name }}
-			{{ result.vote_average }}
+	.row.no-gutter(ng-if="searchController.movieResults.length")
+		h2.col-sm-12
+			+fa('film', 'Movies')
+			hr
+		.col-md-2.col-xs-6.searchItem(ng-repeat="result in searchController.movieResults")
+			+resultDetail(result)
+	.row.no-gutter(ng-if="searchController.showResults.length")
+		h2.col-sm-12
+			+fa('tv', 'Shows')
+			hr
+		.col-md-2.col-xs-6.searchItem(ng-repeat="result in searchController.showResults")
+			+resultDetail(result)
+	.row.no-gutter(ng-if="searchController.musicResults.length")
+		h2.col-sm-12
+			+fa('music', 'Music')
+			hr
+		.col-md-2.col-xs-6.searchItem(ng-repeat="result in searchController.musicResults")
+			+resultDetail(result)
