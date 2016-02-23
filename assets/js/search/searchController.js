@@ -8,6 +8,8 @@
 	function SearchController($location, $scope, searchService) {
 		var self = this;
 		
+		this.isSearching = false;
+		
 		this.movieResults = [];
 		this.showResults = [];
 		this.musicResults = [];
@@ -16,13 +18,24 @@
 			$location.path('/search').search('q', searchTerm);
 		};
 		
+		this.noResults = function() {
+			return !self.isSearching && !self.movieResults.length && !self.showResults.length && !self.musicResults.length; 
+		};
+		
+		this.searching = function() {
+			return this.isSearching;
+		};
+		
 		var doSearch = function(searchTerm) {
+			self.isSearching = true;
 			searchService.search(searchTerm).then(function(results) {
-				self.movieResults = results.movieResults;
-				self.showResults = results.showResults;
-				self.musicResults = results.musicResults;
+				self.movieResults = results.movieResults || [];
+				self.showResults = results.showResults || [];
+				self.musicResults = results.musicResults || [];
+				self.isSearching = false;
 			}).catch(function(err) {
 				console.log(err);
+				self.isSearching = false;
 			});		
 		};
 		

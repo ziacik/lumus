@@ -25,3 +25,9 @@ mixin resultDetail(result)
 			hr
 		.col-md-2.col-xs-6.searchItem(ng-repeat="result in searchController.musicResults")
 			+resultDetail(result)
+	.searching(ng-if="searchController.searching()")
+		h2
+			+fa('search', 'Searching...')
+	.no-result(ng-if="searchController.noResults()")
+		h2
+			+fa('ban', 'No results.')			
