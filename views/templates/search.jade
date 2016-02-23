@@ -5,22 +5,21 @@ mixin resultDetail(result)
 	.resultInfo
 		h4 {{ result.title || result.name }}
 		em {{ result.vote_average }}
-	.clearfix(ng-if="$index % 4 == 3")
 
 #searchResults.container-fluid
-	.row.no-gutter(ng-if="searchController.movieResults.length")
+	.row.no-gutters(ng-if="searchController.movieResults.length")
 		h2.col-sm-12
 			+fa('film', 'Movies')
 			hr
 		.col-md-2.col-xs-6.searchItem(ng-repeat="result in searchController.movieResults")
 			+resultDetail(result)
-	.row.no-gutter(ng-if="searchController.showResults.length")
+	.row.no-gutters(ng-if="searchController.showResults.length")
 		h2.col-sm-12
 			+fa('tv', 'Shows')
 			hr
 		.col-md-2.col-xs-6.searchItem(ng-repeat="result in searchController.showResults")
 			+resultDetail(result)
-	.row.no-gutter(ng-if="searchController.musicResults.length")
+	.row.no-gutters(ng-if="searchController.musicResults.length")
 		h2.col-sm-12
 			+fa('music', 'Music')
 			hr

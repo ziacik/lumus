@@ -4,8 +4,9 @@ include ./includes/widgets
 block body
 	.row
 		.col-sm-6
-			h1
-				+fa('search', 'Lumus')
+			a(ng-href="/")
+				h1
+					+fa('search', 'Lumus')
 
 			small
 				| Version #{myVersion}
