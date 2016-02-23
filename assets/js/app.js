@@ -8,7 +8,9 @@
 		'app.search'
 	]).config(['$routeProvider', function ($routeProvider) {
 		$routeProvider.when('/', {
-			templateUrl : '/templates/main'
+			templateUrl : '/templates/main',
+			controller : 'ItemController',
+			controllerAs : 'itemController'			
 		}).when('/search', {
 			templateUrl : '/templates/search',
 			controller : 'SearchController',
