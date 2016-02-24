@@ -1,10 +1,29 @@
 include ../includes/widgets
 
-mixin resultDetail(result)
+mixin resultDetail(result, type)
 	| <img class="preview preview-inner img-responsive" ng-src="{{ result.poster_path ? 'http://image.tmdb.org/t/p/w185' + result.poster_path : 'https://assets.tmdb.org/assets/7f29bd8b3370c71dd379b0e8b570887c/images/no-poster-w185-v2.png' }}" />
 	.resultInfo
 		h4 {{ result.title || result.name }}
 		em {{ result.vote_average }}
+		.pull-right
+			if type == 'Movie'
+				.btn.btn-xs.btn-primary(ng-click="searchController.addMovie(result)", ng-disabled="searchController.isAdding(result)", ng-if="!searchController.isAdded(result) && !searchController.isError(result)")
+					span.fa.fa-plus &nbsp;
+					| Add
+				span.text-success(ng-if="searchController.isAdded(result)")
+					span.fa.fa-check
+					| Added
+				span.text-danger(ng-if="searchController.isError(result)")
+					span.fa.fa-ban
+					| Error
+			else if type == 'Show'
+				.btn.btn-xs.btn-primary(ng-click="searchController.showSeasons(result)")
+					span.fa.fa-tv &nbsp;
+					| Seasons
+			else if type == 'Music'
+				.btn.btn-xs.btn-primary(ng-click="searchController.showAlbums(result)")
+					span.fa.fa-music &nbsp;
+					| Albums	
 
 #searchResults.container-fluid
 	.row.no-gutters(ng-if="searchController.movieResults.length")
@@ -12,19 +31,19 @@ mixin resultDetail(result)
 			+fa('film', 'Movies')
 			hr
 		.col-md-2.col-xs-6.searchItem(ng-repeat="result in searchController.movieResults")
-			+resultDetail(result)
+			+resultDetail(result, 'Movie')
 	.row.no-gutters(ng-if="searchController.showResults.length")
 		h2.col-sm-12
 			+fa('tv', 'Shows')
 			hr
 		.col-md-2.col-xs-6.searchItem(ng-repeat="result in searchController.showResults")
-			+resultDetail(result)
+			+resultDetail(result, 'Show')
 	.row.no-gutters(ng-if="searchController.musicResults.length")
 		h2.col-sm-12
 			+fa('music', 'Music')
 			hr
 		.col-md-2.col-xs-6.searchItem(ng-repeat="result in searchController.musicResults")
-			+resultDetail(result)
+			+resultDetail(result, 'Music')
 	.searching(ng-if="searchController.searching()")
 		h2
 			+fa('search', 'Searching...')
