@@ -2,8 +2,8 @@ include ../includes/widgets
 include ../includes/item
 
 .col-sm-6
-	form(role="form", ng-controller="SearchController as searchController", ng-submit="searchController.search(searchController.searchTerm)")
-		+ngInputWithPlaceholder('text', 'q', 'Enter Movie, Show, Artist or Group Name', 'searchController.searchTerm')
+	form(role="form", ng-submit="mainController.search()")
+		+ngInputWithPlaceholder('text', 'q', 'Enter Movie, Show, Artist or Group Name', 'mainController.searchTerm')
 		button#search.btn.btn-warning(type='submit')
 			+fa('search', 'Search')
 		.dropdown#menu(style='float:right')
@@ -13,8 +13,8 @@ include ../includes/item
 				li(role='presentation')
 					+faLink('wrench', '/config', 'Settings')
 
-	#items(ng-controller="ItemController as itemController")
-		div(ng-repeat="(state, groupedItems) in itemController.items | orderBy: itemController.stateWeight | groupBy: 'state'")
+	#items
+		div(ng-repeat="(state, groupedItems) in mainController.items | orderBy: mainController.stateWeight | groupBy: 'state'")
 			h2 {{ state }}
 			div(ng-repeat="item in groupedItems")
 				+item()

@@ -14,10 +14,6 @@
 		this.showResults = [];
 		this.musicResults = [];
 			
-		this.search = function(searchTerm) {
-			$location.path('/search').search('q', searchTerm);
-		};
-		
 		this.noResults = function() {
 			return !self.isSearching && !self.movieResults.length && !self.showResults.length && !self.musicResults.length; 
 		};

@@ -3,9 +3,9 @@
 
 	angular
 		.module('app')
-		.controller('ItemController', [ '$scope', '$sails', ItemController]);
+		.controller('MainController', [ '$location', '$scope', '$sails', MainController]);
 	
-	function ItemController($scope, $sails) {
+	function MainController($location, $scope, $sails) {
 		var self = this;
 	
 		(function () {
@@ -16,7 +16,6 @@
 				alert(err);
 			});
 
-			// Stop watching for updates
 			$scope.$on('$destroy', function() {
 				if (self.modelUpdaterDestructor) {
 					self.modelUpdaterDestructor();
@@ -24,6 +23,10 @@
 			});
 
 		}());
+		
+		this.search = function() {
+			$location.path('/search').search('q', this.searchTerm);
+		};
 		
 		this.iconFor = function(item) {
 			switch(item.type) {
