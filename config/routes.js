@@ -40,9 +40,18 @@ module.exports.routes = {
   	view : 'templates/main'
   },
   
+  '/templates/search/seasons': {
+  	view : 'templates/seasonSearch'
+  },
+
+  '/templates/search/albums': {
+  	view : 'templates/search/albums'
+  },
+
   '/templates/search': {
   	view : 'templates/search'
   }
+
 
   /***************************************************************************
   *                                                                          *

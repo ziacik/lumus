@@ -3,21 +3,20 @@
 
 	angular
 		.module('app.search')
-		.controller('SearchController', [ '$location', '$scope', '$sails', '$timeout', 'SearchService', SearchController ]);
+		.controller('SeasonSearchController', [ '$location', '$scope', '$sails', '$timeout', 'SearchService', SeasonSearchController ]);
 	
-	function SearchController($location, $scope, $sails, $timeout, searchService) {
+	function SeasonSearchController($location, $scope, $sails, $timeout, searchService) {
 		var self = this;
 		
 		this.isSearching = false;
 		
-		this.movieResults = [];
-		this.showResults = [];
-		this.musicResults = [];
+		this.show = {};
+		this.results = [];
 		
 		this.status = {};
 			
 		this.noResults = function() {
-			return !self.isSearching && !self.movieResults.length && !self.showResults.length && !self.musicResults.length; 
+			return !self.isSearching && !self.results.length; 
 		};
 		
 		this.searching = function() {
@@ -36,13 +35,14 @@
 			return self.status[result.id] === 'error';
 		};
 		
-		this.addMovie = function(result) {
+		this.add = function(result) {
 			self.status[result.id] = 'adding';
 			
 			$sails.post('/api/item/', {
-				name : result.title,
+				name : self.show.name,
 				externalId : result.id,
-				type : 'movie',
+				no : result.season_number,
+				type : 'show',
 				posterUrl : result.poster_path
 			}).then(function() {
 				self.status[result.id] = 'added';
@@ -55,24 +55,15 @@
 			}); 
 		};
 		
-		this.showSeasons = function(result) {
-			$location.path('/search/seasons').search('id', result.id);
-		};
-				
-		this.showAlbum = function(result) {
-			$location.path('/search/albums').search('id', result.id);
-		};
-
 		this.resetState = function(result) {
 			delete self.status[result.id];
 		};
 		
-		var doSearch = function(searchTerm) {
+		var doSearch = function(showId) {
 			self.isSearching = true;
-			searchService.search(searchTerm).then(function(results) {
-				self.movieResults = results.movieResults || [];
-				self.showResults = results.showResults || [];
-				self.musicResults = results.musicResults || [];
+			searchService.getShow(showId).then(function(show) {
+				self.show = show;
+				self.results = show.seasons || [];
 				self.isSearching = false;
 			}).catch(function(err) {
 				console.log(err);
@@ -80,10 +71,10 @@
 			});		
 		};
 		
-		var searchTerm = $location.search().q;
+		var id = $location.search().id;
 		
-		if (searchTerm) {
-			doSearch(searchTerm);
+		if (id) {
+			doSearch(id);
 		}		
 	}
 })();

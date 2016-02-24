@@ -8,7 +8,7 @@
 	function TheMovieDbService($http) {
 		var self = this;
 		
-		var createRequest = function(type, searchTerm) {
+		var createSearchRequest = function(type, searchTerm) {
 			return $http({
 				method: 'GET',
 				url: 'https://api.themoviedb.org/3/search/' + type,
@@ -26,10 +26,10 @@
 		};
 			
 		this.search = function(searchTerm) {
-			return createRequest('movie', searchTerm).then(function(movieResponse) {
+			return createSearchRequest('movie', searchTerm).then(function(movieResponse) {
 				checkStatus(movieResponse);
 			
-				return createRequest('tv', searchTerm).then(function(tvResponse) {
+				return createSearchRequest('tv', searchTerm).then(function(tvResponse) {
 					checkStatus(tvResponse);
 				
 					return {
@@ -37,6 +37,21 @@
 						showResults : tvResponse.data.results
 					};
 				}); 
+			});	
+		};
+
+		this.getShow = function(showId) {
+			var request = $http({
+				method: 'GET',
+				url: 'https://api.themoviedb.org/3/tv/' + showId,
+				params : {
+					api_key : 'f647d297016fdbf28f67b9ebe0dbdd93'
+				}
+			});
+		
+			return request.then(function(response) {
+				checkStatus(response);
+				return response.data;
 			});	
 		};
 	}

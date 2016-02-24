@@ -11,5 +11,9 @@
 		this.search = function(searchTerm) {
 			return theMovieDbService.search(searchTerm);
 		};
+		
+		this.getShow = function(showId) {
+			return theMovieDbService.getShow(showId);
+		};
 	}
 })();

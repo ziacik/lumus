@@ -1,0 +1,32 @@
+include ../includes/widgets
+
+mixin resultDetail(result)
+	| <img class="preview preview-inner img-responsive" ng-src="{{ result.poster_path ? 'http://image.tmdb.org/t/p/w185' + result.poster_path : 'https://assets.tmdb.org/assets/7f29bd8b3370c71dd379b0e8b570887c/images/no-poster-w185-v2.png' }}" />
+	.resultInfo
+		h4 Season {{ result.season_number }}
+		em {{ result.vote_average }}
+		.pull-right
+			.btn.btn-xs.btn-primary(ng-click="seasonSearchController.add(result)", ng-disabled="seasonSearchController.isAdding(result)", ng-if="!seasonSearchController.isAdded(result) && !seasonSearchController.isError(result)")
+				span.fa.fa-plus &nbsp;
+				| Add
+			span.text-success(ng-if="seasonSearchController.isAdded(result)")
+				span.fa.fa-check &nbsp;
+				| Added
+			span.text-danger(ng-if="seasonSearchController.isError(result)")
+				span.fa.fa-ban &nbsp;
+				| Error
+
+#searchResults.container-fluid
+	.row
+		h2.col-sm-12
+			+fa('tv', '{{ seasonSearchController.show.name }}')
+			hr
+	.row.no-gutters
+		.col-md-2.col-xs-6.searchItem(ng-repeat="result in seasonSearchController.results")
+			+resultDetail(result)
+	.searching(ng-if="seasonSearchController.searching()")
+		h2
+			+fa('search', 'Searching...')
+	.no-result(ng-if="seasonSearchController.noResults()")
+		h2
+			+fa('ban', 'No results.')

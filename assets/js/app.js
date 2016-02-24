@@ -15,6 +15,14 @@
 			templateUrl : '/templates/search',
 			controller : 'SearchController',
 			controllerAs : 'searchController'
+		}).when('/search/seasons', {
+			templateUrl : '/templates/search/seasons',
+			controller : 'SeasonSearchController',
+			controllerAs : 'seasonSearchController'
+		}).when('/search/albums', {
+			templateUrl : '/templates/search/albums',
+			controller : 'AlbumSearchController',
+			controllerAs : 'albumSearchController'
 		}).otherwise({
 			redirectTo : '/'
 		});
