@@ -3,7 +3,7 @@ include ../includes/widgets
 mixin resultDetail(result, type)
 	| <img class="preview preview-inner img-responsive" ng-src="{{ result.poster_path ? 'http://image.tmdb.org/t/p/w185' + result.poster_path : 'https://assets.tmdb.org/assets/7f29bd8b3370c71dd379b0e8b570887c/images/no-poster-w185-v2.png' }}" />
 	.resultInfo
-		h4 {{ result.title || result.name }}
+		h7 {{ result.title || result.name }}
 		em {{ result.vote_average }}
 		.pull-right
 			if type == 'Movie'

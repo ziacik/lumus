@@ -5,18 +5,21 @@ var movieShowBaseModel = require('./MovieShowBase');
 module.exports = _.merge({
 	attributes: {
 		type : {
-			enum : ['Movie'],
+			enum : ['Season'],
 			required : true,
-			defaultsTo : 'Movie'
+			defaultsTo : 'Season'
 		},
-		name : {
-			type : 'string',
+		show : {
+			model : 'Show',
 			required : true
 		},
 		year : {
 			type : 'integer',
 			required : true
+		},
+		no : {
+			type : 'integer',
+			required : true
 		}
 	}
 }, itemBaseModel, movieShowBaseModel);
-

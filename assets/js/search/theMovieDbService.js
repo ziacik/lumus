@@ -39,6 +39,21 @@
 				}); 
 			});	
 		};
+		
+		this.getMovie = function(movieId) {
+			var request = $http({
+				method: 'GET',
+				url: 'https://api.themoviedb.org/3/movie/' + movieId,
+				params : {
+					api_key : 'f647d297016fdbf28f67b9ebe0dbdd93'
+				}
+			});
+		
+			return request.then(function(response) {
+				checkStatus(response);
+				return response.data;
+			});	
+		};
 
 		this.getShow = function(showId) {
 			var request = $http({

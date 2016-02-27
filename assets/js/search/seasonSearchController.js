@@ -38,7 +38,7 @@
 		this.add = function(result) {
 			self.status[result.id] = 'adding';
 			
-			$sails.post('/api/item/', {
+			$sails.post('/api/show/', {
 				name : self.show.name,
 				externalId : result.id,
 				no : result.season_number,

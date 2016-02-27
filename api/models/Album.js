@@ -1,22 +1,21 @@
 var _ = require('lodash');
 var itemBaseModel = require('./ItemBase');
-var movieShowBaseModel = require('./MovieShowBase');
+var musicBaseModel = require('./MusicBase');
 
 module.exports = _.merge({
 	attributes: {
 		type : {
-			enum : ['Movie'],
+			enum : ['Album'],
 			required : true,
-			defaultsTo : 'Movie'
+			defaultsTo : 'Album'
 		},
-		name : {
-			type : 'string',
+		artist : {
+			model : 'Artist',
 			required : true
-		},
+		},		
 		year : {
 			type : 'integer',
-			required : true
+			requried : true
 		}
 	}
-}, itemBaseModel, movieShowBaseModel);
-
+}, itemBaseModel, musicBaseModel);

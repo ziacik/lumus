@@ -3,9 +3,9 @@
 
 	angular
 		.module('app.search')
-		.controller('SearchController', [ '$location', '$scope', '$sails', '$timeout', 'SearchService', SearchController ]);
+		.controller('SearchController', [ '$location', '$scope', '$sails', '$timeout', 'SearchService', 'TheMovieDbService', SearchController ]);
 	
-	function SearchController($location, $scope, $sails, $timeout, searchService) {
+	function SearchController($location, $scope, $sails, $timeout, searchService, theMovieDbService) {
 		var self = this;
 		
 		this.isSearching = false;
@@ -39,11 +39,14 @@
 		this.addMovie = function(result) {
 			self.status[result.id] = 'adding';
 			
-			$sails.post('/api/item/', {
-				name : result.title,
-				externalId : result.id,
-				type : 'movie',
-				posterUrl : result.poster_path
+			theMovieDbService.getMovie(result.id).then(function(movie) {
+				return $sails.post('/api/movie/', {
+					name : result.title,
+					tmdbId : result.id,
+					imdbId : movie.imdb_id,
+					year : 1900 + new Date(movie.release_date).getYear(),
+					posterUrl : result.poster_path
+				});
 			}).then(function() {
 				self.status[result.id] = 'added';
 			}).catch(function(err) {
