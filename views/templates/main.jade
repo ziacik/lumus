@@ -1,42 +1,21 @@
 include ../includes/widgets
 include ../includes/item
 
-.col-sm-6
-	form(role="form", ng-submit="mainController.search()")
-		+ngInputWithPlaceholder('text', 'q', 'Enter Movie, Show, Artist or Group Name', 'mainController.searchTerm')
-		button#search.btn.btn-warning(type='submit')
-			+fa('search', 'Search')
-		.dropdown#menu(style='float:right')
-			a.btn.btn-default.dropdown-toggle(href='#', data-toggle='dropdown', type='button', title='Menu')
-				+fa('bars')
-			ul.dropdown-menu(role='menu', aria-labelledby='menu')
-				li(role='presentation')
-					+faLink('wrench', '/config', 'Settings')
+mixin itemDetail(item)
+	| <img class="preview preview-inner" ng-src="{{ item.posterUrl ? 'http://image.tmdb.org/t/p/w185' + item.posterUrl : 'https://assets.tmdb.org/assets/7f29bd8b3370c71dd379b0e8b570887c/images/no-poster-w185-v2.png' }}" />
+	.resultInfo
+		h7 {{ item.name }}
+		.pull-right
+			.label.label-xs.label-primary {{ item.state }}
 
-	#items
-		div(ng-repeat="(state, groupedItems) in mainController.items | orderBy: mainController.stateWeight | groupBy: 'state'")
-			h2 {{ state }}
-			div(ng-repeat="item in groupedItems")
-				+item()
+include ../includes/header
 
-.col-sm-3
-	small Please support development by making a donation
-	br
-	br
-	form(action='https://www.paypal.com/cgi-bin/webscr', method='POST', target='blank')
-		input(type='hidden', name='cmd' value='_s-xclick')
-		input(type='hidden', name='encrypted', value='-----BEGIN PKCS7-----MIIHPwYJKoZIhvcNAQcEoIIHMDCCBywCAQExggEwMIIBLAIBADCBlDCBjjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtQYXlQYWwgSW5jLjETMBEGA1UECxQKbGl2ZV9jZXJ0czERMA8GA1UEAxQIbGl2ZV9hcGkxHDAaBgkqhkiG9w0BCQEWDXJlQHBheXBhbC5jb20CAQAwDQYJKoZIhvcNAQEBBQAEgYBW3RJMJT+FiPiVkOe7uviEgu5HoKsYMvYkSRJH1xzlI+1L/5nfsiYquLbGJaEn7xIQ2b2Ipz7S6Ur8YqW70fs0HUY/fvY4zzmJsnXgkEropyHagFYaTUevg/QRh0tEINae/fPg6plAvcxjfz9HZUprourb76yjmQYo6rTHXx4aWjELMAkGBSsOAwIaBQAwgbwGCSqGSIb3DQEHATAUBggqhkiG9w0DBwQIsrTbpfQDTuaAgZgf+Z8PKfQ4axhNLCxMw8sSGSYjaGfwgxlApQrY8EWt0AhBePxLEVY0b9BzMgZTqrck5PN6aZyPSRMGvHEkkssDczKk7GqE1CoVBsQVxI2HKF+1w1dj832EvChq+7LPBRDBpJ4WMWU64HkiiGHbjn5UaR06pCw23tbnrwOWXOx+2uhbLgP/RH2VgYe+NRrUB2krFnqwmPCT9aCCA4cwggODMIIC7KADAgECAgEAMA0GCSqGSIb3DQEBBQUAMIGOMQswCQYDVQQGEwJVUzELMAkGA1UECBMCQ0ExFjAUBgNVBAcTDU1vdW50YWluIFZpZXcxFDASBgNVBAoTC1BheVBhbCBJbmMuMRMwEQYDVQQLFApsaXZlX2NlcnRzMREwDwYDVQQDFAhsaXZlX2FwaTEcMBoGCSqGSIb3DQEJARYNcmVAcGF5cGFsLmNvbTAeFw0wNDAyMTMxMDEzMTVaFw0zNTAyMTMxMDEzMTVaMIGOMQswCQYDVQQGEwJVUzELMAkGA1UECBMCQ0ExFjAUBgNVBAcTDU1vdW50YWluIFZpZXcxFDASBgNVBAoTC1BheVBhbCBJbmMuMRMwEQYDVQQLFApsaXZlX2NlcnRzMREwDwYDVQQDFAhsaXZlX2FwaTEcMBoGCSqGSIb3DQEJARYNcmVAcGF5cGFsLmNvbTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAwUdO3fxEzEtcnI7ZKZL412XvZPugoni7i7D7prCe0AtaHTc97CYgm7NsAtJyxNLixmhLV8pyIEaiHXWAh8fPKW+R017+EmXrr9EaquPmsVvTywAAE1PMNOKqo2kl4Gxiz9zZqIajOm1fZGWcGS0f5JQ2kBqNbvbg2/Za+GJ/qwUCAwEAAaOB7jCB6zAdBgNVHQ4EFgQUlp98u8ZvF71ZP1LXChvsENZklGswgbsGA1UdIwSBszCBsIAUlp98u8ZvF71ZP1LXChvsENZklGuhgZSkgZEwgY4xCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEUMBIGA1UEChMLUGF5UGFsIEluYy4xEzARBgNVBAsUCmxpdmVfY2VydHMxETAPBgNVBAMUCGxpdmVfYXBpMRwwGgYJKoZIhvcNAQkBFg1yZUBwYXlwYWwuY29tggEAMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEFBQADgYEAgV86VpqAWuXvX6Oro4qJ1tYVIT5DgWpE692Ag422H7yRIr/9j/iKG4Thia/Oflx4TdL+IFJBAyPK9v6zZNZtBgPBynXb048hsP16l2vi0k5Q2JKiPDsEfBhGI+HnxLXEaUWAcVfCsQFvd2A1sxRr67ip5y2wwBelUecP3AjJ+YcxggGaMIIBlgIBATCBlDCBjjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtQYXlQYWwgSW5jLjETMBEGA1UECxQKbGl2ZV9jZXJ0czERMA8GA1UEAxQIbGl2ZV9hcGkxHDAaBgkqhkiG9w0BCQEWDXJlQHBheXBhbC5jb20CAQAwCQYFKw4DAhoFAKBdMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE1MDUxNDIxMTcwMlowIwYJKoZIhvcNAQkEMRYEFJdtFwd/iM6Ol3N3KaiQ7GRxF5H1MA0GCSqGSIb3DQEBAQUABIGAPYzxzRqVlx1GKsMXuXq0FemiUXGzcW8BWGqzkBaZ/v88jQYKiqKgLd8OIIwontUR38wSv6IbT6V6uH/hzl7Dh+ftczKEGT0sN9gMpZ9xTVywEebE1/k911ni5I/0w0tNTosGHxYHAL2OqrZr1GRS8uNmLEuZNVnwqp2vvLecw7A=-----END PKCS7-----')
-		button.btn.btn-primary.btn-sm(type='submit')
-			+fa('paypal', 'PayPal')
-	hr
-	small
-		+fa('bitcoin', 'Bitcoin')
-		br
-		code
-			| 1MqjdRkVpG7CzRgYZAuABdA3NcpH4gajho
+#items.row.no-gutters
+	div(ng-repeat="(state, groupedItems) in mainController.items | orderBy: mainController.stateWeight | groupBy: 'state'")
+		h2.col-sm-12
+			| {{ state }}
+			hr
+		.col-md-2.col-xs-6.searchItem(ng-repeat="item in groupedItems")
+			+itemDetail()
 	
-	hr
-	small
-		| Found a bug? Want a feature?
-		br
-		+faLinkBlank('github', 'https://github.com/ziacik/lumus/issues/new', 'File an issue')
+include ../includes/footer

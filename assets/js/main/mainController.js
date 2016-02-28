@@ -9,7 +9,7 @@
 		var self = this;
 	
 		(function () {
-			$sails.get('/api/item').then(function (resp) {
+			$sails.get('/api/itembase').then(function (resp) {
 				self.items = resp.data;
 				self.modelUpdaterDestructor = $sails.$modelUpdater('item', self.items);
 			}).catch(function (err) {
@@ -50,7 +50,7 @@
 		};
 		
 		this.changeState = function(item, newState) {
-			$sails.put('/api/item/' + item.id, {
+			$sails.put('/api/itembase/' + item.id, {
 				state : newState
 			}).then(function(resp) {
 				angular.extend(item, resp.body);
@@ -61,7 +61,7 @@
 		};
 		
 		this.remove = function(item) {
-			$sails.delete('/api/item/' + item.id).then(function(resp) {
+			$sails.delete('/api/itembase/' + item.id).then(function(resp) {
 				self.items = self.items.filter(function(existingItem) {
 					return existingItem.id !== item.id;
 				});

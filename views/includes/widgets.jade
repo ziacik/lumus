@@ -60,10 +60,6 @@ mixin inputWithPlaceholder(type, id, text, value)
 	.form-group
 		input.form-control(type=type, name=id, id=id, value=value, placeholder=text)
 
-mixin ngInputWithPlaceholder(type, id, text, model)
-	.form-group
-		input.form-control(type=type, name=id, id=id, ng-model=model, placeholder=text)
-
 mixin check(id, text, value)
 	.checkbox
 		label

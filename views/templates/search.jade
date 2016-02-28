@@ -23,9 +23,11 @@ mixin resultDetail(result, type)
 			else if type == 'Music'
 				.btn.btn-xs.btn-primary(ng-click="searchController.showAlbums(result)")
 					span.fa.fa-music &nbsp;
-					| Albums	
+					| Albums
 
-#searchResults.container-fluid
+include ../includes/header
+
+#searchResults
 	.row.no-gutters(ng-if="searchController.movieResults.length")
 		h2.col-sm-12
 			+fa('film', 'Movies')
@@ -50,3 +52,5 @@ mixin resultDetail(result, type)
 	.no-result(ng-if="searchController.noResults()")
 		h2
 			+fa('ban', 'No results.')
+			
+include ../includes/footer

@@ -2,17 +2,4 @@ extends ./layout
 include ./includes/widgets
 
 block body
-	.row
-		.col-sm-6
-			a(ng-href="/#/")
-				h1
-					+fa('search', 'Lumus')
-
-			small
-				| Version #{myVersion}
-				if newVersion
-					em
-						| &nbsp;| new version available #{newVersion}&nbsp;
-						//a(href='/update') Update
-	
-	.row(ng-view)
+	div(ng-view)
