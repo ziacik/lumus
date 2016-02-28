@@ -1,7 +1,7 @@
 include ../includes/widgets
 
 mixin resultDetail(result, type)
-	| <img class="preview preview-inner img-responsive" ng-src="{{ result.poster_path ? 'http://image.tmdb.org/t/p/w185' + result.poster_path : 'https://assets.tmdb.org/assets/7f29bd8b3370c71dd379b0e8b570887c/images/no-poster-w185-v2.png' }}" />
+	| <img class="preview preview-inner" ng-src="{{ result.poster_path ? 'http://image.tmdb.org/t/p/w185' + result.poster_path : 'https://assets.tmdb.org/assets/7f29bd8b3370c71dd379b0e8b570887c/images/no-poster-w185-v2.png' }}" />
 	.resultInfo
 		h7 {{ result.title || result.name }}
 		em {{ result.vote_average }}
@@ -27,30 +27,29 @@ mixin resultDetail(result, type)
 
 include ../includes/header
 
-#searchResults
-	.row.no-gutters(ng-if="searchController.movieResults.length")
-		h2.col-sm-12
-			+fa('film', 'Movies')
-			hr
-		.col-md-2.col-xs-6.searchItem(ng-repeat="result in searchController.movieResults")
-			+resultDetail(result, 'Movie')
-	.row.no-gutters(ng-if="searchController.showResults.length")
-		h2.col-sm-12
-			+fa('tv', 'Shows')
-			hr
-		.col-md-2.col-xs-6.searchItem(ng-repeat="result in searchController.showResults")
-			+resultDetail(result, 'Show')
-	.row.no-gutters(ng-if="searchController.musicResults.length")
-		h2.col-sm-12
-			+fa('music', 'Music')
-			hr
-		.col-md-2.col-xs-6.searchItem(ng-repeat="result in searchController.musicResults")
-			+resultDetail(result, 'Music')
-	.searching(ng-if="searchController.searching()")
-		h2
-			+fa('search', 'Searching...')
-	.no-result(ng-if="searchController.noResults()")
-		h2
-			+fa('ban', 'No results.')
+.row(ng-if="searchController.movieResults.length")
+	h2.col-sm-12
+		+fa('film', 'Movies')
+		hr
+	.col-md-2.col-xs-6.searchItem(ng-repeat="result in searchController.movieResults")
+		+resultDetail(result, 'Movie')
+.row(ng-if="searchController.showResults.length")
+	h2.col-sm-12
+		+fa('tv', 'Shows')
+		hr
+	.col-md-2.col-xs-6.searchItem(ng-repeat="result in searchController.showResults")
+		+resultDetail(result, 'Show')
+.row(ng-if="searchController.musicResults.length")
+	h2.col-sm-12
+		+fa('music', 'Music')
+		hr
+	.col-md-2.col-xs-6.searchItem(ng-repeat="result in searchController.musicResults")
+		+resultDetail(result, 'Music')
+.searching(ng-if="searchController.searching()")
+	h2
+		+fa('search', 'Searching...')
+.no-result(ng-if="searchController.noResults()")
+	h2
+		+fa('ban', 'No results.')
 			
 include ../includes/footer

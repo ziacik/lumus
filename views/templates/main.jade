@@ -10,7 +10,7 @@ mixin itemDetail(item)
 
 include ../includes/header
 
-#items.row.no-gutters
+#items.row
 	div(ng-repeat="(state, groupedItems) in mainController.items | orderBy: mainController.stateWeight | groupBy: 'state'")
 		h2.col-sm-12
 			| {{ state }}
