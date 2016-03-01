@@ -1,0 +1,51 @@
+mixin cardCols(ngDataSource)
+	.col-sm-2.col-xs-3.card(ng-repeat="item in " + ngDataSource)
+		block
+
+mixin card()
+	.content
+		| <img class="img-responsive" ng-src="{{ (item.poster_path || item.posterUrl) ? 'http://image.tmdb.org/t/p/w185' + (item.poster_path || item.posterUrl) : 'https://assets.tmdb.org/assets/7f29bd8b3370c71dd379b0e8b570887c/images/no-poster-w185-v2.png' }}" />
+		.info
+			h7 {{ item.title || item.name || "Season " + item.season_number }}
+			em {{ item.vote_average }}
+			block
+
+mixin itemCard()
+	+card()
+		.pull-right
+			.label.label-xs.label-primary {{ item.state }}
+	
+mixin searchCard(type)
+	+card()
+		.pull-right
+			if type == 'Movie'
+				.btn.btn-xs.btn-primary(ng-click="searchController.addMovie(item)", ng-disabled="searchController.isAdding(item)", ng-if="!searchController.isAdded(item) && !searchController.isError(item)")
+					span.fa.fa-plus &nbsp;
+					| Add
+				span.text-success(ng-if="searchController.isAdded(item)")
+					span.fa.fa-check
+					| Added
+				span.text-danger(ng-if="searchController.isError(item)")
+					span.fa.fa-ban
+					| Error
+			else if type == 'Show'
+				.btn.btn-xs.btn-primary(ng-click="searchController.showSeasons(item)")
+					span.fa.fa-tv &nbsp;
+					| Seasons
+			else if type == 'Music'
+				.btn.btn-xs.btn-primary(ng-click="searchController.showAlbums(item)")
+					span.fa.fa-music &nbsp;
+					| Albums
+
+mixin seasonCard()
+	+card()
+		.pull-right
+			.btn.btn-xs.btn-primary(ng-click="seasonSearchController.add(item)", ng-disabled="seasonSearchController.isAdding(item)", ng-if="!seasonSearchController.isAdded(item) && !seasonSearchController.isError(item)")
+				span.fa.fa-plus &nbsp;
+				| Add
+			span.text-success(ng-if="seasonSearchController.isAdded(item)")
+				span.fa.fa-check &nbsp;
+				| Added
+			span.text-danger(ng-if="seasonSearchController.isError(item)")
+				span.fa.fa-ban &nbsp;
+				| Error	

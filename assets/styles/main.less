@@ -1,33 +1,23 @@
 @fa-font-path: '../bower_components/components-font-awesome/fonts/';
-@poster-width: 185px;
-@poster-height: 272px;
-@result-pane-height: 100px;
+@grid-gutter-width: 10px;
 
 .right-space {
 	margin-right : 0.5em;
 }
 
-.searchItem {
-	width: @poster-width + 10px;
-	height: @poster-height + @result-pane-height;
+.card {
 	margin-bottom: 15px;
-
-	& img {
-		width: @poster-width;
-		height: @poster-height;
-		padding: 0;
-		margin: 0;	
+	height: 380px;
+	& .content {
+		background-color: black;
+		color: white;
+		height: 100%;
+	}
+	& .info {
+		padding: 5px;
 	}
 }
 
-.resultInfo {
-	width: @poster-width;
-	height: @result-pane-height;
-	padding: 5px;
-	background-color: black;
-	color: white;
-}
-
 #header {
-	line-height: 70px;
+	line-height: 80px;
 }

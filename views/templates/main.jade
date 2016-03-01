@@ -1,21 +1,11 @@
-include ../includes/widgets
-include ../includes/item
+extends ./templateLayout
 
-mixin itemDetail(item)
-	| <img class="preview preview-inner" ng-src="{{ item.posterUrl ? 'http://image.tmdb.org/t/p/w185' + item.posterUrl : 'https://assets.tmdb.org/assets/7f29bd8b3370c71dd379b0e8b570887c/images/no-poster-w185-v2.png' }}" />
-	.resultInfo
-		h7 {{ item.name }}
-		.pull-right
-			.label.label-xs.label-primary {{ item.state }}
-
-include ../includes/header
-
-#items.row
-	div(ng-repeat="(state, groupedItems) in mainController.items | orderBy: mainController.stateWeight | groupBy: 'state'")
-		h2.col-sm-12
-			| {{ state }}
-			hr
-		.col-md-2.col-xs-6.searchItem(ng-repeat="item in groupedItems")
-			+itemDetail()
+block content
+	.row
+		div(ng-repeat="(state, groupedItems) in mainController.items | orderBy: mainController.stateWeight | groupBy: 'state'")
+			h2.col-sm-12
+				| {{ state }}
+				hr
+			+cardCols("groupedItems")
+				+itemCard()
 	
-include ../includes/footer
