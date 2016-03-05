@@ -11,7 +11,7 @@
 		(function () {
 			$sails.get('/api/itembase').then(function (resp) {
 				self.items = resp.data;
-				self.modelUpdaterDestructor = $sails.$modelUpdater('item', self.items);
+				self.modelUpdaterDestructor = $sails.$modelUpdater('itembase', self.items);
 			}).catch(function (err) {
 				alert(err);
 			});

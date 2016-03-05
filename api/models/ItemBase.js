@@ -1,6 +1,6 @@
 module.exports = {
 	schema : true,
-	tableName : 'Item',
+	tableName : 'item',
 	attributes : {
 		state : {
 			type : 'string',
@@ -27,6 +27,9 @@ module.exports = {
 		},
 		torrentLinks : {
 			type : 'array'
-		}		
+		},
+		nextCheck : {
+			type : 'dateTime'
+		}
 	}
 };

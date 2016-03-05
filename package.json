@@ -20,9 +20,17 @@
     "grunt-sync": "0.2.4",
     "include-all": "~0.1.6",
     "jade": "^1.11.0",
+    "kodi-ws": "^2.4.0",
+    "nconf": "^0.8.4",
+    "node-tvdb": "^1.6.4",
+    "opensubtitles-client": "^2.5.0",
     "rc": "1.0.1",
     "sails": "~0.12.1",
-    "sails-disk": "~0.10.9"
+    "sails-disk": "~0.10.9",
+    "sails-nedb": "^0.10.0",
+    "thepiratebay": "^0.2.6",
+    "transmission": "^0.4.3",
+    "waterline-nedb": "^0.11.1"
   },
   "scripts": {
     "debug": "node debug app.js",
