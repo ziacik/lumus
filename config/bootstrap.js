@@ -10,7 +10,9 @@
  */
 
 module.exports.bootstrap = function(cb) {
-	require('../app/jobs/checker').check();
+	setTimeout(function() {
+		require('../app/jobs/checker').check();
+	}, 20000);
 
 	// It's very important to trigger this callback method when you are finished
 	// with the bootstrap!	(otherwise your server will never lift, since it's waiting on the bootstrap)

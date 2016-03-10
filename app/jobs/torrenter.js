@@ -134,10 +134,6 @@ var add = function(item, magnetLink, torrentPageUrl) {
 			return;
 		}
 		
-		var changes = {
-			state : 'Downloading'
-		};
-
 		item.state = 'Downloading';
 //		item.stateInfo = null;
 //		item.torrentHash = result.hashString;				
@@ -152,22 +148,8 @@ var add = function(item, magnetLink, torrentPageUrl) {
 		if (notifier) {
 			notifier.notifySnatched(item);
 		}
-
-		console.log('Success. Torrent hash ' + item.torrentHash + '.');
-
-		//TODO item.planNextCheck(1); /// To cancel possible postpone.
-		ItemBase.update(item.id).set(changes).exec(function(err, updated) {
-			if (err) {
-				console.error(err);
-				deferred.reject(err);
-			}
-			
-			console.log(updated, 'GONNA publish');
-			changes.id = item.id;
-			ItemBase.publishUpdate(item.id, changes);
-			deferred.resolve();			
-		});
-		//TODO item.save().then(deferred.resolve, deferred.reject);
+		
+		item.saveAndPublish().then(deferred.resolve, deferred.reject);
 	});
 	
 	return deferred.promise;

@@ -15,7 +15,7 @@
 			}).catch(function (err) {
 				alert(err);
 			});
-
+			
 			$scope.$on('$destroy', function() {
 				if (self.modelUpdaterDestructor) {
 					self.modelUpdaterDestructor();

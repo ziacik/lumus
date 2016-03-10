@@ -32,10 +32,13 @@ module.exports.connections = {
     adapter: 'sails-disk'
   },
   
-  neDb: {
-    adapter: 'sails-nedb',
-    dbPath : '.'
-  },
+  
+  redis: {
+    adapter : 'sails-redis',
+    port: 6379,
+    host: 'localhost'
+  },  
+  
 
   /***************************************************************************
   *                                                                          *

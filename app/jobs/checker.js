@@ -104,11 +104,10 @@ function checkActive() {
 	return ItemBase.find().where({
 		state : {
 			'!' : [ 'Finished' ]
-		}//,
-		//'!' : { nextCheck : { '>' : new Date().toJSON() } }
-		//,  or : [ { nextCheck :  { $exists : true } } ] 
+		},
+		nextCheck : { '<' : new Date().toJSON() } 
 	}).then(function(items) {
-		console.error(items); //TODO
+		console.error(items); //TODO remove
 		var itemCheckers = items.map(function(item) {
 			return Q.fcall(checkOne, item);
 		});

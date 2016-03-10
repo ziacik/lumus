@@ -2,10 +2,6 @@ extends ./templateLayout
 
 block content
 	.row
-		div(ng-repeat="(state, groupedItems) in mainController.items | orderBy: mainController.stateWeight | groupBy: 'state'")
-			h2.col-sm-12
-				| {{ state }}
-				hr
-			+cardCols("groupedItems")
-				+itemCard()
+		+cardCols("mainController.items")
+			+itemCard()
 	

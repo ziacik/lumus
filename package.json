@@ -5,7 +5,6 @@
   "description": "a Sails application",
   "keywords": [],
   "dependencies": {
-    "ejs": "2.3.4",
     "grunt": "0.4.5",
     "grunt-contrib-clean": "0.6.0",
     "grunt-contrib-coffee": "0.13.0",
@@ -27,10 +26,8 @@
     "rc": "1.0.1",
     "sails": "~0.12.1",
     "sails-disk": "~0.10.9",
-    "sails-nedb": "^0.10.0",
     "thepiratebay": "^0.2.6",
-    "transmission": "^0.4.3",
-    "waterline-nedb": "^0.11.1"
+    "transmission": "^0.4.3"
   },
   "scripts": {
     "debug": "node debug app.js",

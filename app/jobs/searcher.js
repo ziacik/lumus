@@ -38,8 +38,9 @@ module.exports.findIfExists = function(item) {
 };
 
 module.exports.findAndAdd = function(item) {
-	return module.exports.findAll(item)
-	.then(function(results) {
+	return item.setState('Searching').then(function() {
+		return module.exports.findAll(item);
+	}).then(function(results) {
 		if (results.length === 0) {
 			item.stateInfo = "No results.";
 		} else {
@@ -54,8 +55,7 @@ module.exports.findAndAdd = function(item) {
 			}
 			item.rescheduleNextDay();
 		}
-	})
-	.catch(function(errors) {
+	}).catch(function(errors) {
 		if (!errors.length) {
 			errors = [ errors ];
 		}
