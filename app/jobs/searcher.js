@@ -1,4 +1,3 @@
-var util = require('util');
 var Q = require('q');
 var torrenter = require('./torrenter');
 var serviceDispatcher = require('./serviceDispatcher');
@@ -33,27 +32,32 @@ module.exports.findIfExists = function(item) {
 			return error.message || error;
 		}).join(', ');
 
-		util.error('Error in searcher. Caused by: ' + stack);
+		console.error('Error in searcher. Caused by: ' + stack);
 	});	
 };
 
 module.exports.findAndAdd = function(item) {
-	return item.setState('Searching').then(function() {
+	var hasResults;
+
+	return item.setState('Searching').saveAndPublish().then(function() {
 		return module.exports.findAll(item);
 	}).then(function(results) {
-		if (results.length === 0) {
-			item.stateInfo = "No results.";
-		} else {
+		hasResults = results.length > 0;
+		if (hasResults) {
 			return filter.first(item, results);
+		} else {
+			return item.setState('Wanted').setInfo('Nothing found.').rescheduleNextDay().then(function(whatever) {
+				console.log(whatever); //TODO remove
+				return Q();
+			});
 		}
 	}).then(function(result) {
 		if (result) {
 			return torrenter.add(item, result.magnetLink, result.torrentInfoUrl);
+		} else if (hasResults) {
+			return item.setState('Wanted').setInfo('No result matched filters.').rescheduleNextDay();
 		} else {
-			if (!item.stateInfo) {
-				item.stateInfo = "No result matched filters.";
-			}
-			item.rescheduleNextDay();
+			return Q();
 		}
 	}).catch(function(errors) {
 		if (!errors.length) {
@@ -68,11 +72,8 @@ module.exports.findAndAdd = function(item) {
 			return error.message || error;
 		}).join(', ');
 
-		util.error('Error in searcher. Caused by: ' + stack);
-		
-		item.stateInfo = messages;
-		//TODO item.rescheduleNextHour();
-		Item.save(item);
+		console.error('Error in searcher. Caused by: ' + stack);		
+		return item.setError(messages);
 	});
 }
 

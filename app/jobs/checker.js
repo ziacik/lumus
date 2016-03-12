@@ -73,30 +73,16 @@ function check() {
 }
 
 function checkOne(item) {
-	if (item.state === 'Wanted') {
+	if (item.state === 'Wanted' || item.state === 'Searching') {
 		return searcher.findAndAdd(item);
-	} else if (item.state === ItemStates.snatched) {
+	} else if (item.state === 'Downloading') {
 		return torrenter.checkFinished(item);
-	} else if (item.state === ItemStates.downloaded) {
+	} else if (item.state === 'Renaming') {
 		return renamer.rename(item);
-	} else if (item.state === ItemStates.renamed) {
+	} else if (item.state === 'UpdatingLibrary') {
 		return notifier.updateLibrary(item);
-	} else if (item.state === ItemStates.libraryUpdated) {
-		if (isMusic(item)) {
-			return finish(item);
-		} else {
-			return subtitler.findSubtitles(item);
-		}
-	} else if (item.state === ItemStates.subtitlerFailed) {
-		if (isAfterSubtitlerRetryLimit(item)) {
-			return finish(item);
-		} else {
-			return subtitler.findSubtitles(item);
-		}
-	} else if (item.state === ItemStates.subtitled) {
-		return finish(item);
-	} else {
-		throw new Error('Invalid state ' + item.state);
+	} else if (item.state === 'Subtitling') {
+		return subtitler.findSubtitles(item);
 	}
 };
 

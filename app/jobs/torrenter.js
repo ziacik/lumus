@@ -35,8 +35,7 @@ var checkFinished = function(item) {
 		}
 		
 		if (result.torrents.length == 0) {
-			item.state = 'Wanted';
-			item.save().then(deferred.resolve, deferred.reject);
+			item.setState('Wanted').setInfo('Torrent removed.').saveAndPublish().then(deferred.resolve, deferred.reject);
 			return;
 		}
 		
@@ -58,7 +57,7 @@ var checkFinished = function(item) {
 
 var removeTorrent = function(item, removeData) {
 	if (!item.torrentHash) {
-		return Q(undefined);
+		return Q();
 	}
 
 	var transmission = getTransmission();
@@ -87,11 +86,8 @@ var finishItem = function(item, torrent) {
 	item.downloadDir = path.join(torrent.downloadDir, fileDir);
 	item.mainFile = fileName;				
 	
-	item.state = 'Downloaded';
-	
-	return item.save().then(function() {
-		if (notifier)
-			return notifier.notifyDownloaded(item);
+	return item.setState('Renaming').saveAndPublish().then(function() {		
+		return notifier ? notifier.notifyDownloaded(item) : Q();
 	});
 }
 
@@ -100,8 +96,9 @@ var _transmissionUrl;
 
 
 var getTransmission = function() {
-	if (_transmission && config.get().downloader.transmission.url === _transmissionUrl)
+	if (_transmission && config.get().downloader.transmission.url === _transmissionUrl) {
 		return _transmission;
+	}
 		
 	var transmissionUrl = config.get().downloader.transmission.url;
 
@@ -128,15 +125,14 @@ var add = function(item, magnetLink, torrentPageUrl) {
 		if (err) {
 			err = convertErr(err);
 			console.log(err);
-			item.rescheduleNextHour();
+			item.rescheduleNextHour().done();
 			deferred.reject(err);
 			
 			return;
 		}
 		
-		item.state = 'Downloading';
-//		item.stateInfo = null;
-//		item.torrentHash = result.hashString;				
+		item.setState('Downloading');
+		item.torrentHash = result.hashString;				
 //		item.torrentInfoUrl = torrentPageUrl;
 
 //		if (!item.torrentLinks) {

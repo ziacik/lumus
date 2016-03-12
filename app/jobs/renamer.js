@@ -7,7 +7,7 @@ var mkdirp = require('mkdirp');
 var tvdb = new (require("node-tvdb"))("6E61D6699D0B1CB0");
 
 module.exports.rename = function(item) {
-	util.log("Renaming " + item.name);		
+	util.log("Renaming " + item.name);
 	
 	var itemName = item.name;
 	var promise;
