@@ -14,6 +14,10 @@ mixin itemCard()
 	+card()
 		.pull-right
 			.label.label-xs.label-primary {{ item.state }}
+		.pull-right(ng-if="item.info")
+			.label.label-xs.label-default {{ item.info }}
+		.pull-right(ng-if="item.error")
+			.label.label-xs.label-danger {{ item.error }}
 	
 mixin searchCard(type)
 	+card()

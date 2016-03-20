@@ -10,33 +10,32 @@ var kodi = require('../notifiers/kodi');
 var opensubtitler = require('../subtitlers/opensubtitler');
 var tpbSearcher = require('../searchers/tpbSearcher');
 
-
 var configure = function() {
 	var configuration = config.get();
-	
+
 	if (configuration.notifier.kodi.use) {
 		notifier.use(kodi);
 	} else {
 		notifier.unuse(kodi);
 	}
-	
+
 	if (configuration.subtitler.opensubtitler.use) {
 		subtitler.use(opensubtitler);
 	} else {
 		subtitler.unuse(opensubtitler);
 	}
-	
+
 	if (configuration.searcher.tpbSearcher.use) {
 		searcher.use(tpbSearcher);
 	} else {
 		searcher.unuse(tpbSearcher);
 	}
-	
-//	if (configuration.searcher.kickassSearcher.use) {
-//		searcher.use(kickassSearcher);
-//	} else {
-//		searcher.unuse(kickassSearcher);
-//	}
+
+	//	if (configuration.searcher.kickassSearcher.use) {
+	//		searcher.use(kickassSearcher);
+	//	} else {
+	//		searcher.unuse(kickassSearcher);
+	//	}
 };
 
 function isMusic(item) {
@@ -64,40 +63,28 @@ function check() {
 	console.log('CHECK');
 
 	return checkActive().then(checkFinished).then(function() {
-		console.log('NEXT CHECK', 		config.get().checkInterval * 1000);
+		console.log('NEXT CHECK', config.get().checkInterval * 1000);
 		setTimeout(check, config.get().checkInterval * 1000);
 	}).catch(function(error) {
-		console.error(error);
+		console.error(error.stack || error);
 		setTimeout(check, config.get().checkInterval * 1000);
 	});
 }
 
-function checkOne(item) {
-	if (item.state === 'Wanted' || item.state === 'Searching') {
-		return searcher.findAndAdd(item);
-	} else if (item.state === 'Downloading') {
-		return torrenter.checkFinished(item);
-	} else if (item.state === 'Renaming') {
-		return renamer.rename(item);
-	} else if (item.state === 'UpdatingLibrary') {
-		return notifier.updateLibrary(item);
-	} else if (item.state === 'Subtitling') {
-		return subtitler.findSubtitles(item);
-	}
-};
-
 function checkActive() {
 	return ItemBase.find().where({
-		state : {
-			'!' : [ 'Finished' ]
+		state: {
+			'!': ['Finished']
 		},
-		nextCheck : { '<' : new Date().toJSON() } 
+		nextCheck: {
+			'<': new Date().toJSON()
+		}
 	}).then(function(items) {
 		console.error(items); //TODO remove
 		var itemCheckers = items.map(function(item) {
 			return Q.fcall(checkOne, item);
 		});
-		
+
 		return Q.allSettled(itemCheckers); /// Or should I run it sequentially? Probably yes.
 	});
 }
@@ -108,36 +95,73 @@ function checkFinished() {
 
 function checkFinishedToNext() {
 	return ItemBase.find({
-		state : 'Finished',
-		type : { $in : [ 'Season' ] },
-		next : { $exists : false },		
-		$not : { nextCheck : { $gt : new Date().toJSON() } }
+		state: 'Finished',
+		type: {
+			$in: ['Season']
+		},
+		next: {
+			$exists: false
+		},
+		nextCheck: {
+			'<': new Date().toJSON()
+		}
 	}).then(function(items) {
 		return Q.allSettled(items.map(function(item) {
-			return nexter.checkNext(item);
+			return nexter.checkNext(item).catch(function(err) {
+				return handleItemError(err, item);
+			});
 		}));
-	}).catch(function(error) {
-		console.error(error.stack || error);
-	});
+	})
 }
 
 function checkFinishedToRemove() {
 	if (!config.get().removeFinishedDays) {
 		return Q();
 	}
-		
+
 	var now = new Date();
 	var deleteDate = new Date(now);
-    deleteDate.setDate(now.getDate() - config.get().removeFinishedDays);
+	deleteDate.setDate(now.getDate() - config.get().removeFinishedDays);
 
-	return Item.find({state : ItemStates.finished, createdAt : {$lt : deleteDate.toJSON()}})
-	.then(function(items) {
-		return Q.allSettled(items.map(function(item) {
-			return item.remove();
-		}));
-	}).catch(function(error) {
-		console.error(error.stack || error);
-	});
+	return Item.find({
+			state: ItemStates.finished,
+			createdAt: {
+				$lt: deleteDate.toJSON()
+			},
+			nextCheck: {
+				'<': new Date().toJSON()
+			}
+		})
+		.then(function(items) {
+			return Q.allSettled(items.map(function(item) {
+				return item.remove().catch(function(err) {
+					return handleItemError(err, item);
+				})
+			}));
+		});
+}
+
+function checkOne(item) {
+	return Q.try(function() {
+		if (item.state === 'Wanted' || item.state === 'Searching') {
+			return searcher.findAndAdd(item);
+		} else if (item.state === 'Downloading') {
+			return torrenter.checkFinished(item);
+		} else if (item.state === 'Renaming') {
+			return renamer.rename(item);
+		} else if (item.state === 'UpdatingLibrary') {
+			return notifier.updateLibrary(item);
+		} else if (item.state === 'Subtitling') {
+			return subtitler.findSubtitles(item);
+		}
+	}).catch(function(err) {
+		return handleItemError(err, item);
+	})
+}
+
+function handleItemError(err, item) {
+	console.error('Error in', item.name, err.stack || err);
+	return item.rescheduleNextHour();
 }
 
 configure();
