@@ -1,13 +1,11 @@
-var Q = require('q');
-
 module.exports = {
-	schema : true,
-	tableName : 'item',
-	attributes : {
-		state : {
-			type : 'string',
-			required : true,
-			enum : [
+	schema: true,
+	tableName: 'item',
+	attributes: {
+		state: {
+			type: 'string',
+			required: true,
+			enum: [
 				'Wanted',
 				'Searching',
 				'Downloading',
@@ -16,34 +14,34 @@ module.exports = {
 				'Subtitling',
 				'Finished'
 			],
-			defaultsTo : 'Wanted'
+			defaultsTo: 'Wanted'
 		},
-		error : {
-			type : 'string'
+		error: {
+			type: 'string'
 		},
-		searchTerm : {
-			type : 'string'
+		searchTerm: {
+			type: 'string'
 		},
-		searchResults : {
-			type : 'array'
+		searchResults: {
+			type: 'array'
 		},
-		torrentHash : {
-			type : 'string'
+		torrentHash: {
+			type: 'string'
 		},
-		torrentLinks : {
-			type : 'array'
+		torrentLinks: {
+			type: 'array'
 		},
-		info : {
-			type : 'string'
+		info: {
+			type: 'string'
 		},
-		nextCheck : {
-			type : 'dateTime',
-			defaultsTo : function() {
+		nextCheck: {
+			type: 'dateTime',
+			defaultsTo: function() {
 				return new Date();
 			}
 		},
 
-		setState : function(newState) {
+		setState: function(newState) {
 			if (this.state !== newState) {
 				this.state = newState;
 				delete this.info;
@@ -51,34 +49,39 @@ module.exports = {
 			return this;
 		},
 
-		setInfo : function(info) {
+		setInfo: function(info) {
 			this.info = info;
 			return this;
 		},
 
-		setError : function(error) {
-			this.error = error;
+		setError: function(error) {
+			this.error = error.message || error.toString();
 			return this;
 		},
 
-		saveAndPublish : function() {
+		saveAndPublish: function() {
 			var self = this;
 			return this.save().then(function() {
-				console.log('SAVED');
-				ItemBase.publishUpdate(self.id, { state : self.state, info : self.info, id : self.id });
+				console.log('SAVED', self);
+				ItemBase.publishUpdate(self.id, {
+					state: self.state,
+					error: self.error,
+					info: self.info,
+					id: self.id
+				});
 			});
 		},
 
-		rescheduleNextHour : function() {
+		rescheduleNextHour: function() {
 			var now = new Date();
 			this.nextCheck = now.setTime(now.getTime() + 3600000);
-			return this.save();
+			return this.saveAndPublish();
 		},
 
-		rescheduleNextDay : function() {
+		rescheduleNextDay: function() {
 			var now = new Date();
 			this.nextCheck = now.setDate(now.getDate() + 1);
-			return this.save();
+			return this.saveAndPublish();
 		},
 
 		getSettingsKey: function() {
