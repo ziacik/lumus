@@ -42,7 +42,7 @@ module.exports = {
 				return new Date();
 			}
 		},
-		
+
 		setState : function(newState) {
 			if (this.state !== newState) {
 				this.state = newState;
@@ -50,35 +50,39 @@ module.exports = {
 			}
 			return this;
 		},
-				
+
 		setInfo : function(info) {
 			this.info = info;
 			return this;
 		},
-		
+
 		setError : function(error) {
 			this.error = error;
 			return this;
 		},
-				
+
 		saveAndPublish : function() {
 			var self = this;
 			return this.save().then(function() {
 				console.log('SAVED');
-				ItemBase.publishUpdate(self.id, { state : self.state, info : self.info, id : self.id });			
+				ItemBase.publishUpdate(self.id, { state : self.state, info : self.info, id : self.id });
 			});
 		},
-		
+
 		rescheduleNextHour : function() {
 			var now = new Date();
 			this.nextCheck = now.setTime(now.getTime() + 3600000);
 			return this.save();
 		},
-		
+
 		rescheduleNextDay : function() {
 			var now = new Date();
 			this.nextCheck = now.setDate(now.getDate() + 1);
 			return this.save();
+		},
+
+		getSettingsKey: function() {
+			return this.type.toLowerCase() + 'Settings';
 		}
 	}
 };

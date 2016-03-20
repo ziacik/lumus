@@ -8,10 +8,9 @@ var tvdb = new (require("node-tvdb"))("6E61D6699D0B1CB0");
 module.exports.rename = function(item) {
 	console.log("Renaming " + item.name);
 
-	var itemName = item.name;
 	var promise;
 
-	if (item.type === ItemTypes.show && item.externalId) {
+	if (item.type === 'Season' && item.imdbId) {
 		promise = getShowNameAndRename(item);
 	} else {
 		promise = renameTo(item, item.name);
@@ -19,9 +18,7 @@ module.exports.rename = function(item) {
 
 	return promise.catch(function(error) {
 		console.error(error.stack || error);
-		item.stateInfo = error.message || error;
-		item.state = ItemStates.renameFailed;
-		item.save();
+		item.setError(error).rescheduleNextHour();
 	});
 }
 
@@ -52,16 +49,18 @@ function doRename(item, destinationDir) {
 }
 
 function renameTo(item, itemName) {
-	var destinationDir = path.join(config.get()[item.type + 'Settings'].destinationDir, itemName);
+	console.log(item.type, item.getSettingsKey());
+	var destinationDir = path.join(config.get()[item.getSettingsKey()].destinationDir, itemName);
 
-	if (item.type === ItemTypes.show)
+	if (item.type === 'Season') {
 		destinationDir = path.join(destinationDir, 'Season ' + item.no);
+	}
 
 	return doRename(item, destinationDir);
 }
 
 function getShowNameAndRename(item) {
-	return Q.nbind(tvdb.getSeriesByRemoteId, tvdb)(item.externalId).then(function(response) {
+	return Q.nbind(tvdb.getSeriesByRemoteId, tvdb)(item.imdbId).then(function(response) {
 		var itemName = item.name;
 
 		if (response.SeriesName) {

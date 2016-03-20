@@ -16,7 +16,6 @@ module.exports = _.merge({
 		year : {
 			type : 'integer',
 			required : true
-		}
+		}		
 	}
 }, itemBaseModel, movieShowBaseModel);
-

@@ -4,18 +4,21 @@ var musicBaseModel = require('./MusicBase');
 
 module.exports = _.merge({
 	attributes: {
-		type : {
-			enum : ['Album'],
-			required : true,
-			defaultsTo : 'Album'
+		type: {
+			enum: ['Album'],
+			required: true,
+			defaultsTo: 'Album'
 		},
-		artist : {
-			model : 'Artist',
-			required : true
-		},		
-		year : {
-			type : 'integer',
-			requried : true
+		artist: {
+			model: 'Artist',
+			required: true
+		},
+		year: {
+			type: 'integer',
+			requried: true
+		},
+		getSettingsKey: function() {
+			return 'showSettings';
 		}
 	}
 }, itemBaseModel, musicBaseModel);
