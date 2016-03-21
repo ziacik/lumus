@@ -1,4 +1,4 @@
-var Q = require('q');
+var Promise = require('bluebird');
 var torrenter = require('./torrenter');
 var serviceDispatcher = require('./serviceDispatcher');
 var filter = require('./filter');
@@ -15,7 +15,7 @@ module.exports.findIfExists = function(item) {
 	return module.exports.findAll(item)
 	.then(function(results) {
 		if (results.length === 0) {
-			return Q(false);
+			return Promise.resolve(false);
 		} else {
 			return filter.first(item, results);
 		}
@@ -33,7 +33,7 @@ module.exports.findIfExists = function(item) {
 		}).join(', ');
 
 		console.error('Error in searcher. Caused by: ' + stack);
-	});	
+	});
 };
 
 module.exports.findAndAdd = function(item) {
@@ -47,8 +47,7 @@ module.exports.findAndAdd = function(item) {
 			return filter.first(item, results);
 		} else {
 			return item.setState('Wanted').setInfo('Nothing found.').rescheduleNextDay().then(function(whatever) {
-				console.log(whatever); //TODO remove
-				return Q();
+				return Promise.resolve();
 			});
 		}
 	}).then(function(result) {
@@ -57,7 +56,7 @@ module.exports.findAndAdd = function(item) {
 		} else if (hasResults) {
 			return item.setState('Wanted').setInfo('No result matched filters.').rescheduleNextDay();
 		} else {
-			return Q();
+			return Promise.resolve();
 		}
 	}).catch(function(errors) {
 		if (!errors.length) {
@@ -72,7 +71,7 @@ module.exports.findAndAdd = function(item) {
 			return error.message || error;
 		}).join(', ');
 
-		console.error('Error in searcher. Caused by: ' + stack);		
+		console.error('Error in searcher. Caused by: ' + stack);
 		return item.setError(messages);
 	});
 }
@@ -93,12 +92,12 @@ module.exports.findAll = function(item) {
 		var results = serviceResults.reduce(function(previous, current, index, array) {
 			return previous.concat(current);
 		}, []);
-		
+
 		results.sort(function(result1, result2) {
 			if (result1.score != result2.score) {
 				return result2.score - result1.score;
 			}
-			
+
 			if (result1.seeds != result2.seeds) {
 				return result2.seeds - result1.seeds;
 			}
@@ -109,7 +108,7 @@ module.exports.findAll = function(item) {
 
 			return 0;
 		});
-		
+
 		return results;
 	});
 };

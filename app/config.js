@@ -1,7 +1,7 @@
+var Promise = require('bluebird');
 var nconf = require('nconf');
 var fs = require('fs');
 var labels = require('./labels');
-var Q = require('q');
 
 module.exports = nconf;
 module.exports.Preference = Object.freeze({
@@ -18,7 +18,7 @@ nconf.use('file', { file : "config.v2.json"});
 nconf.load();
 
 nconf.defaults({
-	version: 0,	
+	version: 0,
 	checkInterval : 60,
 	removeFinishedDays : 0,
 	movieSettings : {
@@ -92,7 +92,7 @@ labels.add({
 	destinationDir : 'Directory'
 });
 
-var nconfSave = Q.nbind(nconf.save, nconf);
+var nconfSave = Promise.promisify(nconf.save);
 
 module.exports.save = function() {
 	nconf.set('version', 2);

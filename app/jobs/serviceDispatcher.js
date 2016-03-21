@@ -1,4 +1,4 @@
-var Q = require('q');
+var Promise = require('bluebird');
 var util = require('util');
 
 module.exports.create = function() {
@@ -15,44 +15,38 @@ ServiceDispatcher.prototype.use = function(service) {
 
 ServiceDispatcher.prototype.unuse = function(service) {
 	var serviceIndex = this.services.indexOf(service);
-	
+
 	if (serviceIndex >= 0) {
 		this.services.splice(serviceIndex, 1);
 	}
 };
 
 ServiceDispatcher.prototype.forAll = function(command) {
-	var promises = this.services.map(function(service) {
-		return Q.fcall(command, service);
-	});
-	return Q.all(promises);
+	return Promise.mapSeries(this.services, command);
 };
 
 ServiceDispatcher.prototype.untilSuccess = function(command, isSuccess) {
-	var deferred = Q.defer();
 	var serviceIndex = 0;
 	var services = this.services;
-	
+
 	function loop() {
 		if (services.length <= serviceIndex) {
-			return Q.resolve(undefined);			
+			return;
 		}
-	
+
 		var service = services[serviceIndex];
 		serviceIndex++;
 
-		Q.when(command(service), function(result) {
+		return Promise.resolve(command(service)).then(function(result) {
 			if (result && (!isSuccess || isSuccess(result))) {
-				deferred.resolve(result);
+				return result;
 			} else if (serviceIndex < services.length) {
-				loop();
+				return loop();
 			} else {
-				deferred.resolve(undefined);
+				return;
 			}
-		}, deferred.reject);
+		});
 	}
-	
-	Q.nextTick(loop);
-	
-	return deferred.promise;
+
+	return Promise.resolve(loop());
 }

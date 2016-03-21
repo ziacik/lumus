@@ -1,5 +1,5 @@
-var Q = require('q');
-var request = require('request');
+var Promise = require('bluebird');
+var request = require('request-promise');
 var cheerio = require('cheerio');
 var config = require('../config');
 var labels = require('../labels');
@@ -8,29 +8,29 @@ var tpb = require('thepiratebay');
 
 module.exports.name = 'The Pirate Bay';
 
-config.add('tpbSearcher', { 
-	type : 'literal', 
-	store : {
-		'searcher:tpbSearcher:use' : true,
-		'searcher:tpbSearcher:url' : 'https://thepiratebay.se'
+config.add('tpbSearcher', {
+	type: 'literal',
+	store: {
+		'searcher:tpbSearcher:use': true,
+		'searcher:tpbSearcher:url': 'https://thepiratebay.se'
 	}
 });
 
-labels.add({ 
-	tpbSearcher : module.exports.name,
-	'searcher:tpbSearcher:url' : 'Base URL'
+labels.add({
+	tpbSearcher: module.exports.name,
+	'searcher:tpbSearcher:url': 'Base URL'
 });
 
 module.exports.searchFor = function(item) {
 	var searchTerm = getSearchTerm(item);
-	
+
 	tpb.setUrl(config.get().searcher.tpbSearcher.url);
-	
+
 	return tpb.search(searchTerm, {
-		category : getCategory(item),
-		orderBy : '7'
+		category: getCategory(item),
+		orderBy: '7'
 	}).then(function(searchResults) {
-		return searchResults.map(convertDataItemToResult);	
+		return searchResults.map(convertDataItemToResult);
 	});
 };
 
@@ -42,23 +42,23 @@ var getSearchTerm = function(item) {
 
 var convertSize = function(sizeStr) {
 	var sizeMatches = sizeStr.match(/([0-9]+[.]?[0-9]*)[^0-9]+(KiB|MiB|GiB)/); // todo rewise
-	
-	if (sizeMatches == null || sizeMatches.length < 3) {		
-	 	throw 'Unable to determine size from "' + sizeStr + '".';
-	}		 		
-	
+
+	if (sizeMatches == null || sizeMatches.length < 3) {
+		throw 'Unable to determine size from "' + sizeStr + '".';
+	}
+
 	var size = parseFloat(sizeMatches[1]);
-	
+
 	if (sizeMatches[2] === 'GiB')
 		size = size * 1000;
 	else if (sizeMatches[2] === 'KiB')
-		size = size / 1000;	
-		
+		size = size / 1000;
+
 	return size;
 };
 
 var convertDataItemToResult = function(dataItem) {
-	var result = {};	
+	var result = {};
 	result.title = dataItem.name;
 	result.magnetLink = dataItem.magnetLink;
 	result.torrentInfoUrl = dataItem.link;
@@ -77,23 +77,16 @@ var guessReleaseName = function(dataItem) {
 };
 
 var getDescription = function(link) {
-	var deferred = Q.defer();
-	
-	request({
+	return request({
 		method: 'GET',
-    	uri: link,
-    	gzip: true
-    }, function(error, response, body) {
-		if (error) {
-			return deferred.reject(error);
+		uri: link,
+		gzip: true,
+		transform: function(body) {
+			return cheerio.load(body);
 		}
-
-		$ = cheerio.load(body);
-		var description = $('.nfo').text();
-		deferred.resolve(description);
+	}).then(function($) {
+		return $('.nfo').text();
 	});
-	
-	return deferred.promise;
 }
 
 var getCategory = function(item) {

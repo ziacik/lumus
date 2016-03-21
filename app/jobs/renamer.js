@@ -1,9 +1,9 @@
-var Q = require('q');
+var Promise = require('bluebird');
 var config = require('../config');
 var fs = require('fs');
 var path = require('path');
 var mkdirp = require('mkdirp');
-var tvdb = new (require("node-tvdb"))("6E61D6699D0B1CB0");
+var tvdb = Promise.promisifyAll(new(require("node-tvdb"))("6E61D6699D0B1CB0"));
 
 module.exports.rename = function(item) {
 	console.log("Renaming " + item.name);
@@ -23,9 +23,9 @@ module.exports.rename = function(item) {
 }
 
 function doRename(item, destinationDir) {
-	var rmdir = Q.denodeify(require('rimraf'));
-	var mkdir = Q.denodeify(require('mkdirp'));
-	var rename = Q.denodeify(fs.rename);
+	var rmdir = Promise.promisify(require('rimraf'));
+	var mkdir = Promise.promisify(require('mkdirp'));
+	var rename = Promise.promisify(fs.rename);
 
 	var promise =
 		mkdir(destinationDir)
@@ -60,7 +60,7 @@ function renameTo(item, itemName) {
 }
 
 function getShowNameAndRename(item) {
-	return Q.nbind(tvdb.getSeriesByRemoteId, tvdb)(item.imdbId).then(function(response) {
+	return tvdb.getSeriesByRemoteId(item.imdbId).then(function(response) {
 		var itemName = item.name;
 
 		if (response.SeriesName) {
@@ -69,6 +69,6 @@ function getShowNameAndRename(item) {
 			itemName = response[0].SeriesName;
 		}
 
-	    return renameTo(item, itemName);
+		return renameTo(item, itemName);
 	});
 }

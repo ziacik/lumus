@@ -1,24 +1,14 @@
-var Q = require('q');
 var kodi = require('kodi-ws');
 var config = require('../config');
 var labels = require('../labels');
 
 config.add('kodi', { type : 'literal', store : {'notifier:kodi:use' : true, 'notifier:kodi:host' : 'localhost', 'notifier:kodi:port' : '9090' }});
-labels.add({ 
-	kodi : 'Kodi', 
+labels.add({
+	kodi : 'Kodi',
 	'notifier:kodi:url' : 'Kodi Url <em><small>Deprecated, please use Host and Port to EventServer</small></em>',
 	'notifier:kodi:host' : 'Kodi Host',
 	'notifier:kodi:port' : 'Kodi Port <em><small>EventServer</small></em>'
 });
-
-/// Kodi-ws library uses Promise which was introduced in node ~ v0.11 or so, so let's define it for legacy.
-if (!global.Promise) {
-	global.Promise = function(resolveRejectFunction) {
-		var deferred = Q.defer();
-		resolveRejectFunction(deferred.resolve, deferred.reject);
-		return deferred.promise;
-	}
-}
 
 module.exports.notifySnatched = function(item) {
 	return connect().then(function(connection) {
@@ -52,7 +42,7 @@ var updateVideoLibrary = function(item) {
 	});
 };
 
-var connect = function() {	
-	var options = config.get().notifier.kodi;	
+var connect = function() {
+	var options = config.get().notifier.kodi;
 	return kodi(options.host, parseInt(options.port));
 }

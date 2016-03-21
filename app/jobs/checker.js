@@ -1,4 +1,4 @@
-var Q = require('q');
+var Promise = require('bluebird');
 var config = require('../config');
 var torrenter = require('./torrenter');
 var searcher = require('./searcher');
@@ -81,11 +81,9 @@ function checkActive() {
 		}
 	}).then(function(items) {
 		console.error(items); //TODO remove
-		var itemCheckers = items.map(function(item) {
-			return Q.fcall(checkOne, item);
+		return Promise.each(items, function(item) {
+			return checkOne(item);
 		});
-
-		return Q.allSettled(itemCheckers); /// Or should I run it sequentially? Probably yes.
 	});
 }
 
@@ -106,17 +104,17 @@ function checkFinishedToNext() {
 			'<': new Date().toJSON()
 		}
 	}).then(function(items) {
-		return Q.allSettled(items.map(function(item) {
+		return Promise.each(items, function(item) {
 			return nexter.checkNext(item).catch(function(err) {
 				return handleItemError(err, item);
 			});
-		}));
+		});
 	})
 }
 
 function checkFinishedToRemove() {
 	if (!config.get().removeFinishedDays) {
-		return Q();
+		return Promise.resolve();
 	}
 
 	var now = new Date();
@@ -133,16 +131,16 @@ function checkFinishedToRemove() {
 			}
 		})
 		.then(function(items) {
-			return Q.allSettled(items.map(function(item) {
+			return Promise.each(items, function(item) {
 				return item.remove().catch(function(err) {
 					return handleItemError(err, item);
 				})
-			}));
+			});
 		});
 }
 
 function checkOne(item) {
-	return Q.try(function() {
+	return Promise.try(function() {
 		if (item.state === 'Wanted' || item.state === 'Searching') {
 			return searcher.findAndAdd(item);
 		} else if (item.state === 'Downloading') {

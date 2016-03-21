@@ -1,5 +1,7 @@
+var Promise = require('bluebird');
 var Transmission = require('transmission');
-var Q = require('q');
+
+Promise.promisifyAll(Transmission.prototype);
 
 var url = require('url');
 
@@ -8,12 +10,18 @@ var config = require('../config');
 var labels = require('../labels');
 var notifier = require('./notifier');
 
-config.add('transmission', { type : 'literal', store : { 'downloader:transmission:url' : 'http://localhost:9091', 'downloader:removeTorrent' : true }});
+config.add('transmission', {
+	type: 'literal',
+	store: {
+		'downloader:transmission:url': 'http://localhost:9091',
+		'downloader:removeTorrent': true
+	}
+});
 labels.add({
-	downloader : '<span class="fa fa-download" /> Downloaders',
-	transmission : 'Transmission',
-	removeTorrent : 'Remove Torrent <em><small>from downloader when finished</small></em>',
-	'downloader:transmission:url' : 'Transmission Url'
+	downloader: '<span class="fa fa-download" /> Downloaders',
+	transmission: 'Transmission',
+	removeTorrent: 'Remove Torrent <em><small>from downloader when finished</small></em>',
+	'downloader:transmission:url': 'Transmission Url'
 });
 
 var convertErr = function(err) {
@@ -25,53 +33,40 @@ var convertErr = function(err) {
 }
 
 var checkFinished = function(item) {
-	var deferred = Q.defer();
 	var transmission = getTransmission();
-	
-	transmission.get(item.torrentHash, function(err, result) {
-		if (err) {
-			deferred.reject(convertErr(err));
-			return;
-		}
-		
+
+	return transmission.getAsync(item.torrentHash).then(function(result) {
 		if (result.torrents.length == 0) {
-			item.setState('Wanted').setInfo('Torrent removed.').saveAndPublish().then(deferred.resolve, deferred.reject);
-			return;
+			return item.setState('Wanted').setInfo('Torrent removed.').saveAndPublish();
 		}
-		
+
 		var torrent = result.torrents[0];
-				
+
 		if (torrent.isFinished) {
-			finishItem(item, torrent).then(function() {
+			return finishItem(item, torrent).then(function() {
 				if (config.get().downloader.removeTorrent) {
 					return removeTorrent(item);
 				}
-			}).then(deferred.resolve, deferred.reject);
-		} else {
-			deferred.resolve();
-		};
+			});
+		}
 	});
-	
-	return deferred.promise;
 }
 
 var removeTorrent = function(item, removeData) {
 	if (!item.torrentHash) {
-		return Q();
+		return Promise.resolve();
 	}
 
 	var transmission = getTransmission();
-	var remove = Q.nbind(transmission.remove, transmission);
-
-	return remove([item.torrentHash], removeData)
+	return transmission.removeAsync([item.torrentHash], removeData)
 }
 
 var finishItem = function(item, torrent) {
 	var filesInfo = torrent.files;
-	
+
 	var maxLength = 0;
 	var maxFileInfo;
-	
+
 	for (var i = 0; i < filesInfo.length; i++) {
 		var fileInfo = filesInfo[i];
 		if (fileInfo.length > maxLength) {
@@ -79,15 +74,15 @@ var finishItem = function(item, torrent) {
 			maxFileInfo = fileInfo;
 		}
 	}
-	
+
 	var fileDir = path.dirname(maxFileInfo.name);
-	var fileName = path.basename(maxFileInfo.name); 
+	var fileName = path.basename(maxFileInfo.name);
 
 	item.downloadDir = path.join(torrent.downloadDir, fileDir);
-	item.mainFile = fileName;				
-	
-	return item.setState('Renaming').saveAndPublish().then(function() {		
-		return notifier ? notifier.notifyDownloaded(item) : Q();
+	item.mainFile = fileName;
+
+	return item.setState('Renaming').saveAndPublish().then(function() {
+		return notifier ? notifier.notifyDownloaded(item) : Promise.resolve();
 	});
 }
 
@@ -99,15 +94,15 @@ var getTransmission = function() {
 	if (_transmission && config.get().downloader.transmission.url === _transmissionUrl) {
 		return _transmission;
 	}
-		
+
 	var transmissionUrl = config.get().downloader.transmission.url;
 
-	var parsedUrl = url.parse(transmissionUrl, false, true);	
+	var parsedUrl = url.parse(transmissionUrl, false, true);
 	var transmission = new Transmission({
-		host : parsedUrl.hostname,
-		port : parsedUrl.port
+		host: parsedUrl.hostname,
+		port: parsedUrl.port
 	});
-	
+
 	_transmission = transmission;
 	_transmissionUrl = transmissionUrl;
 
@@ -116,39 +111,28 @@ var getTransmission = function() {
 
 var add = function(item, magnetLink, torrentPageUrl) {
 	var transmission = getTransmission();
-	var deferred = Q.defer();
-	
+
 	/// Item already has a torrent, remove it first (with data too).
-	removeTorrent(item, true);
+	return removeTorrent(item, true).then(function() {
+		return transmission.addUrlAsync(magnetLink).then(function(result) {
+			item.setState('Downloading');
+			item.torrentHash = result.hashString;
+			//		item.torrentInfoUrl = torrentPageUrl;
 
-	transmission.addUrl(magnetLink, function(err, result) {
-		if (err) {
-			err = convertErr(err);
-			console.log(err);
-			item.rescheduleNextHour().done();
-			deferred.reject(err);
-			
-			return;
-		}
-		
-		item.setState('Downloading');
-		item.torrentHash = result.hashString;				
-//		item.torrentInfoUrl = torrentPageUrl;
+			//		if (!item.torrentLinks) {
+			//			item.torrentLinks = [];
+			//		}
 
-//		if (!item.torrentLinks) {
-//			item.torrentLinks = [];
-//		}
+			//item.torrentLinks.push(magnetLink);
 
-		//item.torrentLinks.push(magnetLink);
+			if (notifier) {
+				//TODO add to chain
+				notifier.notifySnatched(item);
+			}
 
-		if (notifier) {
-			notifier.notifySnatched(item);
-		}
-		
-		item.saveAndPublish().then(deferred.resolve, deferred.reject);
+			return item.saveAndPublish();
+		});
 	});
-	
-	return deferred.promise;
 };
 
 
