@@ -73,14 +73,16 @@ module.exports = {
 		},
 
 		rescheduleNextHour: function() {
-			var now = new Date();
-			this.nextCheck = now.setTime(now.getTime() + 3600000);
+			var nextHour = new Date();
+			nextHour.setTime(nextHour.getTime() + 3600000)
+			this.nextCheck = nextHour;
 			return this.saveAndPublish();
 		},
 
 		rescheduleNextDay: function() {
-			var now = new Date();
-			this.nextCheck = now.setDate(now.getDate() + 1);
+			var nextDay = new Date();
+			nextDay.setDate(nextDay.getDate() + 1);
+			this.nextCheck = nextDay;
 			return this.saveAndPublish();
 		},
 
