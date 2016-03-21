@@ -58,21 +58,6 @@ module.exports.findAndAdd = function(item) {
 		} else {
 			return Promise.resolve();
 		}
-	}).catch(function(errors) {
-		if (!errors.length) {
-			errors = [ errors ];
-		}
-
-		var stack = errors.map(function(error) {
-			return error.stack || error.message;
-		}).join(require('os').EOL);
-
-		var messages = errors.map(function(error) {
-			return error.message || error;
-		}).join(', ');
-
-		console.error('Error in searcher. Caused by: ' + stack);
-		return item.setError(messages);
 	});
 }
 
