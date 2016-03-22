@@ -81,9 +81,14 @@ var finishItem = function(item, torrent) {
 	item.downloadDir = path.join(torrent.downloadDir, fileDir);
 	item.mainFile = fileName;
 
-	return item.setState('Renaming').saveAndPublish().then(function() {
-		return notifier ? notifier.notifyDownloaded(item) : Promise.resolve();
-	});
+	console.log('Setting item downloadDir. Should fail.', item.downloadDir);
+
+	if (notifier) {
+		//TODO error handling (global)
+		notifier.notifyDownloaded(item);
+	}
+
+	return item.setState('Renaming').saveAndPublish();
 }
 
 var _transmission;
