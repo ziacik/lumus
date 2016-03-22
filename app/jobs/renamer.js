@@ -8,18 +8,11 @@ var tvdb = Promise.promisifyAll(new(require("node-tvdb"))("6E61D6699D0B1CB0"));
 module.exports.rename = function(item) {
 	console.log("Renaming " + item.name);
 
-	var promise;
-
 	if (item.type === 'Season' && item.imdbId) {
-		promise = getShowNameAndRename(item);
+		return getShowNameAndRename(item);
 	} else {
-		promise = renameTo(item, item.name);
+		return renameTo(item, item.name);
 	}
-
-	return promise.catch(function(error) {
-		console.error(error.stack || error);
-		item.setError(error).rescheduleNextHour();
-	});
 }
 
 function doRename(item, destinationDir) {
