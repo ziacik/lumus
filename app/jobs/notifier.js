@@ -22,13 +22,7 @@ module.exports.notifyDownloaded = function(item) {
 module.exports.updateLibrary = function(item) {
 	return this.forAll(function(service) {
 		return service.updateLibrary(item).then(function() {
-			item.state = ItemStates.libraryUpdated;
-			return item.save();
+			return item.setState('Subtitling').saveAndPublish();
 		});
-	}).catch(function(error) {
-		util.error(error.stack || error);
-		item.stateInfo = error.message || error;
-		item.state = ItemStates.libraryUpdateFailed;
-		item.rescheduleNextHour();
 	});
 }

@@ -23,7 +23,7 @@ module.exports.notifyDownloaded = function(item) {
 }
 
 module.exports.updateLibrary = function(item) {
-	if (item.type === ItemTypes.music) {
+	if (item.type === 'Album') {
 		return updateAudioLibrary(item);
 	} else {
 		return updateVideoLibrary(item);
