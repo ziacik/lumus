@@ -31,6 +31,12 @@ module.exports = {
 		torrentLinks: {
 			type: 'array'
 		},
+		downloadDir: {
+			type: 'string'
+		},
+		mainFile: {
+			type: 'string'
+		},
 		info: {
 			type: 'string'
 		},
@@ -45,6 +51,7 @@ module.exports = {
 			if (this.state !== newState) {
 				this.state = newState;
 				delete this.info;
+				delete this.error;
 			}
 			return this;
 		},
