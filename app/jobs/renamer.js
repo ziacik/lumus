@@ -27,25 +27,20 @@ function doRename(item, destinationDir) {
 	var mkdir = Promise.promisify(require('mkdirp'));
 	var rename = Promise.promisify(fs.rename);
 
-	var promise =
-		mkdir(destinationDir)
-		.then(function() {
-			return rename(item.downloadDir, destinationDir).fail(function(error) {
-				if (error.code === 'ENOTEMPTY') {
-					return rmdir(destinationDir).then(function() {
-						return rename(item.downloadDir, destinationDir);
-					});
-				} else {
-					throw error;
-				}
-			});
-		}).then(function() {
-			item.renamedDir = destinationDir;
-			item.state = ItemStates.renamed;
-			return item.save();
+	return mkdir(destinationDir).then(function() {
+		return rename(item.downloadDir, destinationDir).catch(function(error) {
+			if (error.code === 'ENOTEMPTY') {
+				return rmdir(destinationDir).then(function() {
+					return rename(item.downloadDir, destinationDir);
+				});
+			} else {
+				throw error;
+			}
 		});
-
-	return promise;
+	}).then(function() {
+		item.renamedDir = destinationDir;
+		return item.setState('UpdatingLibrary').saveAndPublish();
+	});
 }
 
 function renameTo(item, itemName) {
