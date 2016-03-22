@@ -8,6 +8,10 @@ mixin card()
 		.info
 			h7 {{ item.title || item.name || "Season " + item.season_number }}
 			em {{ item.vote_average }}
+			.btn.btn-xs.btn-primary(ng-click="mainController.remove(item)")
+				span.fa.fa-minus &nbsp;
+				| Remove
+
 			block
 
 mixin itemCard()
@@ -18,7 +22,7 @@ mixin itemCard()
 			.label.label-xs.label-default {{ item.info }}
 		.pull-right(ng-if="item.error")
 			.label.label-xs.label-danger {{ item.error }}
-	
+
 mixin searchCard(type)
 	+card()
 		.pull-right
@@ -52,4 +56,4 @@ mixin seasonCard()
 				| Added
 			span.text-danger(ng-if="seasonSearchController.isError(item)")
 				span.fa.fa-ban &nbsp;
-				| Error	
+				| Error
