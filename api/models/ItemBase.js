@@ -37,6 +37,9 @@ module.exports = {
 		mainFile: {
 			type: 'string'
 		},
+		renamedDir: {
+			type: 'string'
+		},
 		info: {
 			type: 'string'
 		},
@@ -58,11 +61,13 @@ module.exports = {
 
 		setInfo: function(info) {
 			this.info = info;
+			delete this.error;
 			return this;
 		},
 
 		setError: function(error) {
 			this.error = error.message || error.toString();
+			delete this.info;
 			return this;
 		},
 

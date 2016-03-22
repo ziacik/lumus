@@ -159,7 +159,7 @@ function checkOne(item) {
 
 function handleItemError(err, item) {
 	console.error('Error in', item.name, err.stack || err);
-	return item.rescheduleNextHour();
+	return item.setError(err).rescheduleNextHour();
 }
 
 configure();
